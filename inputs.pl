@@ -9,11 +9,12 @@ select_spot(GameState, Player) :-
   % GameState is FinalGameState
   .
 
-
+% predicate to read column from user
 read_column(Column) :-
   write('Column (0-7) - '),
   read(Column).
 
+% predicate to read row from user
 read_row(Row) :-
   write('Row (A-H) - '),
   read(Row).
