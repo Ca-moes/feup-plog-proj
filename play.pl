@@ -1,7 +1,7 @@
 % main predicate for game start
 play :-
   initial(GameState),
-  print_board(GameState),
+  display_game(GameState, Player),
   start_game(GameState).
 
 % initializes the board with no pieces on it
@@ -16,4 +16,4 @@ start_game(GameState) :-
 turn(GameState, Player) :-
   format('\n ~a turn.\n', Player),
   select_spot(GameState, Player),
-  print_board(GameState).
+  display_game(GameState, Player).
