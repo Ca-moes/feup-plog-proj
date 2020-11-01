@@ -1,15 +1,13 @@
-/*
-
-*/
+%  Tabuleiro inicial com peças em formação xadrez
 initial_board([
-  [1,2,1,2,1,2,1,2],
-  [2,1,2,1,2,1,2,1],
-  [1,2,1,2,1,2,1,2],
-  [2,1,2,1,2,1,2,1],
-  [1,2,1,2,1,2,1,2],
-  [2,1,2,1,2,1,2,1],
-  [1,2,1,2,1,2,1,2],
-  [2,1,2,1,2,1,2,1]
+  [2,2,2,2,1,0,2,0],
+  [0,0,0,0,0,0,0,2],
+  [2,1,0,1,0,0,1,0],
+  [0,0,0,2,0,2,0,2],
+  [0,1,1,0,1,0,0,0],
+  [2,0,0,0,0,0,1,0],
+  [0,0,0,1,1,2,0,0],
+  [2,1,2,0,1,1,1,0]
 ]).
 
 % códigos das peças na list
@@ -36,11 +34,13 @@ print_matrix([L|T], N) :-
   write('---|---|---|---|---|---|---|---|---|\n'),
   print_matrix(T, N1).
 
+% imprime uma linha do tabuleiro
 print_line([]).
 print_line([C|L]) :-
   code(C, P), write(P), write(' | '),
   print_line(L).
 
+% Imprime o tabuleiro de acordo com o estado de Board
 display_game(Board, Player) :-
   % cabeçalho do tabuleiro
   nl,
