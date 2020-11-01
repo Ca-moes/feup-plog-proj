@@ -4,11 +4,11 @@ play :-
   display_game(GameState, Player),
   start_game(GameState).
 
-% initializes the board with no pieces on it
+% initializes the board with pieces organized
 initial(GameState) :-
   initial_board(GameState).
 
-% Starts the game with player 1 and black board
+% Starts the game with player 1
 start_game(GameState) :-
   turn(GameState, 'Player 1').
 

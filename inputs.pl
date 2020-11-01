@@ -1,4 +1,4 @@
-% Predicado para slecionar o lugar de uma peça
+% Predicate to select a piece location
 select_spot(GameState, Player) :-
   read_column(Column),
   check_column(Column, CheckedColumn),
