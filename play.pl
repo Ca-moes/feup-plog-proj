@@ -1,8 +1,9 @@
 % main predicate for game start
 play :-
   initial(GameState),
-  display_game(GameState, Player),
-  start_game(GameState).
+  display_game(GameState, Player)
+  % start_game(GameState)
+  .
 
 % initializes the board with pieces organized
 initial(GameState) :-

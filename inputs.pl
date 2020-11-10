@@ -44,21 +44,21 @@ check_column(_, CheckedColumn) :-
 
 % checking rows
 check_row('A', CheckedRow) :-
-  CheckedColumn = 'A'.
+  CheckedRow = 'A'.
 check_row('B', CheckedRow) :-
-  CheckedColumn = 'B'.
+  CheckedRow = 'B'.
 check_row('C', CheckedRow) :-
-  CheckedColumn = 'C'.
+  CheckedRow = 'C'.
 check_row('D', CheckedRow) :-
-  CheckedColumn = 'D'.
+  CheckedRow = 'D'.
 check_row('E', CheckedRow) :-
-  CheckedColumn = 'E'.
+  CheckedRow = 'E'.
 check_row('F', CheckedRow) :-
-  CheckedColumn = 'F'.
+  CheckedRow = 'F'.
 check_row('G', CheckedRow) :-
-  CheckedColumn = 'G'.
+  CheckedRow = 'G'.
 check_row('H', CheckedRow) :-
-  CheckedColumn = 'H'.
+  CheckedRow = 'H'.
 % if not between A-H then try again
 check_row(_, CheckedRow) :-
   write('Invalid row\nSelect again\n'),
