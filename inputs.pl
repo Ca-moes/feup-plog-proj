@@ -1,5 +1,6 @@
 % Predicate to select a piece location
 select_spot(GameState, Player) :-
+  size_of_board(GameState, Size),
   read_column(Column),
   check_column(Column, CheckedColumn),
   read_row(Row),
