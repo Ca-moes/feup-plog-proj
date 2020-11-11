@@ -1,4 +1,5 @@
 % Initial board with pieces in chess formation
+
 /* initial_board([
   [1,2,1,2,1,2,1,2],
   [2,1,2,1,2,1,2,1],
@@ -9,7 +10,6 @@
   [1,2,1,2,1,2,1,2],
   [2,1,2,1,2,1,2,1]
 ]).  */
-
 
 initial_board([
   [1,2,1,2,1,2],
@@ -26,6 +26,17 @@ initial_board([
   [1,2,1]
 ]). */
 
+/* initial_board([
+  [2,2,2,2,1,0,2,0],
+  [0,0,0,0,0,0,0,2],
+  [2,1,0,1,0,0,1,0],
+  [0,0,0,2,0,2,0,2],
+  [0,1,1,0,1,0,0,0],
+  [2,0,0,0,0,0,1,0],
+  [0,0,0,1,1,2,0,0],
+  [2,1,2,0,1,1,1,0]
+]). */
+
 size_of_board(Board, X):-
   nth0(0, Board, Header),
   length(Header, X),
@@ -33,19 +44,19 @@ size_of_board(Board, X):-
   X == Y. % check if board is nxn and not nxm
 
 % Pieces codes for board representation
-code(0, ' ').
+code(0, 32). %ascii code for space
 code(2, 216).
 code(1, 215).
 
 % Codes for board rows
-row(0, R) :- R='A'.
-row(1, R) :- R='B'.
-row(2, R) :- R='C'.
-row(3, R) :- R='D'.
-row(4, R) :- R='E'.
-row(5, R) :- R='F'.
-row(6, R) :- R='G'.
-row(7, R) :- R='H'.
+row(0, 'A').
+row(1, 'B').
+row(2, 'C').
+row(3, 'D').
+row(4, 'E').
+row(5, 'F').
+row(6, 'G').
+row(7, 'H').
 
 print_board_middle_separator(1):-
   write('|\n').
