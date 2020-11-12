@@ -1,6 +1,6 @@
 % Initial board with pieces in chess formation
 
-initial_board([
+/* initial_board([
   [1,2,1,2,1,2,1,2],
   [2,1,2,1,2,1,2,1],
   [1,2,1,2,1,2,1,2],
@@ -9,7 +9,7 @@ initial_board([
   [2,1,2,1,2,1,2,1],
   [1,2,1,2,1,2,1,2],
   [2,1,2,1,2,1,2,1]
-]). 
+]).  */
 
 /* initial_board([
   [1,2,1,2,1,2],
@@ -26,7 +26,7 @@ initial_board([
   [1,2,1]
 ]). */
 
-/* initial_board([
+initial_board([
   [2,2,2,2,1,0,2,0],
   [0,0,0,0,0,0,0,2],
   [2,1,0,1,0,0,1,0],
@@ -35,7 +35,7 @@ initial_board([
   [2,0,0,0,0,0,1,0],
   [0,0,0,1,1,2,0,0],
   [2,1,2,0,1,1,1,0]
-]). */
+]).
 
 size_of_board(Board, X):-
   nth0(0, Board, Header),
@@ -45,8 +45,11 @@ size_of_board(Board, X):-
 
 % Pieces codes for board representation
 code(0, 32). %ascii code for space
-code(2, 216).
-code(1, 215).
+code(2, 216). % Ø - Player 2
+code(1, 215). % × - Player 1
+
+player_piece('Player 1', 1).
+playerPiece('Player 2', 2).
 
 % Codes for board rows
 row(0, 'A').

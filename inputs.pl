@@ -12,22 +12,24 @@ code_number(57, 9).
 % Predicate to select a piece location
 select_spot(GameState, Player) :-
   size_of_board(GameState, Size),
-  read_column(Column, Size),
-  check_column(Column, CheckedColumn, Size),
-  format('Column read :~d\n', CheckedColumn),
-  read_row(Row, Size),
-  check_row(Row, CheckedRow, Size),
-  format('Row read :~w\n', CheckedRow)
-  % validate_choice(Column, Row),
+  read_inputs(Size, X, Y),
+  validate_choice(GameState, X, Y, Player)
   % make_choice(GameState, Column, Row, FinalGameState),
   % GameState is FinalGameState
   .
+
+read_inputs(Size, X, Y):-
+  read_column(Column, Size),
+  check_column(Column, X, Size),
+  format('Column read :~d\n', X),
+  read_row(Row, Size),
+  check_row(Row, Y, Size),
+  format('Row read :~w\n', Y).
 
 % predicate to read column from user
 read_column(Column, Size) :-
   write('Column (0-'), format('~d', Size-1), write(') - '),
   get_code(Column).
-  %read(Column).
 
 % predicate to read row from user
 read_row(Row, Size) :-
