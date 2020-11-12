@@ -64,14 +64,14 @@ print_board_middle_separator(X):-
   write('+ - '), X1 is X-1, print_board_middle_separator(X1).
 
 % When the counter reaches 0, it ends
-print_matrix([], 8, X).
+print_matrix([], 8, _).
 print_matrix([L|T], N, X) :-
   row(N, R), code(1,P),write(' '), write(R), write(' | '),put_code(P), write(' | '),
   N1 is N + 1,
   print_line(L), nl,
   N < X - 1, !, write('---+   | - '), print_board_middle_separator(X),
   print_matrix(T, N1, X).
-print_matrix(A, B, X):-
+print_matrix(_, _, X):-
   write('---+   *---'),
   print_board_separator(X).
 
@@ -94,7 +94,7 @@ print_separator(0):-
 print_separator(X):-
   write('+---'), X1 is X-1, print_separator(X1).
   
-print_line_codes(0, P):-
+print_line_codes(0, _):-
   write('\n').
 print_line_codes(X, P):-
   put_code(P), write('   '), X1 is X-1, print_line_codes(X1, P).
@@ -116,7 +116,7 @@ print_header(P, X):-
 
 
 % Prints the board according to its state
-display_game(Board, Player) :-
+display_game(Board, _) :- % trocar _ por Player no futuro, está assim para não ser singleton
   % Header of the board
   nl, code(2, P), size_of_board(Board, X),
   print_header(P, X),
