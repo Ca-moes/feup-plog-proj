@@ -53,7 +53,7 @@ check_column(_, CheckedColumn, Size) :-
 
 % checking rows
 check_row(Rowread, CheckedRow, Size) :-
-  row(RowNumb, Rowread), RowNumb < Size, RowNumb >= 0, 
+  (row(RowNumb, Rowread) ; row_lower(RowNumb, Rowread)), RowNumb < Size, RowNumb >= 0, 
   row(RowNumb, RowreadUpper), % caso lê minuscula, vai buscar maiuscula
   CheckedRow = RowreadUpper.
 

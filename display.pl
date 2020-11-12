@@ -1,6 +1,6 @@
 % Initial board with pieces in chess formation
 
-/* initial_board([
+initial_board([
   [1,2,1,2,1,2,1,2],
   [2,1,2,1,2,1,2,1],
   [1,2,1,2,1,2,1,2],
@@ -9,16 +9,16 @@
   [2,1,2,1,2,1,2,1],
   [1,2,1,2,1,2,1,2],
   [2,1,2,1,2,1,2,1]
-]).  */
+]). 
 
-initial_board([
+/* initial_board([
   [1,2,1,2,1,2],
   [2,1,2,1,2,1],
   [1,2,1,2,1,2],
   [2,1,2,1,2,1],
   [1,2,1,2,1,2],
   [2,1,2,1,2,1]
-]).
+]). */
 
 /* initial_board([
   [1,2,1],
@@ -58,14 +58,14 @@ row(5, 'F').
 row(6, 'G').
 row(7, 'H').
 
-row(0, 'a').
-row(1, 'b').
-row(2, 'c').
-row(3, 'd').
-row(4, 'e').
-row(5, 'f').
-row(6, 'g').
-row(7, 'h').
+row_lower(0, 'a').
+row_lower(1, 'b').
+row_lower(2, 'c').
+row_lower(3, 'd').
+row_lower(4, 'e').
+row_lower(5, 'f').
+row_lower(6, 'g').
+row_lower(7, 'h').
 
 print_board_middle_separator(1):-
   write('|\n').
@@ -78,7 +78,7 @@ print_matrix([L|T], N, X) :-
   row(N, R), code(1,P),write(' '), write(R), write(' | '),put_code(P), write(' | '),
   N1 is N + 1,
   print_line(L), nl,
-  N < X - 1, !, write('---+   | - '), print_board_middle_separator(X),
+  N < X - 1, write('---+   | - '), print_board_middle_separator(X),
   print_matrix(T, N1, X).
 print_matrix(_, _, X):-
   write('---+   *---'),
