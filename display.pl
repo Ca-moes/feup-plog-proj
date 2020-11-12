@@ -58,6 +58,15 @@ row(5, 'F').
 row(6, 'G').
 row(7, 'H').
 
+row(0, 'a').
+row(1, 'b').
+row(2, 'c').
+row(3, 'd').
+row(4, 'e').
+row(5, 'f').
+row(6, 'g').
+row(7, 'h').
+
 print_board_middle_separator(1):-
   write('|\n').
 print_board_middle_separator(X):-

@@ -53,10 +53,13 @@ check_column(_, CheckedColumn, Size) :-
 
 % checking rows
 check_row(Rowread, CheckedRow, Size) :-
-  row(RowNumb, Rowread), RowNumb < Size, RowNumb >= 0, !, CheckedRow = Rowread.
+  row(RowNumb, Rowread), RowNumb < Size, RowNumb >= 0, 
+  row(RowNumb, RowreadUpper), % caso lê minuscula, vai buscar maiuscula
+  CheckedRow = RowreadUpper.
 
 % if not between A-H then try again
 check_row(_, CheckedRow, Size) :-
   write('Invalid row\nSelect again\n'),
+  skip_line,
   read_row(Row, Size),
   check_row(Row, CheckedRow, Size).
