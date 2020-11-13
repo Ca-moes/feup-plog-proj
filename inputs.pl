@@ -9,15 +9,6 @@ code_number(55, 7).
 code_number(56, 8).
 code_number(57, 9).
 
-% Predicate to select a piece location
-select_spot(GameState, Player) :-
-  size_of_board(GameState, Size),
-  read_inputs(Size, X, Y),
-  validate_choice(GameState, X, Y, Player)
-  % make_choice(GameState, Column, Row, FinalGameState),
-  % GameState is FinalGameState
-  .
-
 read_inputs(Size, X, Y):-
   read_column(Column, Size),
   check_column(Column, X, Size),
@@ -46,7 +37,7 @@ check_column(Testing, CheckedColumn, Size) :-
   code_number(Testing, Number),
   Number < Size, Number >= 0, CheckedColumn = Number, skip_line.
 
-% if not between 0-7 then try again
+% if not between 0-x then try again
 check_column(_, CheckedColumn, Size) :-
   write('Invalid column\nSelect again\n'),
   skip_line,
@@ -59,9 +50,11 @@ check_row(Rowread, CheckedRow, Size) :-
   row(RowNumb, RowreadUpper), % caso lê minuscula, vai buscar maiuscula
   CheckedRow = RowreadUpper.
 
-% if not between A-H then try again
+% if not between A-y then try again
 check_row(_, CheckedRow, Size) :-
   write('Invalid row\nSelect again\n'),
   skip_line,
   read_row(Row, Size),
   check_row(Row, CheckedRow, Size).
+
+read_direction(X, Y, Dir).

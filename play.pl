@@ -16,4 +16,4 @@ start_game(GameState) :-
 turn(GameState, Player) :-
   format('\n ~a turn.\n', Player),
   select_spot(GameState, Player),
-  display_game(GameState, Player).
+  display_game(GameState, Player).  
