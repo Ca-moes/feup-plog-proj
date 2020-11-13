@@ -9,6 +9,7 @@ validate_choice(Board, X, Y, Player):-
 validate_choice(Board, _, _, Player):-
     write('Wrong Cell, try again\n'),
     size_of_board(Board, Size),
+    skip_line,
     read_inputs(Size, X, Y),
     validate_choice(Board, X, Y, Player).
 
