@@ -1,40 +1,40 @@
 % Initial board with pieces in chess formation
 
 /* initial_board([
-  [1,2,1,2,1,2,1,2],
-  [2,1,2,1,2,1,2,1],
-  [1,2,1,2,1,2,1,2],
-  [2,1,2,1,2,1,2,1],
-  [1,2,1,2,1,2,1,2],
-  [2,1,2,1,2,1,2,1],
-  [1,2,1,2,1,2,1,2],
-  [2,1,2,1,2,1,2,1]
+  [ 1,-1, 1,-1, 1,-1, 1,-1],
+  [-1, 1,-1, 1,-1, 1,-1, 1],
+  [ 1,-1, 1,-1, 1,-1, 1,-1],
+  [-1, 1,-1, 1,-1, 1,-1, 1],
+  [ 1,-1, 1,-1, 1,-1, 1,-1],
+  [-1, 1,-1, 1,-1, 1,-1, 1],
+  [ 1,-1, 1,-1, 1,-1, 1,-1],
+  [-1, 1,-1, 1,-1, 1,-1, 1]
 ]).  */
 
 /* initial_board([
-  [1,2,1,2,1,2],
-  [2,1,2,1,2,1],
-  [1,2,1,2,1,2],
-  [2,1,2,1,2,1],
-  [1,2,1,2,1,2],
-  [2,1,2,1,2,1]
+  [ 1,-1, 1,-1, 1,-1],
+  [-1, 1,-1, 1,-1, 1],
+  [ 1,-1, 1,-1, 1,-1],
+  [-1, 1,-1, 1,-1, 1],
+  [ 1,-1, 1,-1, 1,-1],
+  [-1, 1,-1, 1,-1, 1]
 ]). */
 
 /* initial_board([
-  [1,2,1],
-  [2,1,2],
-  [1,2,1]
+  [ 1,-1, 1],
+  [-1, 1,-1],
+  [ 1,-1, 1]
 ]). */
 
 initial_board([
-  [2,2,2,2,1,0,2,0],
-  [0,0,0,0,0,0,0,2],
-  [2,1,0,1,0,0,1,0],
-  [0,0,0,2,0,2,0,2],
-  [0,1,1,0,1,0,0,0],
-  [2,0,0,0,0,0,1,0],
-  [0,0,0,1,1,2,0,0],
-  [2,1,2,0,1,1,1,0]
+  [-1,-1,-1,-1, 1, 0,-1, 0],
+  [ 0, 0, 0, 0, 0, 0, 0,-1],
+  [-1, 1, 0, 1, 0, 0, 1, 0],
+  [ 0, 0, 0,-1, 0,-1, 0,-1],
+  [ 0, 1, 1, 0, 1, 0, 0, 0],
+  [-1, 0, 0, 0, 0, 0, 1, 0],
+  [ 0, 0, 0, 1, 1,-1, 0, 0],
+  [-1, 1,-1, 0, 1, 1, 1, 0]
 ]).
 
 size_of_board(Board, X):-
@@ -45,11 +45,11 @@ size_of_board(Board, X):-
 
 % Pieces codes for board representation
 code(0, 32). %ascii code for space
-code(2, 216). % Ø - Player 2
+code(-1, 216). % Ø - Player 2
 code(1, 215). % × - Player 1
 
 player_piece('Player 1', 1).
-playerPiece('Player 2', 2).
+player_piece('Player 2', -1).
 
 % Codes for board rows
 row(0, 'A').
@@ -78,7 +78,7 @@ print_board_middle_separator(X):-
 % When the counter reaches 0, it ends
 print_matrix([], 8, _).
 print_matrix([L|T], N, X) :-
-  row(N, R), code(1,P),write(' '), write(R), write(' | '),put_code(P), write(' | '),
+  row(N, R), code(1,P), write(' '), write(R), write(' | '),put_code(P), write(' | '),
   N1 is N + 1,
   print_line(L), nl,
   N < X - 1, write('---+   | - '), print_board_middle_separator(X),
@@ -130,7 +130,7 @@ print_header(P, X):-
 % Prints the board according to its state
 display_game(Board, _) :- % trocar _ por Player no futuro, está assim para não ser singleton
   % Header of the board
-  nl, code(2, P), size_of_board(Board, X),
+  nl, code(-1, P), size_of_board(Board, X),
   print_header(P, X),
   print_matrix(Board, 0, X),
   write('         '),

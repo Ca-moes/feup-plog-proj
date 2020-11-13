@@ -27,8 +27,7 @@ read_row(Row, Size) :-
   Size1 is Size-1,
   row(Size1, Letter),
   write('Row (A-'),write(Letter),write(') - '),
-/*   skip_line,
- */  get_char(Row).
+  get_char(Row).
 
 % checking columns
 check_column(Testing, CheckedColumn, Size) :-
@@ -57,4 +56,3 @@ check_row(_, CheckedRow, Size) :-
   read_row(Row, Size),
   check_row(Row, CheckedRow, Size).
 
-read_direction(X, Y, Dir).
