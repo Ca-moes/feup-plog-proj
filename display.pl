@@ -43,6 +43,11 @@ size_of_board(Board, X):-
   length(Board, Y),
   X == Y. % check if board is nxn and not nxm
 
+% Code takes opposed player code
+opposed_opponent_code(Player, Code):-
+  player_piece(Player, Piece),
+  Code is -Piece.
+
 % Pieces codes for board representation
 code(0, 32). %ascii code for space
 code(-1, 216). % Ø - Player 2
