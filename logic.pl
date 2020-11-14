@@ -8,16 +8,21 @@ direction(4, 'left').
 move(GameState, Player) :-
     size_of_board(GameState, Size),
     choose_piece(GameState, Size, Player, X, Y),
-    format('selected spot: X : ~d -- Y : ~w \n', [X,Y]),
-    available_dirs(GameState, X, Y, Player, List),
-    write(List).
-    %read_direction(X, Y, Direction).
+    format('selected spot: X : ~d -- Y : ~w \n', [X,Y]).
+    % read_direction(X, Y, Direction).
     % make_choice(GameState, Column, Row, FinalGameState),
     % GameState is FinalGameState
     
 choose_piece(Board, Size, Player, X, Y):-
     read_inputs(Size, Xread, Yread),
-    validate_choice(Board, Xread, Yread, Player, X, Y).
+    validate_choice(Board, Xread, Yread, Player, X, Y),
+    available_dirs(Board, X, Y, Player, List),
+    List \== [],
+    write('There are plays available for that spot\n'),
+    write(List), nl.
+choose_piece(Board, Size, Player, X, Y):-
+    write('No plays available for that piece, choose another\n'),
+    choose_piece(Board, Size, Player, X, Y).
 
 % check if selected piece belongs to player
 validate_choice(Board, Xread, Yread, Player, X, Y):-
@@ -26,9 +31,9 @@ validate_choice(Board, Xread, Yread, Player, X, Y):-
     player_piece(Player, Piece),
     Piece == Value,
     X = Xread, Y = NumbY,
-    write('Chose correct coordenates\n').
+    write('Chose Spot belonging to player\n').
 validate_choice(Board, _, _, Player, X, Y):-
-    write('--Wrong Cell, try again\n'),
+    write('--Unavailable piece, try again\n'),
     size_of_board(Board, Size),
     skip_line,
     read_inputs(Size, Xread, Yread),
