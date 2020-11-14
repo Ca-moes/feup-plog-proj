@@ -15,14 +15,22 @@ move(GameState, Player) :-
     
 choose_piece(Board, Size, Player, X, Y):-
     read_inputs(Size, Xread, Yread),
-    validate_choice(Board, Xread, Yread, Player, X, Y),
-    available_dirs(Board, X, Y, Player, List),
-    List \== [],
-    write('There are plays available for that spot\n'),
-    write(List), nl.
-choose_piece(Board, Size, Player, X, Y):-
-    write('No plays available for that piece, choose another\n'),
-    choose_piece(Board, Size, Player, X, Y).
+    validate_choice(Board, Xread, Yread, Player, Xtemp, Ytemp),
+    available_dirs(Board, Xtemp, Ytemp, Player, List),
+    (
+        (
+            List \== [],
+            write('There are plays available for that spot\n'),
+            write(List), nl, X is Xtemp, Y is Ytemp
+        ) ;
+        (
+            write('No plays available for that piece, choose another\n'),
+            skip_line,
+            choose_piece(Board, Size, Player, X1, Y1),
+            X is X1, Y is Y1
+        )
+    ).
+
 
 % check if selected piece belongs to player
 validate_choice(Board, Xread, Yread, Player, X, Y):-
