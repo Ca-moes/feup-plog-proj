@@ -44,8 +44,8 @@ size_of_board(Board, X):-
   X == Y. % check if board is nxn and not nxm
 
 % Code takes opposed player code
-opposed_opponent_code(Player, Code):-
-  player_piece(Player, Piece),
+opposed_opponent_code(PlayerS, Code):-
+  player_piece(PlayerS, Piece),
   Code is -Piece.
 
 % Pieces codes for board representation
