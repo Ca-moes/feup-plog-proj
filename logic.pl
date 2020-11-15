@@ -15,13 +15,12 @@ direction(X, Y, 'left', Xr, Yr):-   Xr is X-1,  Yr = Y.
 
 
 % Predicate to select move a piece
-move(GameState, PlayerS) :-
+move(GameState, PlayerS, NewGameState) :-
     choose_piece(GameState, PlayerS, X, Y, Directions),
     format('- Selected spot: X : ~d -- Y : ~w \n', [X,Y]),
     read_direction(Directions, Direction),
-    format('- Direction received in logic : ~s\n', Direction).
-    % make_choice(GameState, Column, Row, FinalGameState),
-    % GameState is FinalGameState
+    format('- Direction received in logic : ~s\n', Direction),
+    make_choice(GameState, PlayerS, X, Y, Direction, NewGameState).
     
 choose_piece(Board, PlayerS, X, Y, Directions):-
     size_of_board(Board, Size),
@@ -87,3 +86,21 @@ check_dir(Board, X, Y, PlayerS, Direction, Result):-
     (direction(4, Direction) , X > 0, X2 is X-1, value_in_board(Board, X2, Y, Value), Value==OpponentCode, Result = [Direction]);
     Result = []).
 
+
+replace_index(I, L, E, K) :-
+    nth0(I, L, _, R),
+    nth0(I, K, E, R).
+
+replace(Board, X, Y, Value, BoardResult):-
+    %usar substitute(+X, +Xlist, +Y, ?Ylist)
+    nth0(Y, Board, Row),
+    replace_index(X, Row, Value, NewRow),
+    replace_index(Y, Board, NewRow, BoardResult).
+    
+make_choice(Board, PlayerS, X, Y, Direction, FinalBoard):-
+    % X Y fica a branco
+    replace(Board, X, Y, 0, Board1),
+    % Direção fica com peça de player
+    direction(X, Y, Direction, X1, Y1),
+    player_piece(PlayerS, Code),
+    replace(Board1, X1, Y1, Code, FinalBoard).

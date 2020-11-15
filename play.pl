@@ -15,7 +15,7 @@ start_game(GameState) :-
 % Makes a turn and calls the predicate to chose a spot
 turn(GameState, Player) :-
   format('\n ~a turn.\n', Player),
-  move(GameState, Player),
-  display_game(GameState, Player)
+  move(GameState, Player, NewGameState),
+  display_game(NewGameState, Player)
   % turn(GameState, outro jogador),
   .  
