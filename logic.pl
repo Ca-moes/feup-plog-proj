@@ -17,10 +17,9 @@ direction(X, Y, 'left', Xr, Yr):-   Xr is X-1,  Yr = Y.
 % Predicate to select move a piece
 move(GameState, PlayerS) :-
     choose_piece(GameState, PlayerS, X, Y, Directions),
-    format('selected spot: X : ~d -- Y : ~w \n', [X,Y]),
-    write(Directions), nl,
+    format('- Selected spot: X : ~d -- Y : ~w \n', [X,Y]),
     read_direction(Directions, Direction),
-    format('Direction received in logic : ~s\n', Direction).
+    format('- Direction received in logic : ~s\n', Direction).
     % make_choice(GameState, Column, Row, FinalGameState),
     % GameState is FinalGameState
     
@@ -32,11 +31,11 @@ choose_piece(Board, PlayerS, X, Y, Directions):-
     (
         (
             List \== [],
-            write('There are plays available for that spot\n'),
+            write('- There are plays available for that spot\n'),
             X is Xtemp, Y is Ytemp, Directions = List
         ) ;
         (
-            write('No plays available for that piece, choose another\n'),
+            write('# No plays available for that piece, choose another\n'),
             skip_line,
             choose_piece(Board, PlayerS, X1, Y1, Directions1),
             X is X1, Y is Y1, Directions = Directions1
@@ -50,7 +49,7 @@ validate_choice(Board, Xread, Yread, PlayerS, X, Y):-
     player_piece(PlayerS, Piece),
     Piece == Value,
     X = Xread, Y = NumbY,
-    write('Chose Spot belonging to player\n').
+    write('- Chose Spot belonging to player\n').
 validate_choice(Board, _, _, PlayerS, X, Y):-
     write('--Unavailable piece, try again\n'),
     size_of_board(Board, Size),

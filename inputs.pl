@@ -12,15 +12,15 @@ code_number(57, 9).
 read_inputs(Size, X, Y):-
   read_column(Column, Size),
   check_column(Column, X, Size),
-  format('Column read :~d\n', X),
+  format(': Column read :  ~d\n', X),
   read_row(Row, Size),
   check_row(Row, Y, Size),
-  format('Row read :~w\n', Y).
+  format(': Row read :     ~w\n', Y).
 
 
 % predicate to read column from user
 read_column(Column, Size) :-
-  write('Column (0-'), format('~d', Size-1), write(') - '),
+  write('| Column (0-'), format('~d', Size-1), write(') - '),
   get_code(Column).
 
 % checking columns
@@ -32,7 +32,7 @@ check_column(Testing, CheckedColumn, Size) :-
 
 % if not between 0-x then try again
 check_column(_, CheckedColumn, Size) :-
-  write('Invalid column\nSelect again\n'),
+  write('~ Invalid column\n| Select again\n'),
   skip_line,
   read_column(Column, Size),
   check_column(Column, CheckedColumn, Size).
@@ -42,7 +42,7 @@ check_column(_, CheckedColumn, Size) :-
 read_row(Row, Size) :-
   Size1 is Size-1,
   row(Size1, Letter),
-  write('Row (A-'),write(Letter),write(') - '),
+  write('| Row (A-'),write(Letter),write(') -    '),
   get_char(Row).
 
 % checking rows
@@ -53,7 +53,7 @@ check_row(Rowread, CheckedRow, Size) :-
 
 % if not between A-y then try again
 check_row(_, CheckedRow, Size) :-
-  write('Invalid row\nSelect again\n'),
+  write('~ Invalid row\n| Select again\n'),
   skip_line,
   read_row(Row, Size),
   check_row(Row, CheckedRow, Size).
@@ -68,11 +68,11 @@ print_directions([Dir|Rest]):-
   print_directions(Rest).
   
 read_direction(List, Direction):-
-  write('Select Direction (number) to move to\n|'),
+  write('| Select Direction (number) to move to\n|'),
   print_directions(List), skip_line,
   get_code(CodeRead),
   check_direction_input(List, CodeRead, NumberRead),
-  write('read valid direction (1-4)\n'), 
+  write('- Read valid direction (1-4)\n'), 
   check_direction(List, NumberRead, DirSelected),
   DirSelected \== '',
   Direction = DirSelected
@@ -85,8 +85,8 @@ check_direction_input(List, CharRead, Number):-
   code_number(CharRead, Number),
   Number < 5, Number > 0.
 check_direction_input(List, Char, Number):-
-  write('Invalid Number. Select again\n'),
-  write('Select Direction (number) to move to\n|'),
+  write('~ Invalid Number. Select again\n'),
+  write('| Select Direction (number) to move to\n|'),
   print_directions(List), skip_line,
   get_code(CodeRead),
   check_direction_input(List, CodeRead, NumberRead),
@@ -106,5 +106,5 @@ check_direction([Dir|Rest], NumberRead, Direction):-
     ) 
   ) .
 check_direction([], _, Direction):-
-  write('Not a available direction, choose correctly!\n'),
+  write('~ Not an available direction, choose correctly!\n'),
   Direction = ''.
