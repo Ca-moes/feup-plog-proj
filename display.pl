@@ -48,6 +48,10 @@ opposed_opponent_code(PlayerS, Code):-
   player_piece(PlayerS, Piece),
   Code is -Piece.
 
+opposed_opponent_string(PlayerS, EnemyS):-
+  opposed_opponent_code(PlayerS, Code),
+  player_piece(EnemyS, Code).
+
 % Pieces codes for board representation
 code(0, 32). %ascii code for space
 code(-1, 216). % Ø - Player 2
