@@ -137,7 +137,7 @@ print_header(P, X):-
 
 
 % Prints the board according to its state
-display_game(Board, _) :- % trocar _ por Player no futuro, está assim para não ser singleton
+display_game(Board) :- % trocar _ por Player no futuro, está assim para não ser singleton
   % Header of the board
   nl, code(-1, P), size_of_board(Board, X),
   print_header(P, X),

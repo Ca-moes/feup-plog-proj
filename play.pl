@@ -1,7 +1,7 @@
 % main predicate for game start
 play :-
   initial(GameState),
-  display_game(GameState, Player),
+  display_game(GameState),
   start_game(GameState). 
 
 % initializes the board with pieces organized
@@ -15,9 +15,28 @@ start_game(GameState) :-
 % Makes a turn and calls the predicate to chose a spot
 turn(GameState, PlayerS) :-
   format('\n ~a turn.\n', PlayerS),
+  % verificar se está em fase final, AKA tirar peças em vez de comer
   move(GameState, PlayerS, NewGameState),
-  display_game(NewGameState, Player),
+  % verificar se jogo acabou
+  display_game(NewGameState),
   opposed_opponent_string(PlayerS, EnemyS),
   skip_line,
   turn(NewGameState, EnemyS)
   .  
+
+
+/*
+Board
+
+Peça a peça
+Code, código oponente
+
+available_dirs
+= []
+
+passa próxima
+
+    ultima peça
+    available dirs []
+    fase final
+*/

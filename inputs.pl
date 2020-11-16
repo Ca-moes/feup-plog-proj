@@ -79,12 +79,12 @@ read_direction(List, Direction):-
   .
   
 %verificar se está entre 1 e 4
-check_direction_input(List, CharRead, Number):-
+check_direction_input(_, CharRead, Number):-
   peek_char(Char),
   Char == '\n',
   code_number(CharRead, Number),
   Number < 5, Number > 0.
-check_direction_input(List, Char, Number):-
+check_direction_input(List, _, Number):-
   write('~ Invalid Number. Select again\n'),
   write('| Select Direction (number) to move to\n|'),
   print_directions(List), skip_line,
