@@ -16,7 +16,16 @@ start_game(GameState) :-
 turn(GameState, PlayerS) :-
   format('\n ~a turn.\n', PlayerS),
   % verificar se está em fase final, AKA tirar peças em vez de comer
-  move(GameState, PlayerS, NewGameState),
+  (
+    (
+      check_final_state(GameState, PlayerS, 0, 0),
+      remove(GameState, PlayerS, NewGameState)
+    ) 
+    ; 
+    (move(GameState, PlayerS, NewGameState))
+  ),
+  
+  
   % verificar se jogo acabou
   display_game(NewGameState),
   opposed_opponent_string(PlayerS, EnemyS),

@@ -56,7 +56,7 @@ validate_choice(Board, _, _, PlayerS, X, Y):-
     read_inputs(Size, Xread, Yread),
     validate_choice(Board, Xread, Yread, PlayerS, X, Y).
 
-% returns in Value  the value [0,1,2] at (X,Y) from Board
+% returns in Value  the value [0,1,-1] at (X,Y) from Board
 value_in_board(Board, X, Y, Value):-
     nth0(Y, Board, Row),
     nth0(X, Row, Value).
@@ -104,3 +104,61 @@ make_choice(Board, PlayerS, X, Y, Direction, FinalBoard):-
     direction(X, Y, Direction, X1, Y1),
     player_piece(PlayerS, Code),
     replace(Board1, X1, Y1, Code, FinalBoard).
+
+
+/* predicate to check if game as reached its final state */    
+check_final_state(GameState, PlayerS, X, Y):-
+    size_of_board(GameState, Length),
+    value_in_board(GameState, X, Y, Value),
+    ((
+        Value \== 0,
+        check_no_neighbors(GameState, PlayerS, X, Y),
+        next_index(X, Y, Length, X2, Y2)
+    ) ; 
+    (
+        next_index(X, Y, Length, X2, Y2)
+    )),
+    check_end(X, Y, Length, End),
+    (
+        (End is 1) ; (End \== 1, check_final_state(GameState, PlayerS, X2, Y2))
+    ).
+
+
+next_index(X, Y, Length, X2, Y2):-
+    X1 is X + 1,
+    ((
+        X1 \== Length,
+        X2 is X1, 
+        Y2 is Y
+    ) ;
+    (
+        X1 == Length, 
+        X2 is 0, 
+        Y2 is Y + 1
+    )).
+
+check_end(X, Y, Length, End):-
+    ((
+        X is (Length - 1),
+        Y is (Length - 1),
+        End is 1
+    ) ;
+    (
+        X \== (Length - 1),
+        Y \== (Length - 1),
+        End is 0
+    )).
+    
+
+check_no_neighbors(Board, PlayerS, X, Y):-
+    available_dirs(Board, X, Y, PlayerS, Moves),
+    Moves == [].
+
+
+remove(GameState, PlayerS, NewGameState) :-
+    write('- There are no pieces to replace, select one piece to remove.\n'),
+    size_of_board(GameState, Size),
+    read_inputs(Size, Xread, Yread),
+    validate_choice(GameState, Xread, Yread, PlayerS, Xtemp, Ytemp),
+    format('- Selected spot: X : ~d -- Y : ~w \n', [Xread,Yread]),
+    replace(GameState, Xtemp, Ytemp, 0, NewGameState).
