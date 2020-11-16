@@ -110,17 +110,17 @@ make_choice(Board, PlayerS, X, Y, Direction, FinalBoard):-
 check_final_state(GameState, PlayerS, X, Y):-
     size_of_board(GameState, Length),
     value_in_board(GameState, X, Y, Value),
-    ((
-        Value \== 0,
-        check_no_neighbors(GameState, PlayerS, X, Y),
-        next_index(X, Y, Length, X2, Y2)
-    ) ; 
+    check_no_neighbors(GameState, PlayerS, X, Y, Value, Result),
     (
-        next_index(X, Y, Length, X2, Y2)
-    )),
-    check_end(X, Y, Length, End),
-    (
-        (End is 1) ; (End \== 1, check_final_state(GameState, PlayerS, X2, Y2))
+        (Result == 0, !, fail) 
+        ;
+        (
+            next_index(X, Y, Length, X2, Y2),
+            check_end(X, Y, Length, End),
+            (
+                (End is 1) ; (End \== 1, check_final_state(GameState, PlayerS, X2, Y2))
+            )
+        )
     ).
 
 
@@ -150,9 +150,27 @@ check_end(X, Y, Length, End):-
     )).
     
 
-check_no_neighbors(Board, PlayerS, X, Y):-
-    available_dirs(Board, X, Y, PlayerS, Moves),
-    Moves == [].
+check_no_neighbors(Board, PlayerS, X, Y, Value, Result):-
+    (
+        value_in_board(Board, X, Y, Value),
+        player_piece(PlayerS, Piece),
+        (
+            (
+                ((Piece \== Value); (Value is 0)), 
+                Result is 1
+            ) ;
+            (
+                (Piece is Value), (Value \== 0),
+                available_dirs(Board, X, Y, PlayerS, Moves),
+                ((
+                    Moves == [], Result is 1
+                ) ; 
+                (
+                    Moves \== [], Result is 0
+                ))
+            )
+        )
+    ).
 
 
 remove(GameState, PlayerS, NewGameState) :-
