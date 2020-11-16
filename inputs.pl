@@ -1,66 +1,110 @@
-% Predicate to select a piece location
-select_spot(GameState, Player) :-
-  read_column(Column),
-  check_column(Column, CheckedColumn),
-  read_row(Row),
-  check_row(Row, CheckedRow)
-  % validate_choice(Column, Row),
-  % make_choice(GameState, Column, Row, FinalGameState),
-  % GameState is FinalGameState
-  .
+code_number(48, 0).
+code_number(49, 1).
+code_number(50, 2).
+code_number(51, 3).
+code_number(52, 4).
+code_number(53, 5).
+code_number(54, 6).
+code_number(55, 7).
+code_number(56, 8).
+code_number(57, 9).
+
+read_inputs(Size, X, Y):-
+  read_column(Column, Size),
+  check_column(Column, X, Size),
+  format(': Column read :  ~d\n', X),
+  read_row(Row, Size),
+  check_row(Row, Y, Size),
+  format(': Row read :     ~w\n', Y).
+
 
 % predicate to read column from user
-read_column(Column) :-
-  write('Column (0-7) - '),
-  read(Column).
-
-% predicate to read row from user
-read_row(Row) :-
-  write('Row (A-H) - '),
-  read(Row).
+read_column(Column, Size) :-
+  write('| Column (0-'), format('~d', Size-1), write(') - '),
+  get_code(Column).
 
 % checking columns
-check_column(0, CheckedColumn) :-
-  CheckedColumn = 0.
-check_column(1, CheckedColumn) :-
-  CheckedColumn = 1.
-check_column(2, CheckedColumn) :-
-  CheckedColumn = 2.
-check_column(3, CheckedColumn) :-
-  CheckedColumn = 3.
-check_column(4, CheckedColumn) :-
-  CheckedColumn = 4.
-check_column(5, CheckedColumn) :-
-  CheckedColumn = 5.
-check_column(6, CheckedColumn) :-
-  CheckedColumn = 6.
-check_column(7, CheckedColumn) :-
-  CheckedColumn = 7.
-% if not between 0-7 then try again
-check_column(_, CheckedColumn) :-
-  write('Invalid column\nSelect again\n'),
-  read_column(Column),
-  check_column(Column, CheckedColumn).
+check_column(Testing, CheckedColumn, Size) :-
+  peek_char(Char),
+  Char == '\n',
+  code_number(Testing, Number),
+  Number < Size, Number >= 0, CheckedColumn = Number, skip_line.
+
+% if not between 0-x then try again
+check_column(_, CheckedColumn, Size) :-
+  write('~ Invalid column\n| Select again\n'),
+  skip_line,
+  read_column(Column, Size),
+  check_column(Column, CheckedColumn, Size).
+
+
+% predicate to read row from user
+read_row(Row, Size) :-
+  Size1 is Size-1,
+  row(Size1, Letter),
+  write('| Row (A-'),write(Letter),write(') -    '),
+  get_char(Row).
 
 % checking rows
-check_row('A', CheckedRow) :-
-  CheckedColumn = 'A'.
-check_row('B', CheckedRow) :-
-  CheckedColumn = 'B'.
-check_row('C', CheckedRow) :-
-  CheckedColumn = 'C'.
-check_row('D', CheckedRow) :-
-  CheckedColumn = 'D'.
-check_row('E', CheckedRow) :-
-  CheckedColumn = 'E'.
-check_row('F', CheckedRow) :-
-  CheckedColumn = 'F'.
-check_row('G', CheckedRow) :-
-  CheckedColumn = 'G'.
-check_row('H', CheckedRow) :-
-  CheckedColumn = 'H'.
-% if not between A-H then try again
-check_row(_, CheckedRow) :-
-  write('Invalid row\nSelect again\n'),
-  read_row(Row),
-  check_row(Row, CheckedRow).
+check_row(Rowread, CheckedRow, Size) :-
+  (row(RowNumb, Rowread) ; row_lower(RowNumb, Rowread)), RowNumb < Size, RowNumb >= 0, 
+  row(RowNumb, RowreadUpper), % caso lê minuscula, vai buscar maiuscula
+  CheckedRow = RowreadUpper.
+
+% if not between A-y then try again
+check_row(_, CheckedRow, Size) :-
+  write('~ Invalid row\n| Select again\n'),
+  skip_line,
+  read_row(Row, Size),
+  check_row(Row, CheckedRow, Size).
+
+
+
+print_directions([]):-
+  nl.
+print_directions([Dir|Rest]):-
+  direction(Number, Dir),
+  format(" ~d - ~w |", [Number, Dir]),
+  print_directions(Rest).
+  
+read_direction(List, Direction):-
+  write('| Select Direction (number) to move to\n|'),
+  print_directions(List), skip_line,
+  get_code(CodeRead),
+  check_direction_input(List, CodeRead, NumberRead),
+  write('- Read valid direction (1-4)\n'), 
+  check_direction(List, NumberRead, DirSelected),
+  DirSelected \== '',
+  Direction = DirSelected
+  .
+  
+%verificar se está entre 1 e 4
+check_direction_input(_, CharRead, Number):-
+  peek_char(Char),
+  Char == '\n',
+  code_number(CharRead, Number),
+  Number < 5, Number > 0.
+check_direction_input(List, _, Number):-
+  write('~ Invalid Number. Select again\n'),
+  write('| Select Direction (number) to move to\n|'),
+  print_directions(List), skip_line,
+  get_code(CodeRead),
+  check_direction_input(List, CodeRead, NumberRead),
+  Number = NumberRead.
+
+
+%verificar se o numero é uma das direções
+check_direction([Dir|Rest], NumberRead, Direction):-
+  direction(DirNumb, Dir),
+  (
+    (
+    DirNumb == NumberRead,
+    Direction = Dir
+    ) ;
+    (
+    check_direction(Rest, NumberRead, Direction)
+    ) 
+  ) .
+check_direction([], _, Direction):-
+  write('~ Not an available direction, choose correctly!\n'),
+  Direction = ''.
