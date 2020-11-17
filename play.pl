@@ -174,21 +174,3 @@ direction(X, Y, 'left', Xr, Yr):-   Xr is X-1,  Yr = Y.
 
 
 */
-
-/*
-attempt 1
-
-floodFill(Board, BoardSize, X, Y, PrevCode, NewCode, FinalBoard):-
- format('X:~d Y:~d     ', [X,Y]),
- X >= 0, X < BoardSize, Y > 0, Y < BoardSize,
- value_in_board(Board, X, Y, Value),
- Value == PrevCode,  % valor no board é 0, vai ter de ser mudado para NewCode
- replace(Board, X, Y, NewCode, BoardResult), % substitui 0 pelo novo valor,
- X1 is X+1, X2 is X-1, Y1 is Y+1, Y2 is Y-1,
- (floodFill(BoardResult, BoardSize, X1, Y, PrevCode, NewCode, FinalBoard) ;
- floodFill(BoardResult, BoardSize, X2, Y, PrevCode, NewCode, FinalBoard)  ;
- floodFill(BoardResult, BoardSize, X, Y1, PrevCode, NewCode, FinalBoard)  ; 
- floodFill(BoardResult, BoardSize, X, Y2, PrevCode, NewCode, FinalBoard) ; FinalBoard=Board )
-floodFill(Board, BoardSize, X, Y, PrevCode, NewCode, FinalBoard).
-
-*/
