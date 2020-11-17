@@ -56,7 +56,7 @@ validate_choice(Board, _, _, PlayerS, X, Y):-
     read_inputs(Size, Xread, Yread),
     validate_choice(Board, Xread, Yread, PlayerS, X, Y).
 
-% returns in Value  the value [0,1,2] at (X,Y) from Board
+% returns in Value  the value [0,1,-1] at (X,Y) from Board
 value_in_board(Board, X, Y, Value):-
     nth0(Y, Board, Row),
     nth0(X, Row, Value).
@@ -78,12 +78,12 @@ available_dirs(Board, X, Y, PlayerS, List):-
 % Checks if there's a enemy piece Direction of position
 check_dir(Board, X, Y, PlayerS, Direction, Result):-
     size_of_board(Board, Size),
-    opposed_opponent_code(PlayerS, OpponentCode),
+    opposed_opponent_code(PlayerS, ExpectedCode),
     % OU para aceder a uma direção
-    ((direction(1, Direction) , Y > 0, Y1 is Y-1, value_in_board(Board, X, Y1, Value), Value==OpponentCode, Result = [Direction]);
-    (direction(2, Direction) , X < Size, X1 is X+1, value_in_board(Board, X1, Y, Value), Value==OpponentCode, Result = [Direction]);
-    (direction(3, Direction) , Y < Size, Y2 is Y+1, value_in_board(Board, X, Y2, Value), Value==OpponentCode, Result = [Direction]);
-    (direction(4, Direction) , X > 0, X2 is X-1, value_in_board(Board, X2, Y, Value), Value==OpponentCode, Result = [Direction]);
+    ((direction(1, Direction) , Y > 0, Y1 is Y-1, value_in_board(Board, X, Y1, Value), Value==ExpectedCode, Result = [Direction]);
+    (direction(2, Direction) , X < Size, X1 is X+1, value_in_board(Board, X1, Y, Value), Value==ExpectedCode, Result = [Direction]);
+    (direction(3, Direction) , Y < Size, Y2 is Y+1, value_in_board(Board, X, Y2, Value), Value==ExpectedCode, Result = [Direction]);
+    (direction(4, Direction) , X > 0, X2 is X-1, value_in_board(Board, X2, Y, Value), Value==ExpectedCode, Result = [Direction]);
     Result = []).
 
 
