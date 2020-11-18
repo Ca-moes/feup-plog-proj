@@ -15,13 +15,21 @@ start_game(GameState) :-
 % Makes a turn and calls the predicate to chose a spot
 turn(GameState, PlayerS) :-
   format('\n ~a turn.\n', PlayerS),
-  % move(GameState, PlayerS, NewGameState),
-
+   % verificar se está em fase final, AKA tirar peças em vez de comer
+  (
+    (
+      check_final_state(GameState, PlayerS, 0, 0),
+      remove(GameState, PlayerS, NewGameState)
+    ) 
+    ; 
+    (move(GameState, PlayerS, NewGameState))
+  ),
   check_win(GameState, Result), 
-  format('Result -> ~s', Result)
-  %opposed_opponent_string(PlayerS, EnemyS),
-  %skip_line,
-  %turn(NewGameState, EnemyS)
+  format('Result -> ~s', Result),
+  display_game(NewGameState),
+  opposed_opponent_string(PlayerS, EnemyS),
+  skip_line,
+  turn(NewGameState, EnemyS)
   .  
 
 check_win(Board, Player):-
