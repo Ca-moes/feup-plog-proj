@@ -22,6 +22,7 @@ move(GameState, PlayerS, NewGameState) :-
     format('- Direction received in logic : ~s\n', Direction),
     make_choice(GameState, PlayerS, X, Y, Direction, NewGameState).
     
+%% Ripzão na simplificação, ele volta para tras
 choose_piece(Board, PlayerS, X, Y, Directions):-
     size_of_board(Board, Size),
     read_inputs(Size, Xread, Yread),
@@ -40,6 +41,7 @@ choose_piece(Board, PlayerS, X, Y, Directions):-
             X is X1, Y is Y1, Directions = Directions1
         )
     ).
+
 
 % check if selected piece belongs to player
 validate_choice(Board, Xread, Yread, PlayerS, X, Y):-
@@ -105,71 +107,51 @@ make_choice(Board, PlayerS, X, Y, Direction, FinalBoard):-
     player_piece(PlayerS, Code),
     replace(Board1, X1, Y1, Code, FinalBoard).
 
-
-/* predicate to check if game as reached its final state */    
+/* predicate to check if game as reached its final state */ 
+% if check_no_neightbors returs 0, ends predicate   
+check_final_state(GameState, PlayerS, X, Y):-
+    value_in_board(GameState, X, Y, Value),
+    check_no_neighbors(GameState, PlayerS, X, Y, Value, 0), !, fail.
+% check_no_neighbors returned 1, there are not directions available, checking if reached end of board
+% if reached end of board, then returns, else fails and continues to next predicate
+check_final_state(GameState, _, X, Y):-
+    size_of_board(GameState, Length),
+    check_end(X, Y, Length, 1).
+% checks if next position has directions available
 check_final_state(GameState, PlayerS, X, Y):-
     size_of_board(GameState, Length),
-    value_in_board(GameState, X, Y, Value),
-    check_no_neighbors(GameState, PlayerS, X, Y, Value, Result),
-    (
-        (Result == 0, !, fail) 
-        ;
-        (
-            next_index(X, Y, Length, X2, Y2),
-            check_end(X, Y, Length, End),
-            (
-                (End is 1) ; (End \== 1, check_final_state(GameState, PlayerS, X2, Y2))
-            )
-        )
-    ).
-
+    next_index(X, Y, Length, X2, Y2),
+    check_final_state(GameState, PlayerS, X2, Y2).
 
 next_index(X, Y, Length, X2, Y2):-
     X1 is X + 1,
-    ((
-        X1 \== Length,
-        X2 is X1, 
-        Y2 is Y
-    ) ;
-    (
-        X1 == Length, 
-        X2 is 0,
-        Y2 is Y + 1
-    )).
+    X1 \== Length,
+    X2 is X1, 
+    Y2 is Y.
+next_index(X, Y, Length, X2, Y2):-
+    X1 is X + 1,
+    X1 == Length, 
+    X2 is 0,
+    Y2 is Y + 1.
 
-check_end(X, Y, Length, End):-
-    ((
-        X is (Length - 1),
-        Y is (Length - 1),
-        End is 1
-    ) ;
-    (
-        X \== (Length - 1),
-        Y \== (Length - 1),
-        End is 0
-    )).
-    
 
-check_no_neighbors(Board, PlayerS, X, Y, Value, Result):-
-    (
-        player_piece(PlayerS, Piece),
-        (
-            (
-                Piece \== Value, 
-                Result is 1
-            ) ;
-            (
-                Piece = Value,
-                available_dirs(Board, X, Y, PlayerS, Moves),
-                ((
-                    Moves == [], Result is 1
-                ) ; 
-                (
-                    Moves \== [], Result is 0
-                ))
-            )
-        )
-    ).
+check_end(X, Y, Length, 1):-
+    X is (Length - 1),
+    Y is (Length - 1).
+check_end(X, Y, Length, 0):-
+    X \== (Length - 1),
+    Y \== (Length - 1).
+
+% checks if there are directions available, if the list is empty goes to next predicate, else return is 0
+check_no_neighbors(Board, PlayerS, X, Y, Value, 0):-
+    player_piece(PlayerS, Value),
+    available_dirs(Board, X, Y, PlayerS, [_]).
+% if list of directions is empty, returns 1
+check_no_neighbors(Board, PlayerS, X, Y, Value, 1):-
+    player_piece(PlayerS, Value),
+    available_dirs(Board, X, Y, PlayerS, []).
+% if the player piece is different from the value on the board, no need to check for directions
+check_no_neighbors(_, _, _, _, _, 1).
 
 
 remove(GameState, PlayerS, NewGameState) :-

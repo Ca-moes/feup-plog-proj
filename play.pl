@@ -16,17 +16,15 @@ start_game(GameState) :-
 turn(GameState, PlayerS, Result) :-
   format('\n ~a turn.\n', PlayerS),
    % verificar se está em fase final, AKA tirar peças em vez de comer
-  (
-    (
-      check_final_state(GameState, PlayerS, 0, 0),
-      remove(GameState, PlayerS, NewGameState)
-    ) 
-    ; 
-    (move(GameState, PlayerS, NewGameState))
-  ),
-  check_winnner(NewGameState, PlayerS, TempResult), 
-  process_result(TempResult, NewGameState, PlayerS, Result)
-  .  
+  check_final_state(GameState, PlayerS, 0, 0),
+  remove(GameState, PlayerS, NewGameState),
+  %check_winnner(NewGameState, PlayerS, TempResult), 
+  process_result('none', NewGameState, PlayerS, Result).  
+turn(GameState, PlayerS, Result) :-
+  move(GameState, PlayerS, NewGameState),
+  %check_winnner(NewGameState, PlayerS, TempResult), 
+  process_result('none', NewGameState, PlayerS, Result).
+
 
 process_result('none', NewGameState, PlayerS, Result):-
   display_game(NewGameState),
@@ -37,15 +35,14 @@ process_result(Winner, _, _, Result):-
   format('Result -> ~s', Winner),
   Result = Winner.
 
+%% Ripzão na simplificação, ele volta para tras e tenta com Size1 diferentes
 check_winnner(Board, CurrentPlayer, Player):-
   size_of_board(Board, Size),
   Size1 is Size-1,
   opposed_opponent_string(CurrentPlayer, EnemyS),
   check_win(EnemyS, Board, Size1, Result), 
   (
-    (
-      Result == EnemyS, Player=EnemyS
-    )
+    (Result == EnemyS, Player=EnemyS)
     ;
     (
       check_win(CurrentPlayer, Board, Size1, Result1), 
@@ -55,101 +52,84 @@ check_winnner(Board, CurrentPlayer, Player):-
       )
     )
   ).
-  
+
+%% Ripzão na simplificação, ele volta para tras e tenta com Size1 diferentes
 check_win('Player 1', Board, Y, Result):-
-  value_in_board(Board, 0, Y, Value), % se valor não for 0 falha
-  ( % se valor for 0 entra aqui
-    Value == 0,
-    size_of_board(Board, Size),
-    floodFill(Board, Size, 0, Y, 0, 9, NewBoard),
-    Size1 is Size-1,
-    check_1_win_helper(NewBoard, Size1, Size1, Return),
+  value_in_board(Board, 0, Y, 0), 
+  size_of_board(Board, Size),
+  floodFill(Board, Size, 0, Y, 0, 9, NewBoard),
+  Size1 is Size-1,
+  check_1_win_helper(NewBoard, Size1, Size1, Return),
+  (
     (
-      (
-        Return == 'not', 
-        Y1 is Y-1, 
-        ((Y1 >= 0, check_win('Player 1', Board, Y1, Result)) ; (Result = 'none'))
-      );
-      (
-        Return == 'found',
-        Result = 'Player 1'
-      )
+      Return == 'not', 
+      Y1 is Y-1, 
+      ((Y1 >= 0, check_win('Player 1', Board, Y1, Result)) ; (Result = 'none'))
+    );
+    (
+      Return == 'found',
+      Result = 'Player 1'
     )
-  );
-  ( % se valor não for 0 entra aqui
-    Y1 is Y-1, 
-    ((Y1 >= 0, check_win('Player 1', Board, Y1, Result)) ; (Result = 'none'))
   ).
-    
+% if the value in board is not 0
+check_win('Player 1', Board, Y, Result):-
+  Y1 is Y-1, Y1 >= 0, 
+  check_win('Player 1', Board, Y1, Result).
+check_win('Player 1', _, _, 'none').
+
+%% Ripzão na simplificação, ele volta para tras e tenta com Size1 diferentes
 check_win('Player 2', Board, X, Result):-
-  value_in_board(Board, X, 0, Value), % se valor não for 0 falha
-  ( % se valor for 0 entra aqui
-    Value == 0,
-    size_of_board(Board, Size),
-    floodFill(Board, Size, X, 0, 0, 9, NewBoard),
-    Size1 is Size-1,
-    check_2_win_helper(NewBoard, Size1, Size1, Return),
+  value_in_board(Board, X, 0, 0), 
+  size_of_board(Board, Size),
+  floodFill(Board, Size, X, 0, 0, 9, NewBoard),
+  Size1 is Size-1,
+  check_2_win_helper(NewBoard, Size1, Size1, Return),
+  (
     (
-      (
-        Return == 'not', 
-        X1 is X-1, 
-        ((X1 >= 0, check_win('Player 2', Board, X1, Result)) ; (Result = 'none'))
-      );
-      (
-        Return == 'found',
-        Result = 'Player 2'
-      )
+      Return == 'not', 
+      X1 is X-1, 
+      ((X1 >= 0, check_win('Player 2', Board, X1, Result)) ; (Result = 'none'))
+    );
+    (
+      Return == 'found',
+      Result = 'Player 2'
     )
-  );
-  ( % se valor não for 0 entra aqui
-    X1 is X-1, 
-    ((X1 >= 0, check_win('Player 2',Board, X1, Result)) ; (Result = 'none'))
   ).
+% if the value in board is not 0
+check_win('Player 2', Board, X, Result):-
+  X1 is X-1, X1 >= 0, 
+  check_win('Player 2', Board, X1, Result).
+check_win('Player 2', _, _, 'none').
 
+
+
+check_1_win_helper(Board, Y, MaxX, 'found'):-
+  value_in_board(Board, MaxX, Y, 9).
 check_1_win_helper(Board, Y, MaxX, Return):-
-  (
-    (
-      value_in_board(Board, MaxX, Y, 9),
-      Return = 'found'
-    )
-    ;
-    (
-      Y1 is Y-1,
-      ((Y1 >= 0, check_1_win_helper(Board, Y1, MaxX, Return)) ; (Return = 'not'))
-    )
-  ).
+  Y1 is Y-1,
+  Y1 >= 0,
+  check_1_win_helper(Board, Y1, MaxX, Return).
+check_1_win_helper(_, _, _, 'not').
 
+check_2_win_helper(Board, X, MaxY, 'found'):-
+  value_in_board(Board, X, MaxY, 9).
 check_2_win_helper(Board, X, MaxY, Return):-
-  (
-    (
-      value_in_board(Board, X, MaxY, 9),
-      Return = 'found'
-    )
-    ;
-    (
-      X1 is X-1,
-      ((X1 >= 0, check_2_win_helper(Board, X1, MaxY, Return)) ; (Return = 'not'))
-    )
-  ).
+  X1 is X-1,
+  X1 >= 0,
+  check_2_win_helper(Board, X1, MaxY, Return).
+check_2_win_helper(_, _, _, 'not').
+
 
 floodFill(Board, BoardSize, X, Y, PrevCode, NewCode, FinalBoard):-
-  (
-    ( 
-      X >= 0, X < BoardSize, Y >= 0, Y < BoardSize,
-      value_in_board(Board, X, Y, Value),
-      Value == PrevCode,
-      Value \== NewCode,
-      replace(Board, X, Y, NewCode, BoardResult), % substitui 0 pelo novo valor,
-      X1 is X+1, X2 is X-1, Y1 is Y+1, Y2 is Y-1,
-      floodFill(BoardResult, BoardSize, X1, Y, PrevCode, NewCode, T1) ,
-      floodFill(T1, BoardSize, X2, Y, PrevCode, NewCode, T2) ,
-      floodFill(T2, BoardSize, X, Y1, PrevCode, NewCode, T3) , 
-      floodFill(T3, BoardSize, X, Y2, PrevCode, NewCode, FinalBoard) 
-    ) 
-  ; 
-    (FinalBoard = Board) 
-  ).
-
+  X >= 0, X < BoardSize, Y >= 0, Y < BoardSize,
+  value_in_board(Board, X, Y, PrevCode),
+  replace(Board, X, Y, NewCode, BoardResult), % substitui 0 pelo novo valor,
+  X1 is X+1, X2 is X-1, Y1 is Y+1, Y2 is Y-1,
+  floodFill(BoardResult, BoardSize, X1, Y, PrevCode, NewCode, T1) ,
+  floodFill(T1, BoardSize, X2, Y, PrevCode, NewCode, T2) ,
+  floodFill(T2, BoardSize, X, Y1, PrevCode, NewCode, T3) ,  
+  floodFill(T3, BoardSize, X, Y2, PrevCode, NewCode, FinalBoard).
+floodFill(Board, _, _, _, _, _, Board).
 
 
 /*

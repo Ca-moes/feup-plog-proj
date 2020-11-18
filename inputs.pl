@@ -94,17 +94,10 @@ check_direction_input(List, _, Number):-
 
 
 %verificar se o numero é uma das direções
-check_direction([Dir|Rest], NumberRead, Direction):-
-  direction(DirNumb, Dir),
-  (
-    (
-    DirNumb == NumberRead,
-    Direction = Dir
-    ) ;
-    (
-    check_direction(Rest, NumberRead, Direction)
-    ) 
-  ) .
-check_direction([], _, Direction):-
-  write('~ Not an available direction, choose correctly!\n'),
-  Direction = ''.
+check_direction([Dir|_], NumberRead, Dir):-
+  direction(NumberRead, Dir).
+check_direction([_|Rest], NumberRead, Direction):-
+  check_direction(Rest, NumberRead, Direction).
+check_direction([], _, ''):-
+  write('~ Not an available direction, choose correctly!\n').
+
