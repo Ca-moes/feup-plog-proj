@@ -133,7 +133,7 @@ next_index(X, Y, Length, X2, Y2):-
     ) ;
     (
         X1 == Length, 
-        X2 is 0, 
+        X2 is 0,
         Y2 is Y + 1
     )).
 
@@ -152,15 +152,14 @@ check_end(X, Y, Length, End):-
 
 check_no_neighbors(Board, PlayerS, X, Y, Value, Result):-
     (
-        value_in_board(Board, X, Y, Value),
         player_piece(PlayerS, Piece),
         (
             (
-                ((Piece \== Value); (Value is 0)), 
+                Piece \== Value, 
                 Result is 1
             ) ;
             (
-                (Piece is Value), (Value \== 0),
+                Piece = Value,
                 available_dirs(Board, X, Y, PlayerS, Moves),
                 ((
                     Moves == [], Result is 1
