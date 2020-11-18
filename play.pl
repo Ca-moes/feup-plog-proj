@@ -10,10 +10,10 @@ initial(GameState) :-
 
 % Starts the game with player 1
 start_game(GameState) :-
-  turn(GameState, 'Player 1').
+  turn(GameState, 'Player 1', Result).
 
 % Makes a turn and calls the predicate to chose a spot
-turn(GameState, PlayerS) :-
+turn(GameState, PlayerS, Result) :-
   format('\n ~a turn.\n', PlayerS),
    % verificar se está em fase final, AKA tirar peças em vez de comer
   (
@@ -24,30 +24,39 @@ turn(GameState, PlayerS) :-
     ; 
     (move(GameState, PlayerS, NewGameState))
   ),
-  check_win(GameState, Result), 
-  format('Result -> ~s', Result),
+  check_winnner(NewGameState, PlayerS, TempResult), 
+  process_result(TempResult, NewGameState, PlayerS, Result)
+  .  
+
+process_result('none', NewGameState, PlayerS, Result):-
   display_game(NewGameState),
   opposed_opponent_string(PlayerS, EnemyS),
   skip_line,
-  turn(NewGameState, EnemyS)
-  .  
+  turn(NewGameState, EnemyS, Result).
+process_result(Winner, _, _, Result):-
+  format('Result -> ~s', Winner),
+  Result = Winner.
 
-check_win(Board, Player):-
+check_winnner(Board, CurrentPlayer, Player):-
   size_of_board(Board, Size),
   Size1 is Size-1,
-  check_1_win(Board, Size1, Result),
+  opposed_opponent_string(CurrentPlayer, EnemyS),
+  check_win(EnemyS, Board, Size1, Result), 
   (
-    (Result == 'Player 1', Player='Player 1') ;
     (
-      check_2_win(Board, Size1, Result1),
+      Result == EnemyS, Player=EnemyS
+    )
+    ;
+    (
+      check_win(CurrentPlayer, Board, Size1, Result1), 
       (
-        (Result1 == 'Player 2', Player='Player 2') ;
+        (Result1 == CurrentPlayer, Player=CurrentPlayer);
         (Player = 'none')
       )
     )
   ).
   
-check_1_win(Board, Y, Result):-
+check_win('Player 1', Board, Y, Result):-
   value_in_board(Board, 0, Y, Value), % se valor não for 0 falha
   ( % se valor for 0 entra aqui
     Value == 0,
@@ -59,7 +68,7 @@ check_1_win(Board, Y, Result):-
       (
         Return == 'not', 
         Y1 is Y-1, 
-        ((Y1 >= 0, check_1_win(Board, Y1, Result)) ; (Result = 'none'))
+        ((Y1 >= 0, check_win('Player 1', Board, Y1, Result)) ; (Result = 'none'))
       );
       (
         Return == 'found',
@@ -69,9 +78,33 @@ check_1_win(Board, Y, Result):-
   );
   ( % se valor não for 0 entra aqui
     Y1 is Y-1, 
-    ((Y1 >= 0, check_1_win(Board, Y1, Result)) ; (Result = 'none'))
+    ((Y1 >= 0, check_win('Player 1', Board, Y1, Result)) ; (Result = 'none'))
   ).
     
+check_win('Player 2', Board, X, Result):-
+  value_in_board(Board, X, 0, Value), % se valor não for 0 falha
+  ( % se valor for 0 entra aqui
+    Value == 0,
+    size_of_board(Board, Size),
+    floodFill(Board, Size, X, 0, 0, 9, NewBoard),
+    Size1 is Size-1,
+    check_2_win_helper(NewBoard, Size1, Size1, Return),
+    (
+      (
+        Return == 'not', 
+        X1 is X-1, 
+        ((X1 >= 0, check_win('Player 2', Board, X1, Result)) ; (Result = 'none'))
+      );
+      (
+        Return == 'found',
+        Result = 'Player 2'
+      )
+    )
+  );
+  ( % se valor não for 0 entra aqui
+    X1 is X-1, 
+    ((X1 >= 0, check_win('Player 2',Board, X1, Result)) ; (Result = 'none'))
+  ).
 
 check_1_win_helper(Board, Y, MaxX, Return):-
   (
@@ -85,32 +118,6 @@ check_1_win_helper(Board, Y, MaxX, Return):-
       ((Y1 >= 0, check_1_win_helper(Board, Y1, MaxX, Return)) ; (Return = 'not'))
     )
   ).
-
-check_2_win(Board, X, Result):-
-  value_in_board(Board, X, 0, Value), % se valor não for 0 falha
-  ( % se valor for 0 entra aqui
-    Value == 0,
-    size_of_board(Board, Size),
-    floodFill(Board, Size, X, 0, 0, 9, NewBoard),
-    Size1 is Size-1,
-    check_2_win_helper(NewBoard, Size1, Size1, Return),
-    (
-      (
-        Return == 'not', 
-        X1 is X-1, 
-        ((X1 >= 0, check_2_win(Board, X1, Result)) ; (Result = 'none'))
-      );
-      (
-        Return == 'found',
-        Result = 'Player 2'
-      )
-    )
-  );
-  ( % se valor não for 0 entra aqui
-    X1 is X-1, 
-    ((X1 >= 0, check_2_win(Board, X1, Result)) ; (Result = 'none'))
-  ).
-    
 
 check_2_win_helper(Board, X, MaxY, Return):-
   (
