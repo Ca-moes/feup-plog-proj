@@ -23,20 +23,21 @@ move(GameState, PlayerS, NewGameState) :-
     
 % predicate to read input, check if piece belongs to player, get available directions and return
 % +Board, +PlayerS, -Xtemp, -Ytemp, -Directions
-choose_piece(Board, PlayerS, Xtemp, Ytemp, Directions):-
+choose_piece(Board, PlayerS, X, Y, Directions):-
     size_of_board(Board, Size),
     read_inputs(Size, Xread, Yread),
     validate_choice(Board, Xread, Yread, PlayerS, Xtemp, Ytemp),
     available_dirs(Board, Xtemp, Ytemp, PlayerS, List),
-    check_list(Board, PlayerS, Xtemp, Ytemp, List, Directions),
+    check_list(Board, PlayerS, Xtemp, Ytemp, List, Directions, X, Y),
     write('- There are plays available for that spot\n').
 % chekcs if list is empty, in that case, calls choose_piece again
-check_list(Board, PlayerS, X, Y, [], Directions):-
+check_list(Board, PlayerS, _, _, [], Directions, XFinal, YFinal):-
     write('# No plays available for that piece, choose another\n'),
     skip_line,
-    choose_piece(Board, PlayerS, X, Y, Directions).
+    choose_piece(Board, PlayerS, XFinal, YFinal, Directions).
 %if List is not empty
-check_list(_,_,_,_,_,_).
+check_list(_,_,X,Y,List,List,X,Y):-
+    write('in available dirs checked\n').
      
 % check if selected piece belongs to player
 validate_choice(Board, Xread, Yread, PlayerS, X, Y):-
