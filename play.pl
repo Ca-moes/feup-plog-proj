@@ -30,9 +30,9 @@ process_result('none', NewGameState, PlayerS, Result):-
   skip_line,
   turn(NewGameState, EnemyS, Result).
 % if there's a winner, the game ends
-process_result(Winner, _, _, Result):-
+process_result(Winner, _, _, Winner):-
   format('Result -> ~s', Winner),
-  Result = Winner.
+  sleep(2), skip_line.
 
 % checks first if enemy is winner
 check_winnner(Board, CurrentPlayer, EnemyS):-

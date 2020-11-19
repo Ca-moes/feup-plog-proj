@@ -9,12 +9,12 @@ menu :-
     read_number(0, 5, Number),
     menu_option(Number).
     
-menu_option(0).
+menu_option(0):-
+  write('\nThank You For Playing\nIgnore the "yes"').
 menu_option(1):-
   initial(GameState),
   display_game(GameState),
   start_game(GameState),
-  sleep(2), skip_line,
   menu.
 menu_option(2):-
   write('\nPlayer vs Computer\nChoose a Difficulty:\n'),
@@ -25,6 +25,12 @@ menu_option(2):-
   pc_menu(Number),
   menu.
 menu_option(3):-
+  write('\nComputer vs Computer\nChoose a Difficulty for Computer 1:\n'),
+  write('1 - Easy (Random)\n'),
+  write('2 - Normal (Greedy)\n'),
+  write('0 - Exit\n'),
+  read_number(0,2,Number),
+  cc_menu(Number),
   menu.
 menu_option(4):-
   write('\nMissing instructions\n'),
@@ -61,3 +67,31 @@ pc_menu_normal(1):-
   write('TO IMPLEMENT\nPlayer vs Computer (Normal), Player is Player 1\n').
 pc_menu_normal(2):-
   write('TO IMPLEMENT\nPlayer vs Computer (Normal), Player is Player 2\n').
+
+cc_menu(0).
+cc_menu(1):-
+  write('\nComputer (Easy) vs Computer \nChoose a Difficulty for Computer 2:\n'),
+  write('1 - Easy (Random)\n'),
+  write('2 - Normal (Greedy)\n'),
+  write('0 - Exit\n'),
+  read_number(0,2,Number),
+  cc_menu_easy(Number).
+cc_menu(2):-
+  write('\nComputer (Normal) vs Computer \nChoose a Difficulty for Computer 2:\n'),
+  write('1 - Easy (Random)\n'),
+  write('2 - Normal (Greedy)\n'),
+  write('0 - Exit\n'),
+  read_number(0,2,Number),
+  cc_menu_normal(Number).
+
+cc_menu_easy(0).
+cc_menu_easy(1):-
+  write('TO IMPLEMENT\nComputer (Easy) vs Computer (Easy)\n').
+cc_menu_easy(2):-
+  write('TO IMPLEMENT\nComputer (Easy) vs Computer (Normal)\n').
+
+cc_menu_normal(0).
+cc_menu_normal(1):-
+  write('TO IMPLEMENT\nComputer (Normal) vs Computer (Easy)\n').
+cc_menu_normal(2):-
+  write('TO IMPLEMENT\nComputer (Normal) vs Computer (Normal)\n').
