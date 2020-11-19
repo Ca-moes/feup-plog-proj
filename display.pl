@@ -21,7 +21,7 @@
 ]). */
 
 initial_board([
-  [ 0, 0, 1,-1, 1,-1],
+  [ 0, 0, 1, 0, 1,-1],
   [-1, 0, 0, 0,-1, 1],
   [ 0, 0, 0,-1, 0, 0],
   [ 0, 1, 0, 1, 0, 1],
@@ -36,8 +36,8 @@ initial_board([
 ]). */
 
 
-/*
-initial_board([
+
+/* initial_board([
   [-1,-1,-1,-1, 1, 0,-1, 0],
   [ 0, 0, 0, 0, 0, 0, 0,-1],
   [-1, 1, 0, 1, 0, 0, 1, 0],
@@ -48,7 +48,7 @@ initial_board([
   [-1, 1,-1, 0, 1, 1, 1, 0]
 ]). */
 
-/*
+
 initial_board([
   [0, 0, 0, -1, 1, 0, 0, 0],
   [0, 0,-1, 0, 0, 0, 0, 0],
@@ -59,9 +59,9 @@ initial_board([
   [0, 0, 0, 1, 1, 0, 0, 0],
   [0, 1, 0, 0, 1, 1, 1, 0]
 ]).
-*/
 
 
+% returns in X the size of the Square Board. Does not accept Rectangular Boards
 size_of_board(Board, X):-
   nth0(0, Board, Header),
   length(Header, X),
@@ -72,7 +72,7 @@ size_of_board(Board, X):-
 opposed_opponent_code(PlayerS, Code):-
   player_piece(PlayerS, Piece),
   Code is -Piece.
-
+% EnemyS returns the string of the enemy of PlayerS
 opposed_opponent_string(PlayerS, EnemyS):-
   opposed_opponent_code(PlayerS, Code),
   player_piece(EnemyS, Code).
@@ -81,8 +81,8 @@ opposed_opponent_string(PlayerS, EnemyS):-
 code(0, 32). %ascii code for space
 code(-1, 216). % Ø - Player 2
 code(1, 215). % × - Player 1
-code(9, 181).
-
+code(9, 181). % used for floodFill
+% Pieces codes for each player
 player_piece('Player 1', 1).
 player_piece('Player 2', -1).
 
@@ -95,7 +95,7 @@ row(4, 'E').
 row(5, 'F').
 row(6, 'G').
 row(7, 'H').
-
+% Lowercase letter Codes to be able to read from input in lowercase
 row_lower(0, 'a').
 row_lower(1, 'b').
 row_lower(2, 'c').
