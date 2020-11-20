@@ -111,3 +111,14 @@ read_number(LowerBound, UpperBound, Number):-
 read_number(LowerBound, UpperBound, Number):-
   write('Not a valid number, try again\n'), skip_line,
   read_number(LowerBound, UpperBound, Number).
+
+read_number_hidden(LowerBound, UpperBound, Number):-
+  format('| Choose an Option (~d-~d) - ', [LowerBound, UpperBound-1]),
+  get_code(NumberASCII),
+  peek_char(Char),
+  Char == '\n',
+  code_number(NumberASCII, Number),
+  Number =< UpperBound, Number >= LowerBound, skip_line.
+read_number_hidden(LowerBound, UpperBound, Number):-
+  write('Not a valid number, try again\n'), skip_line,
+  read_number(LowerBound, UpperBound, Number).

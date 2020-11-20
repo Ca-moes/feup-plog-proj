@@ -1,3 +1,6 @@
+option_dif(1, 'Easy').
+option_dif(2, 'Normal').
+
 menu :-
   write('\nMenu\n'),
   write('1 - Player vs Player\n'),
@@ -16,7 +19,7 @@ menu_board_size_hidden_feature(Size):-
   write('2 - 8x8\n'),
   write('3 - 10x10\n'),
   write('0 - Exit\n'),
-  read_number(0, 4, Size).
+  read_number_hidden(0, 4, Size).
 % menu to choose the board size
 menu_board_size(Size):-
   write('\nChoose a Board Size\n'),
@@ -34,7 +37,7 @@ menu_option(1):-
 menu_option(2):-
   write('\nPlayer vs Computer\n'),
   menu_board_size(Size),
-  pc_menu_board(Size),
+  pc_menu_1(Size),
   menu.
 menu_option(3):-
   write('\nComputer vs Computer\n'),
@@ -62,51 +65,32 @@ pp_menu(Size):-
   start_game(GameState),
   menu.
 
-pc_menu_board(0).
-pc_menu_board(Size):-
+% process board input
+pc_menu_1(0).
+pc_menu_1(Size):-
   index_to_board_size(Size,Actual),
   format('\nPlayer vs Computer - ~dx~d Board\nChoose a Difficulty:\n', [Actual, Actual]),
   write('1 - Easy (Random)\n'),
   write('2 - Normal (Greedy)\n'),
   write('0 - Exit\n'),
   read_number(0,2,Number),
-  pc_menu(Size, Number),
-  menu.
+  pc_menu_2(Size, Number).
 
-% player vs computer menu
-pc_menu(_,0).
-pc_menu(Size, 1):-
-  index_to_board_size(Size,Actual),
-  format('\nPlayer vs Computer (Easy) - ~dx~d Board\nWhich Player do you want to be:\n', [Actual, Actual]),
+pc_menu_2(_, 0).
+pc_menu_2(Size, Difficulty):-
+  index_to_board_size(Size,Actual), option_dif(Difficulty, Diff),
+  format('\nPlayer vs Computer (~s) - ~dx~d Board\nWhich Player do you want to be:\n', [Diff, Actual, Actual]),
   write('1 - Player 1\n'),
   write('2 - Player 2\n'),
   write('0 - Exit\n'),
   read_number(0,2,Number),
-  pc_menu_easy(Size, Number).
-pc_menu(Size, 2):-
-  index_to_board_size(Size,Actual),
-  format('\nPlayer vs Computer (Normal) - ~dx~d Board\nWhich Player do you want to be:\n', [Actual, Actual]),
-  write('1 - Player 1\n'),
-  write('2 - Player 2\n'),
-  write('0 - Exit\n'),
-  read_number(0,2,Number),
-  pc_menu_normal(Size, Number).
+  pc_menu_3(Size, Difficulty, Number).
 
-pc_menu_easy(_, 0).
-pc_menu_easy(Size, 1):-
-  index_to_board_size(Size,Actual),
-  format('\nTO IMPLEMENT\nPlayer vs Computer (Easy), Player is Player 1, Board Size ~dx~d\n', [Actual, Actual]).
-pc_menu_easy(Size, 2):-
-  index_to_board_size(Size,Actual),
-  format('\nTO IMPLEMENT\nPlayer vs Computer (Easy), Player is Player 2, Board Size ~dx~d\n', [Actual, Actual]).
+pc_menu_3(_,_,0).
+pc_menu_3(Size, Difficulty, Player):-
+  index_to_board_size(Size,Actual), option_dif(Difficulty, Diff), 
+  format('\nTO IMPLEMENT\nPlayer vs Computer (~s), Player is Player ~d, Board Size ~dx~d\n', [Diff, Player, Actual, Actual]).
 
-pc_menu_normal(_,0).
-pc_menu_normal(Size, 1):-
-  index_to_board_size(Size,Actual),
-  format('\nTO IMPLEMENT\nPlayer vs Computer (Normal), Player is Player 1, Board Size ~dx~d\n', [Actual, Actual]).
-pc_menu_normal(Size, 2):-
-  index_to_board_size(Size,Actual),
-  format('\nTO IMPLEMENT\nPlayer vs Computer (Normal), Player is Player 2, Board Size ~dx~d\n', [Actual, Actual]).
 
 cc_menu_board(0).
 cc_menu_board(Size):-
