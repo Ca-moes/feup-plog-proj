@@ -1,6 +1,7 @@
 option_dif(1, 'Easy').
 option_dif(2, 'Normal').
 
+%Main Menu
 menu :-
   write('\nMenu\n'),
   write('1 - Player vs Player\n'),
@@ -28,45 +29,54 @@ menu_board_size(Size):-
   write('3 - 10x10\n'),
   write('0 - Exit\n'),
   read_number(0, 3, Size).
-
+% Exit Main Menu
 menu_option(0):-
   write('\nThank You For Playing\nIgnore the "yes"').
+% Player vs PLayer, need to choose Board Size
 menu_option(1):-
   menu_board_size_hidden_feature(Size),
   pp_menu(Size).
+% Player vs Computer, need to choose Board Size
 menu_option(2):-
   write('\nPlayer vs Computer\n'),
   menu_board_size(Size),
   pc_menu_1(Size),
   menu.
+% Computer vs Computer, need to choose Board Size
 menu_option(3):-
   write('\nComputer vs Computer\n'),
   menu_board_size(Size),
-  cc_menu_board(Size),
+  cc_menu_1(Size),
   menu.
+% Game Instructions
 menu_option(4):-
   write('\nMissing instructions\n'),
   menu.
+% Info about the Project
 menu_option(5):-
   write('\nMade By Andre Gomes and Goncalo Teixeira\n'),
   menu.
 
+% Choose to exit game on size screen
 pp_menu(0):-
   menu.
+% Hidden Feature
 pp_menu(4):-
   write('You found a Hidden Feature, Have Fun!\n'),
   initial(4, GameState),
   display_game(GameState),
   start_game(GameState),
   menu.
+% Choose Size, Starting Game
 pp_menu(Size):-
   initial(Size, GameState),
   display_game(GameState),
   start_game(GameState),
   menu.
 
-% process board input
+% Choose to exit game on size screen
 pc_menu_1(0).
+% Choose a board, needs to choose a difficulty for the bot
 pc_menu_1(Size):-
   index_to_board_size(Size,Actual),
   format('\nPlayer vs Computer - ~dx~d Board\nChoose a Difficulty:\n', [Actual, Actual]),
@@ -76,62 +86,52 @@ pc_menu_1(Size):-
   read_number(0,2,Number),
   pc_menu_2(Size, Number).
 
+% Returning to Main Menu
 pc_menu_2(_, 0).
+% Choose a board and bot difficulty, needs to choose who plays first
 pc_menu_2(Size, Difficulty):-
   index_to_board_size(Size,Actual), option_dif(Difficulty, Diff),
   format('\nPlayer vs Computer (~s) - ~dx~d Board\nWhich Player do you want to be:\n', [Diff, Actual, Actual]),
-  write('1 - Player 1\n'),
+  write('1 - Player 1 (Plays First)\n'),
   write('2 - Player 2\n'),
   write('0 - Exit\n'),
   read_number(0,2,Number),
   pc_menu_3(Size, Difficulty, Number).
 
+% Returning to Main Menu
 pc_menu_3(_,_,0).
+% Choose a board, bot difficulty and player, can start game player vs bot game
 pc_menu_3(Size, Difficulty, Player):-
   index_to_board_size(Size,Actual), option_dif(Difficulty, Diff), 
   format('\nTO IMPLEMENT\nPlayer vs Computer (~s), Player is Player ~d, Board Size ~dx~d\n', [Diff, Player, Actual, Actual]).
 
-
-cc_menu_board(0).
-cc_menu_board(Size):-
+% Returning to Main Menu
+cc_menu_1(0).
+% Choose a board, needs to choose bot 1 difficulty
+cc_menu_1(Size):-
   index_to_board_size(Size,Actual),
   format('\nComputer vs Computer - ~dx~d Board\nChoose a Difficulty for Computer 1:\n', [Actual, Actual]),
   write('1 - Easy (Random)\n'),
   write('2 - Normal (Greedy)\n'),
   write('0 - Exit\n'),
   read_number(0,2,Number),
-  cc_menu(Size, Number).
+  cc_menu_2(Size, Number).
 
-cc_menu(_, 0).
-cc_menu(Size, 1):-
-  index_to_board_size(Size,Actual),
-  format('\nComputer (Easy) vs Computer - ~dx~d Board\nChoose a Difficulty for Computer 2:\n', [Actual, Actual]),
+% Returning to Main Menu
+cc_menu_2(_, 0).
+% Choose a board and bot 1 difficulty, needs to choose bot 2 difficulty
+cc_menu_2(Size, Diff1):-
+  index_to_board_size(Size,Actual), option_dif(Diff1, Diff1S),
+  format('\nComputer (~s) vs Computer - ~dx~d Board\nChoose a Difficulty for Computer 2:\n', [Diff1S, Actual, Actual]),
   write('1 - Easy (Random)\n'),
   write('2 - Normal (Greedy)\n'),
   write('0 - Exit\n'),
   read_number(0,2,Number),
-  cc_menu_easy(Number).
-cc_menu(Size, 2):-
-  index_to_board_size(Size,Actual),
-  format('\nComputer (Normal) vs Computer - ~dx~d Board\nChoose a Difficulty for Computer 2:\n', [Actual, Actual]),
-  write('1 - Easy (Random)\n'),
-  write('2 - Normal (Greedy)\n'),
-  write('0 - Exit\n'),
-  read_number(0,2,Number),
-  cc_menu_normal(Number).
+  cc_menu_3(Size, Diff1, Number).
 
-cc_menu_easy(_,0).
-cc_menu_easy(Size, 1):-
-  index_to_board_size(Size,Actual),
-  format('\nComputer (Easy) vs Computer (Easy) - ~dx~d Board\nChoose a Difficulty for Computer 2:\n', [Actual, Actual]).
-cc_menu_easy(Size, 2):-
-  index_to_board_size(Size,Actual),
-  format('\nComputer (Easy) vs Computer (Normal) - ~dx~d Board\nChoose a Difficulty for Computer 2:\n', [Actual, Actual]).
-
-cc_menu_normal(_,0).
-cc_menu_normal(Size, 1):-
-  index_to_board_size(Size,Actual),
-  format('\nComputer (Normal) vs Computer (Easy) - ~dx~d Board\nChoose a Difficulty for Computer 2:\n', [Actual, Actual]).
-cc_menu_normal(Size, 2):-
-  index_to_board_size(Size,Actual),
-  format('\nComputer (Normal) vs Computer (Normal) - ~dx~d Board\nChoose a Difficulty for Computer 2:\n', [Actual, Actual]).
+% Returning to Main Menu
+cc_menu_3(_, _, 0).
+% Choose a board, bot 1 difficulty and bot 2 difficulty, can start bot vs bot game
+cc_menu_3(Size, Diff1, Diff2):-
+  index_to_board_size(Size,Actual), option_dif(Diff1, Diff1S), option_dif(Diff2, Diff2S),
+  format('\nTO IMPLEMENT\nComputer (~s) vs Computer (~s) - ~dx~d Board\n', [Diff1S, Diff2S, Actual, Actual]).
