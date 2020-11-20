@@ -109,5 +109,5 @@ read_number(LowerBound, UpperBound, Number):-
   code_number(NumberASCII, Number),
   Number =< UpperBound, Number >= LowerBound, skip_line.
 read_number(LowerBound, UpperBound, Number):-
-  write('Not a valid number, try again\n'),
+  write('Not a valid number, try again\n'), skip_line,
   read_number(LowerBound, UpperBound, Number).
