@@ -103,7 +103,17 @@ pc_menu_3(_,_,0).
 % Choose a board, bot difficulty and player, can start game player vs bot game
 pc_menu_3(Size, Difficulty, Player):-
   index_to_board_size(Size,Actual), option_dif(Difficulty, Diff), 
-  format('\nTO IMPLEMENT\nPlayer vs Computer (~s), Player is Player ~d, Board Size ~dx~d\n', [Diff, Player, Actual, Actual]).
+  format('\nTO IMPLEMENT\nPlayer vs Computer (~s), Player is Player ~d, Board Size ~dx~d\n', [Diff, Player, Actual, Actual]),
+  pc_option(Size, Difficulty, Player).
+
+pc_option(Size, 1, 1):-
+  write('\nadicionar aqui o jogo\n').
+pc_option(Size, 1, 2):-
+  write('\nadicionar aqui o jogo\n').
+pc_option(Size, 2, 1):-
+  write('\nadicionar aqui o jogo\n').
+pc_option(Size, 2, 2):-
+  write('\nadicionar aqui o jogo\n').
 
 % Returning to Main Menu
 cc_menu_1(0).
@@ -134,4 +144,14 @@ cc_menu_3(_, _, 0).
 % Choose a board, bot 1 difficulty and bot 2 difficulty, can start bot vs bot game
 cc_menu_3(Size, Diff1, Diff2):-
   index_to_board_size(Size,Actual), option_dif(Diff1, Diff1S), option_dif(Diff2, Diff2S),
-  format('\nTO IMPLEMENT\nComputer (~s) vs Computer (~s) - ~dx~d Board\n', [Diff1S, Diff2S, Actual, Actual]).
+  format('\nTO IMPLEMENT\nComputer (~s) vs Computer (~s) - ~dx~d Board\n', [Diff1S, Diff2S, Actual, Actual]),
+  cc_option(Size, Diff1, Diff2).
+
+cc_option(Size, 1, 1):-
+  write('\nadicionar aqui o jogo\n').
+cc_option(Size, 1, 2):-
+  write('\nadicionar aqui o jogo\n').
+cc_option(Size, 2, 1):-
+  write('\nadicionar aqui o jogo\n').
+cc_option(Size, 2, 2):-
+  write('\nadicionar aqui o jogo\n').
