@@ -4,49 +4,51 @@ play :-
 
 % Starts the game with player 1
 start_game(GameState) :-
-  turn_player(GameState, 'Player 1', 'pp').
+  turn(GameState, 'Player', 'Player 1', 'pp').
 % starts a player vs computer game, with player as Player 1
 start_game('pceasy1', GameState):-
-  turn_player(GameState, 'Player 1', 'pceasy-player').
+  turn(GameState, 'Player', 'Player 1', 'pceasy-player').
 start_game('pceasy2', GameState):-
-  turn_bot(GameState, 'Easy', 'Player 1').
+  turn(GameState, 'Easy', 'Player 1', 'pceasy-player').
 
-turn_player(GameState, PlayerS, TypeProcess):-
+
+turn(GameState, 'Player', PlayerS, TypeProcess):-
   format('\n ~a turn.\n', PlayerS),
   check_final_state(GameState, PlayerS, 0, 0),
   remove(GameState, PlayerS, NewGameState), skip_line,
   check_winnner(NewGameState, PlayerS, TempResult),
-  process_result(TypeProcess, TempResult, NewGameState, PlayerS).
-turn_player(GameState, PlayerS, TypeProcess):-
+  process_result(NewGameState, TempResult, TypeProcess, PlayerS).
+turn(GameState, 'Player', PlayerS, TypeProcess):-
   move(GameState, PlayerS, NewGameState), skip_line,
   check_winnner(NewGameState, PlayerS, TempResult),
-  process_result(TypeProcess, TempResult, NewGameState, PlayerS).
+  process_result(NewGameState, TempResult, TypeProcess, PlayerS).
 
-turn_bot(GameState, 'Easy', PlayerS):-
+turn(GameState, 'Easy', PlayerS, TypeProcess):-
   format('\n Computer turn as ~s.\n', PlayerS),
   check_final_state(GameState, PlayerS, 0, 0),
   easy_bot_remove(GameState, PlayerS, NewGameState),
   check_winnner(NewGameState, PlayerS, TempResult),
-  process_result('pceasy-bot', TempResult, NewGameState, PlayerS).
-turn_bot(GameState, 'Easy', PlayerS):-
+  process_result(NewGameState, TempResult, TypeProcess, PlayerS).
+turn(GameState, 'Easy', PlayerS, TypeProcess):-
   easy_bot_move(GameState, PlayerS, NewGameState),
   check_winnner(NewGameState, PlayerS, TempResult),
-  process_result('pceasy-bot', TempResult, NewGameState, PlayerS).
+  process_result(NewGameState, TempResult, TypeProcess, PlayerS).
+turn(GameState, 'Normal', PlayerS, TypeProcess).
 
 
-process_result('pp', 'none', NewGameState, PlayerS):-
+process_result(NewGameState, 'none', 'pp', PlayerS):-
   display_game(NewGameState),
   opposed_opponent_string(PlayerS, EnemyS),
-  turn_player(NewGameState, EnemyS, 'pp').
-process_result('pceasy-player', 'none', NewGameState, PlayerS):-
+  turn(NewGameState, 'Player', EnemyS, 'pp').
+process_result(NewGameState, 'none', 'pceasy-player', PlayerS):-
   display_game(NewGameState),
   opposed_opponent_string(PlayerS, EnemyS),
-  turn_bot(NewGameState, 'Easy', EnemyS).
-process_result('pceasy-bot', 'none', NewGameState, PlayerS):-
+  turn(NewGameState, 'Easy', EnemyS, 'pceasy-bot').
+process_result(NewGameState, 'none','pceasy-bot', PlayerS):-
   display_game(NewGameState),
   opposed_opponent_string(PlayerS, EnemyS),
-  turn_player(NewGameState, EnemyS, 'pceasy-player').
-process_result(_, Winner, NewGameState, _):-
+  turn(NewGameState, 'Player', EnemyS, 'pceasy-player').
+process_result(NewGameState, Winner, _, _):-
   display_game(NewGameState),
   format('Result -> ~s', Winner),
   sleep(2).
