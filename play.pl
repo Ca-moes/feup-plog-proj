@@ -27,11 +27,11 @@ turn(GameState, 'Player', PlayerS, TypeProcess):-
 turn(GameState, 'Easy', PlayerS, TypeProcess):-
   format('\n Computer turn as ~s.\n', PlayerS),
   check_final_state(GameState, PlayerS, 0, 0),
-  easy_bot_remove(GameState, PlayerS, NewGameState),
+  bot_remove('Easy', GameState, PlayerS, NewGameState),
   check_winnner(NewGameState, PlayerS, TempResult),
   process_result(NewGameState, TempResult, TypeProcess, PlayerS).
 turn(GameState, 'Easy', PlayerS, TypeProcess):-
-  easy_bot_move(GameState, PlayerS, NewGameState),
+  bot_move('Easy', GameState, PlayerS, NewGameState),
   check_winnner(NewGameState, PlayerS, TempResult),
   process_result(NewGameState, TempResult, TypeProcess, PlayerS).
 turn(GameState, 'Normal', PlayerS, TypeProcess).

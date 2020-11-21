@@ -1,5 +1,5 @@
 % Initial board with pieces in chess formation
-
+/* 
 initial(1, [
   [ 1,-1, 1,-1, 1,-1],
   [-1, 1,-1, 1,-1, 1],
@@ -7,7 +7,7 @@ initial(1, [
   [-1, 1,-1, 1,-1, 1],
   [ 1,-1, 1,-1, 1,-1],
   [-1, 1,-1, 1,-1, 1]
-]).
+]). */
 initial(2, [
   [ 1,-1, 1,-1, 1,-1, 1,-1],
   [-1, 1,-1, 1,-1, 1,-1, 1],
@@ -41,14 +41,14 @@ initial(3, [
   [-1, 1,-1, 1, 0, 1]
 ]). */
 
-/* initial(1, [
+initial(1, [
   [ 1, 0, 1, 0, 1, 0],
   [ 0,-1, 0,-1, 0,-1],
   [ 1, 0, 1, 0, 1, 0],
   [ 0,-1, 0,-1, 0,-1],
   [ 1, 0, 1, 0, 1, 0],
   [ 0,-1, 0,-1, 0,-1]
-]). */
+]).
 
 %testar direções disponiveis / precisa de não verificar end of game para testar direito
 /* initial(2, [

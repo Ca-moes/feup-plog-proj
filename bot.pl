@@ -10,7 +10,7 @@ choose_move(+GameState, +Player, +Level, -Move).
 Lista de Jogadas Válidas: Obtenção de lista com jogadas possíveis (com melhor á cabeça). O predicado
 deve chamar-se 
 valid_moves(+GameState, +Player, -ListOfMoves).
-[[X,Y,'up'],[X,Y,'left']]
+[[X,Y,'up'],[X,Y,'left']] ,
 */
 
 /**
@@ -24,27 +24,48 @@ valid_moves(+GameState, +Player, -ListOfMoves).
  *   player_in_board(Board, X, Y, PlayerS)
  */
 
-easy_bot_move(GameState, Player, NewGameState):-
+bot_move(Difficulty, GameState, Player, NewGameState):-
   valid_moves(GameState, Player, List),
-  choose_move_easy(List, X, Y, Direction),
+  choose_move(GameState, Player, Difficulty, List, X-Y-Direction),
   row(Y, Letter), format("I'll move from X:~d Y:~s to the ~s Direction\n", [X, Letter, Direction]),
   make_choice(GameState, Player, X, Y, Direction, NewGameState).
-easy_bot_remove(GameState, Player, NewGameState):-
+bot_remove(Difficulty, GameState, Player, NewGameState):-
   valid_removes(GameState, Player, List),
-  choose_move_easy(List, X, Y),
+  choose_move(GameState, Player, Difficulty, List, X-Y),
   row(Y, Letter), format("I'll remove my piece from X:~d Y:~s\n", [X, Letter]),
   replace(GameState, X, Y, 0, NewGameState).
 
-choose_move_easy(List, X, Y, Direction):-
+choose_move(_, _, 'Easy', List, X-Y-Direction):-
   random_member(Value, List),
   nth0(0, Value, X),
   nth0(1, Value, Y),
   nth0(2, Value, Direction).
-choose_move_easy(List, X, Y):-
+choose_move(_, _, 'Easy', List, X-Y):-
   random_member(Value, List),
   nth0(0, Value, X),
   nth0(1, Value, Y).
-  
+
+choose_move(GameState, Player, 'Normal', List, X-Y-Direction):-  
+  % set_of
+  % value(+GameState, +Player, -Value).
+  random_member(Value, List),
+  nth0(0, Value, X),
+  nth0(1, Value, Y),
+  nth0(2, Value, Direction).
+choose_move(GameState, Player, 'Normal', List, X-Y):-
+  % set_of
+  % value(+GameState, +Player, -Value).
+  random_member(Value, List),
+  nth0(0, Value, X),
+  nth0(1, Value, Y).
+
+/**
+ * max_list(+ListOfNumbers, ?Max)
+ *   Max is the largest of the elements in ListOfNumbers.
+ */
+% peça que removida/movida cause o maior numero de celulas brancas seguidas numa linha/coluna  
+value(GameState, Player, Value).
+
 valid_removes(GameState, PlayerS, List):-
   check_spot_remove(GameState, 0, 0, PlayerS, List).
 check_spot_remove(GameState, X, Y, Player, ReturnList):-
