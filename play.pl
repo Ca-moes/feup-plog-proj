@@ -9,7 +9,7 @@ start_game(GameState) :-
 start_game('pceasy1', GameState):-
   turn(GameState, 'Player', 'Player 1', 'pceasy-player').
 start_game('pceasy2', GameState):-
-  turn(GameState, 'Easy', 'Player 1', 'pceasy-player').
+  turn(GameState, 'Easy', 'Player 1', 'pceasy-bot').
 start_game('ceasyceasy', GameState):-
   turn(GameState, 'Easy', 'Player 1', 'ceasyceasy').
 
