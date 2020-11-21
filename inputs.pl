@@ -22,7 +22,7 @@ read_inputs(Size, X, Y):-
 
 % predicate to read column from user
 read_column(Column, Size) :-
-  write('| Column (0-'), format('~d', Size-1), write(') - '),
+  format('| Column (0-~d) - ', Size-1),
   get_code(Column).
 
 % Checks if input is a valid column
@@ -42,7 +42,7 @@ check_column(_, CheckedColumn, Size) :-
 read_row(Row, Size) :-
   Size1 is Size-1,
   row(Size1, Letter),
-  write('| Row (A-'),write(Letter),write(') -    '),
+  format('| Row (A-~s) -    ', Letter),
   get_char(Row).
 
 % checking rows
@@ -63,7 +63,7 @@ print_directions([]):-
 % prints the available directions
 print_directions([Dir|Rest]):-
   direction(Number, Dir),
-  format(" ~d - ~w |", [Number, Dir]),
+  format(' ~d - ~w |', [Number, Dir]),
   print_directions(Rest).
   
 % prints avaialble directions, reads input and processes it
@@ -101,3 +101,24 @@ check_direction([_|Rest], NumberRead, Direction):-
 check_direction([], _, ''):-
   write('~ Not an available direction, choose correctly!\n').
 
+read_number(LowerBound, UpperBound, Number):-
+  format('| Choose an Option (~d-~d) - ', [LowerBound, UpperBound]),
+  get_code(NumberASCII),
+  peek_char(Char),
+  Char == '\n',
+  code_number(NumberASCII, Number),
+  Number =< UpperBound, Number >= LowerBound, skip_line.
+read_number(LowerBound, UpperBound, Number):-
+  write('Not a valid number, try again\n'), skip_line,
+  read_number(LowerBound, UpperBound, Number).
+
+read_number_hidden(LowerBound, UpperBound, Number):-
+  format('| Choose an Option (~d-~d) - ', [LowerBound, UpperBound-1]),
+  get_code(NumberASCII),
+  peek_char(Char),
+  Char == '\n',
+  code_number(NumberASCII, Number),
+  Number =< UpperBound, Number >= LowerBound, skip_line.
+read_number_hidden(LowerBound, UpperBound, Number):-
+  write('Not a valid number, try again\n'), skip_line,
+  read_number(LowerBound, UpperBound, Number).

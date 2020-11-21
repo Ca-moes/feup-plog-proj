@@ -1,12 +1,6 @@
 % main predicate for game start
 play :-
-  initial(GameState),
-  display_game(GameState),
-  start_game(GameState). 
-
-% initializes the board with pieces organized
-initial(GameState) :-
-  initial_board(GameState).
+  menu.
 
 % Starts the game with player 1
 start_game(GameState) :-
@@ -32,9 +26,9 @@ process_result('none', NewGameState, PlayerS, Result):-
   skip_line,
   turn(NewGameState, EnemyS, Result).
 % if there's a winner, the game ends
-process_result(Winner, _, _, Result):-
+process_result(Winner, _, _, Winner):-
   format('Result -> ~s', Winner),
-  Result = Winner.
+  sleep(2), skip_line.
 
 % checks first if enemy is winner
 check_winnner(Board, CurrentPlayer, EnemyS):-
