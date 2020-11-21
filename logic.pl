@@ -121,7 +121,7 @@ check_final_state(GameState, PlayerS, X, Y):-
 % if reached end of board, then returns, else fails and continues to next predicate
 check_final_state(GameState, _, X, Y):-
     size_of_board(GameState, Length),
-    check_end(X, Y, Length, 1).
+    check_end(X, Y, Length).
 % checks if next position has directions available
 check_final_state(GameState, PlayerS, X, Y):-
     size_of_board(GameState, Length),
@@ -141,12 +141,9 @@ next_index(X, Y, Length, X2, Y2):-
     Y2 is Y + 1.
 
 % used before calling next_index to check if current position is the last in the board
-check_end(X, Y, Length, 1):-
+check_end(X, Y, Length):-
     X is (Length - 1),
     Y is (Length - 1).
-check_end(X, Y, Length, 0):-
-    X \== (Length - 1),
-    Y \== (Length - 1).
 
 % checks if there are directions available, if the list is empty goes to next predicate, else return is 0
 check_no_neighbors(Board, PlayerS, X, Y, Value, 0):-

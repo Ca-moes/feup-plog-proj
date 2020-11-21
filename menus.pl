@@ -9,8 +9,9 @@ menu :-
   write('3 - Computer vs Computer\n'),
   write('4 - Game Intructions\n'),
   write('5 - Information about project\n'),
+  write('6 - TEST AREA\n'),
   write('0 - Exit\n'),
-  read_number(0, 5, Number),
+  read_number(0, 6, Number),
   menu_option(Number).
 
 % menu with an extra option for a hidden feature
@@ -55,6 +56,12 @@ menu_option(4):-
 % Info about the Project
 menu_option(5):-
   write('\nMade By Andre Gomes and Goncalo Teixeira\n'),
+  menu.
+menu_option(6):-
+  write('\nOption for Testing things\n'),
+  initial(3, GameState),
+  valid_moves(GameState, 'Player 1', List),
+  write(List),
   menu.
 
 % Choose to exit game on size screen
@@ -107,7 +114,8 @@ pc_menu_3(Size, Difficulty, Player):-
   pc_option(Size, Difficulty, Player).
 
 pc_option(Size, 1, 1):-
-  write('\nadicionar aqui o jogo\n').
+  initial(Size, GameState),
+  start_game_p1ceasy(GameState).
 pc_option(Size, 1, 2):-
   write('\nadicionar aqui o jogo\n').
 pc_option(Size, 2, 1):-
