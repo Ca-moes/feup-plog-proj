@@ -19,20 +19,31 @@ turn(GameState, PlayerS, Result) :-
   check_winnner(NewGameState, PlayerS, TempResult), 
   process_result(TempResult, NewGameState, PlayerS, Result).
 
+
+
 start_game_p1ceasy(GameState):-
   turn_p1ceasy(GameState, 'Player 1', Result).
 
 turn_p1ceasy(GameState, 'Player 2', Result):-
   write('\n Computer turn as Player 2.\n'),
+  check_final_state(GameState, 'Player 2', 0, 0),
+  easy_bot_remove(GameState, 'Player 2', NewGameState),
+  check_winnner(NewGameState, 'Player 2', TempResult),
+  process_result_p1ceasy(TempResult, NewGameState, 'Player 2', Result).
+turn_p1ceasy(GameState, 'Player 2', Result):-
   easy_bot_move(GameState, 'Player 2', NewGameState),
   check_winnner(NewGameState, 'Player 2', TempResult),
   process_result_p1ceasy(TempResult, NewGameState, 'Player 2', Result).
 turn_p1ceasy(GameState, 'Player 1', Result):-
   write('\n Player 1 Turn.\n'),
-  move(GameState, 'Player 1', NewGameState),   skip_line,
+  check_final_state(GameState, 'Player 1', 0, 0),
+  remove(GameState, 'Player 1', NewGameState), skip_line,
   check_winnner(NewGameState, 'Player 1', TempResult),
   process_result_p1ceasy(TempResult, NewGameState, 'Player 1', Result).
-
+turn_p1ceasy(GameState, 'Player 1', Result):-
+  move(GameState, 'Player 1', NewGameState), skip_line,
+  check_winnner(NewGameState, 'Player 1', TempResult),
+  process_result_p1ceasy(TempResult, NewGameState, 'Player 1', Result).
 
 % if there's no winner the next turn is played by the enemy
 process_result_p1ceasy('none', NewGameState, PlayerS, Result):-
@@ -45,6 +56,39 @@ process_result_p1ceasy(Winner, NewGameState, _, Winner):-
   format('Result -> ~s', Winner),
   sleep(2).
 
+start_game_p2ceasy(GameState):-
+  turn_p2ceasy(GameState, 'Player 1', Result).
+
+turn_p2ceasy(GameState, 'Player 1', Result):-
+  write('\n Computer turn as Player 1.\n'),
+  check_final_state(GameState, 'Player 1', 0, 0),
+  easy_bot_remove(GameState, 'Player 1', NewGameState),
+  check_winnner(NewGameState, 'Player 1', TempResult),
+  process_result_p2ceasy(TempResult, NewGameState, 'Player 1', Result).
+turn_p2ceasy(GameState, 'Player 1', Result):-
+  easy_bot_move(GameState, 'Player 1', NewGameState),
+  check_winnner(NewGameState, 'Player 1', TempResult),
+  process_result_p2ceasy(TempResult, NewGameState, 'Player 1', Result).
+turn_p2ceasy(GameState, 'Player 2', Result):-
+  write('\n Player 2 Turn.\n'),
+  check_final_state(GameState, 'Player 2', 0, 0),
+  remove(GameState, 'Player 2', NewGameState), skip_line,
+  check_winnner(NewGameState, 'Player 2', TempResult),
+  process_result_p2ceasy(TempResult, NewGameState, 'Player 2', Result).
+turn_p2ceasy(GameState, 'Player 2', Result):-
+  move(GameState, 'Player 2', NewGameState),   skip_line,
+  check_winnner(NewGameState, 'Player 2', TempResult),
+  process_result_p2ceasy(TempResult, NewGameState, 'Player 2', Result).
+
+process_result_p2ceasy('none', NewGameState, PlayerS, Result):-
+  display_game(NewGameState),
+  opposed_opponent_string(PlayerS, EnemyS),
+  turn_p2ceasy(NewGameState, EnemyS, Result).
+% if there's a winner, the game ends
+process_result_p2ceasy(Winner, NewGameState, _, Winner):-
+  display_game(NewGameState),
+  format('Result -> ~s', Winner),
+  sleep(2).
 
 
 % if there's no winner the next turn is played by the enemy

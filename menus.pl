@@ -59,8 +59,9 @@ menu_option(5):-
   menu.
 menu_option(6):-
   write('\nOption for Testing things\n'),
-  initial(3, GameState),
-  valid_moves(GameState, 'Player 1', List),
+  initial(5, GameState),
+  display_game(GameState),
+  valid_removes(GameState, 'Player 2', List),
   write(List),
   menu.
 
@@ -118,7 +119,9 @@ pc_option(Size, 1, 1):-
   display_game(GameState),
   start_game_p1ceasy(GameState).
 pc_option(Size, 1, 2):-
-  write('\nadicionar aqui o jogo\n').
+  initial(Size, GameState),
+  display_game(GameState),
+  start_game_p2ceasy(GameState).
 pc_option(Size, 2, 1):-
   write('\nadicionar aqui o jogo\n').
 pc_option(Size, 2, 2):-

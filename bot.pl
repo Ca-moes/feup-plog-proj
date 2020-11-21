@@ -18,7 +18,22 @@ easy_bot_move(GameState, 'Player 2', NewGameState):-
   choose_move_easy(List, X, Y, Direction),
   row(Y, Letter), format("I'll move from X:~d Y:~s to the ~s Direction\n", [X, Letter, Direction]),
   make_choice(GameState, 'Player 2', X, Y, Direction, NewGameState).
+easy_bot_remove(GameState, 'Player 2', NewGameState):-
+  valid_removes(GameState, 'Player 2', List),
+  choose_remove_easy(List, X, Y),
+  row(Y, Letter), format("I'll remove my piece from X:~d Y:~s\n", [X, Letter]),
+  replace(GameState, X, Y, 0, NewGameState).
 
+easy_bot_move(GameState, 'Player 1', NewGameState):-
+  valid_moves(GameState, 'Player 1', List),
+  choose_move_easy(List, X, Y, Direction),
+  row(Y, Letter), format("I'll move from X:~d Y:~s to the ~s Direction\n", [X, Letter, Direction]),
+  make_choice(GameState, 'Player 1', X, Y, Direction, NewGameState).
+easy_bot_remove(GameState, 'Player 1', NewGameState):-
+  valid_removes(GameState, 'Player 1', List),
+  choose_remove_easy(List, X, Y),
+  row(Y, Letter), format("I'll remove my piece from X:~d Y:~s\n", [X, Letter]),
+  replace(GameState, X, Y, 0, NewGameState).
 /**
  * % used before calling next_index to check if current position is the last in the board. Return 1 at end of board
  *   check_end(+X, +Y, +Length, -Return)
@@ -35,7 +50,31 @@ choose_move_easy(List, X, Y, Direction):-
   nth0(0, Value, X),
   nth0(1, Value, Y),
   nth0(2, Value, Direction).
+choose_remove_easy(List, X, Y):-
+  random_member(Value, List),
+  nth0(0, Value, X),
+  nth0(1, Value, Y).
   
+valid_removes(GameState, PlayerS, List):-
+  check_spot_remove(GameState, 0, 0, PlayerS, List).
+check_spot_remove(GameState, X, Y, Player, ReturnList):-
+  player_in_board(GameState, X, Y, Player),
+  size_of_board(GameState, Size),
+  \+ check_end(X, Y, Size), 
+  next_index(X, Y, Size, X1, Y1),
+  check_spot_remove(GameState, X1, Y1, Player, TempReturnList),
+  append(TempReturnList, [[X, Y]], ReturnList).
+check_spot_remove(GameState, X, Y, Player, ReturnList):-
+  size_of_board(GameState, Size),
+  check_end(X, Y, Size),
+  ReturnList = [].
+% if not the end of the board, checks next spot
+check_spot_remove(GameState, X, Y, Player, ReturnList):-
+  size_of_board(GameState, Size),
+  next_index(X, Y, Size, X1, Y1),
+  check_spot_remove(GameState, X1, Y1, Player, ReturnList).
+
+
 valid_moves(GameState, PlayerS, List):-
   check_spot(GameState, 0, 0, PlayerS, List).
   
