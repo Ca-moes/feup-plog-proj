@@ -160,7 +160,9 @@ cc_menu_3(Size, Diff1, Diff2):-
   cc_option(Size, Diff1, Diff2).
 
 cc_option(Size, 1, 1):-
-  write('\nadicionar aqui o jogo\n').
+  initial(Size, GameState),
+  display_game(GameState),
+  start_game('ceasyceasy', GameState).
 cc_option(Size, 1, 2):-
   write('\nadicionar aqui o jogo\n').
 cc_option(Size, 2, 1):-

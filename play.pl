@@ -10,7 +10,8 @@ start_game('pceasy1', GameState):-
   turn(GameState, 'Player', 'Player 1', 'pceasy-player').
 start_game('pceasy2', GameState):-
   turn(GameState, 'Easy', 'Player 1', 'pceasy-player').
-
+start_game('ceasyceasy', GameState):-
+  turn(GameState, 'Easy', 'Player 1', 'ceasyceasy').
 
 turn(GameState, 'Player', PlayerS, TypeProcess):-
   format('\n ~a turn.\n', PlayerS),
@@ -48,6 +49,10 @@ process_result(NewGameState, 'none','pceasy-bot', PlayerS):-
   display_game(NewGameState),
   opposed_opponent_string(PlayerS, EnemyS),
   turn(NewGameState, 'Player', EnemyS, 'pceasy-player').
+process_result(NewGameState, 'none','ceasyceasy', PlayerS):-
+  display_game(NewGameState),
+  opposed_opponent_string(PlayerS, EnemyS),
+  turn(NewGameState, 'Easy', EnemyS, 'ceasyceasy').
 process_result(NewGameState, Winner, _, _):-
   display_game(NewGameState),
   format('Result -> ~s', Winner),
