@@ -16,6 +16,7 @@ valid_moves(+GameState, +Player, -ListOfMoves).
 easy_bot_move(GameState, 'Player 2', NewGameState):-
   valid_moves(GameState, 'Player 2', List),
   choose_move_easy(List, X, Y, Direction),
+  row(Y, Letter), format("I'll move from X:~d Y:~s to the ~s Direction\n", [X, Letter, Direction]),
   make_choice(GameState, 'Player 2', X, Y, Direction, NewGameState).
 
 /**
@@ -29,6 +30,12 @@ easy_bot_move(GameState, 'Player 2', NewGameState):-
  *   player_in_board(Board, X, Y, PlayerS)
  */
 
+choose_move_easy(List, X, Y, Direction):-
+  random_member(Value, List),
+  nth0(0, Value, X),
+  nth0(1, Value, Y),
+  nth0(2, Value, Direction).
+  
 valid_moves(GameState, PlayerS, List):-
   check_spot(GameState, 0, 0, PlayerS, List).
   

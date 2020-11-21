@@ -115,6 +115,7 @@ pc_menu_3(Size, Difficulty, Player):-
 
 pc_option(Size, 1, 1):-
   initial(Size, GameState),
+  display_game(GameState),
   start_game_p1ceasy(GameState).
 pc_option(Size, 1, 2):-
   write('\nadicionar aqui o jogo\n').
