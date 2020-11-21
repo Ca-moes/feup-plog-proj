@@ -71,7 +71,7 @@ valid_moves(GameState, PlayerS, List):-
 % if spot belongs to player, checks directions and if list is empty -> next spot
 check_spot(GameState, X, Y, Player, ReturnList):-
   player_in_board(GameState, X, Y, Player),
-  \+ available_dirs(GameState, X, Y, Player, TempList, []).
+  \+ available_dirs(GameState, X, Y, Player, []).
 check_spot(GameState, X, Y, Player, ReturnList):-
   player_in_board(GameState, X, Y, Player),
   available_dirs(GameState, X, Y, Player, TempList), TempList \= [],
@@ -95,6 +95,6 @@ check_spot(GameState, X, Y, Player, ReturnList):-
 % from a position and a list of directions, creates options in the format [[X, Y, 'dir1'], [X, Y, 'dir2']]
 create_sublist(X, Y, [Dir|Rest], Result):-
   NewList = [[X, Y, Dir]],
-  create_list(X, Y, Rest, PreviousResult),
+  create_sublist(X, Y, Rest, PreviousResult),
   append(PreviousResult, NewList, Result).
 create_sublist(X, Y, [], []).
