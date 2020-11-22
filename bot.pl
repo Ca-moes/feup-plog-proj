@@ -34,7 +34,7 @@ move('Player', GameState, PlayerS, NewGameState) :-
   make_choice(GameState, PlayerS, X, Y, Direction, NewGameState), skip_line.
 move(Difficulty, GameState, Player, NewGameState):-
   valid_moves(GameState, Player, List),
-  choose_move(GameState, Player, Difficulty, List, X-Y-Direction),
+  choose_move(GameState, Player, Difficulty, List, X, Y, Direction),
   row(Y, Letter), format("I'll move from X:~d Y:~s to the ~s Direction\n", [X, Letter, Direction]),
   make_choice(GameState, Player, X, Y, Direction, NewGameState).
 
@@ -49,21 +49,22 @@ remove('Player', GameState, PlayerS, NewGameState) :-
   replace(GameState, Xtemp, Ytemp, 0, NewGameState), skip_line.
 remove(Difficulty, GameState, Player, NewGameState):-
   valid_removes(GameState, Player, List),
-  choose_move(GameState, Player, Difficulty, List, X-Y),
+  choose_move(GameState, Player, Difficulty, List, X, Y),
   row(Y, Letter), format("I'll remove my piece from X:~d Y:~s\n", [X, Letter]),
   replace(GameState, X, Y, 0, NewGameState).
 
-choose_move(_, _, 'Easy', List, X-Y-Direction):-
+choose_move(_, _, 'Easy', List, X, Y, Direction):-
   random_member(Value, List),
   nth0(0, Value, X),
   nth0(1, Value, Y),
   nth0(2, Value, Direction).
-choose_move(_, _, 'Easy', List, X-Y):-
+choose_move(_, _, 'Easy', List, X, Y):-
   random_member(Value, List),
   nth0(0, Value, X),
   nth0(1, Value, Y).
 
-choose_move(GameState, Player, 'Normal', List, X-Y-Direction):-  
+choose_move(GameState, Player, 'Normal', List, X, Y, Direction):-  
+  write('here with direction'),
   findall(
     Value1-X1-Y1-Direction1-Index,
     (
@@ -78,16 +79,21 @@ choose_move(GameState, Player, 'Normal', List, X-Y-Direction):-
     ),
   sort(ListResults, Sorted), 
   reverse(Sorted, [_-X-Y-Direction-_|_]).
-random_member(Value, List),
-  nth0(0, Value, X),
-  nth0(1, Value, Y),
-  nth0(2, Value, Direction).
-choose_move(GameState, Player, 'Normal', List, X-Y):-
-  % set_of
-  % value(+GameState, +Player, -Value).
-  random_member(Value, List),
-  nth0(0, Value, X),
-  nth0(1, Value, Y).
+choose_move(GameState, Player, 'Normal', List, X, Y):-
+  write('here without direction'),
+  findall(
+    Value1-X1-Y1-Index,
+    (
+      nth0(Index, List, SubList), 
+      nth0(0, SubList, X1),
+      nth0(1, SubList, Y1),
+      replace(GameState, X1, Y1, 0, NewGameState),
+      value(NewGameState, Player, Value1)
+    ),
+    ListResults
+    ),
+  sort(ListResults, Sorted), 
+  reverse(Sorted, [_-X-Y-_|_]).
 
 /**
  * max_list(+ListOfNumbers, ?Max)

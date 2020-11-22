@@ -80,8 +80,8 @@ menu_option(6):-
   Player = 'Player 1',
   initial(1, GameState),
   valid_moves(GameState, Player, List),
-  choose_move(GameState, Player, 'Normal', List, X-Y-Direction),
-  format('Resultados no menu: X-~d, Y-~d, Dir:~s', [X,Y,Direction]),
+  choose_move(GameState, Player, 'Normal', List, X, Y),
+  format('Resultados no menu: X-~d, Y-~d.', [X,Y]),
   menu.
 
 % Choose to exit game on size screen
