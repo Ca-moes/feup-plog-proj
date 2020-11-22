@@ -101,7 +101,7 @@ choose_move(GameState, Player, 'Normal', List, X, Y):-
  */
 % peça que removida/movida cause o maior numero de celulas brancas seguidas numa linha/coluna  
 value(GameState, Player, Value):-
-  random(0, 11, Value).
+  random(0, 10, Value).
   
 % faz flood fill se nos lados tiver um o
 /* value(GameState, 'Player 1', Value):-
