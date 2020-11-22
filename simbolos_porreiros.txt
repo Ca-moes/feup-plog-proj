@@ -170,3 +170,50 @@ write(251), put_code(251),nl,
 write(252), put_code(252),nl,
 write(253), put_code(253),nl,
 write(254), put_code(254),nl,
+
+___
+
+Tentativa de value:
+
+(
+List with values: [2,3,3,1,1,1]
+Max is: 3
+Value in menu is 3
+)
+
+value(GameState, 'Player 1', Value):-
+  
+  TempList = [],
+  biggest_value_row(GameState, 0, Value1),
+  append(TempList, [Value1], TempResult1),
+  biggest_value_row(GameState, 1, Value2),
+  append(TempResult1, [Value2], TempResult2),
+  biggest_value_row(GameState, 2, Value3),
+  append(TempResult2, [Value3], TempResult3),
+  biggest_value_row(GameState, 3, Value4),
+  append(TempResult3, [Value4], TempResult4),
+  biggest_value_row(GameState, 4, Value5),
+  append(TempResult4, [Value5], TempResult5),
+  biggest_value_row(GameState, 5, Value6),
+  append(TempResult5, [Value6], TempResult6),
+
+  write('List with values: '), write(TempResult6), nl,
+  max_member(Value, TempResult6), format('Max is: ~d', Value)
+  .
+
+
+biggest_value_row(GameState, RowNumber, Value):-
+  get_row(GameState, RowNumber, Row),
+  longest_0_sequence(Row, Value).
+
+longest_0_sequence(Row, Value):-
+ (sublist(Row, [0, 0, 0, 0, 0, 0], Before, 6, After), Value = 6);
+ (sublist(Row, [0, 0, 0, 0, 0], Before1, 5, After1), Value = 5);
+ (sublist(Row, [0, 0, 0, 0], Before2, 4, After2), Value = 4);
+ (sublist(Row, [0, 0, 0], Before3, 3, After3), Value = 3);
+ (sublist(Row, [0, 0], Before4, 2, After4), Value = 2);
+ (sublist(Row, [0], Before5, 1, After5), Value = 1);
+ (Value = 0).
+
+get_row(GameState, Y, Row):-
+  nth0(Y, GameState, Row).

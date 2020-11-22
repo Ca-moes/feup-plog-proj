@@ -2,33 +2,31 @@
 play :-
   menu.
 
-% Starts the game with player 1
-start_game(GameState) :-
-  turn(GameState, 'Player 1', Result).
+%starts a game with playertype vs playertype
+start_game(GameState, Player1Type, Player2Type):-
+  display_game(GameState),
+  turn(GameState, Player1Type, 'Player 1', Player2Type ).
 
-% Checks if game is in final state (remove pieces intead of relocating them) and in that case, removes piece, checks if there's a winner and processes
-turn(GameState, PlayerS, Result) :-
-  format('\n ~a turn.\n', PlayerS),
+turn(GameState, Player, PlayerS, NextPlayer):-
+  ((Player == 'Player', format('\n ~a turn.\n', PlayerS)) ; format('\n Computer turn as ~s.\n', PlayerS)),
   check_final_state(GameState, PlayerS, 0, 0),
-  remove(GameState, PlayerS, NewGameState),
-  check_winnner(NewGameState, PlayerS, TempResult), 
-  process_result(TempResult, NewGameState, PlayerS, Result).  
-% Move a piece instead of removing one, checks if there's a winner and processes
-turn(GameState, PlayerS, Result) :-
-  move(GameState, PlayerS, NewGameState),
-  check_winnner(NewGameState, PlayerS, TempResult), 
-  process_result(TempResult, NewGameState, PlayerS, Result).
+  remove(Player, GameState, PlayerS, NewGameState),
+  check_winnner(NewGameState, PlayerS, TempResult),
+  process_result(NewGameState, TempResult, Player, NextPlayer, PlayerS).
+turn(GameState, Player, PlayerS, NextPlayer):-
+  move(Player, GameState, PlayerS, NewGameState),
+  check_winnner(NewGameState, PlayerS, TempResult),
+  process_result(NewGameState, TempResult, Player, NextPlayer, PlayerS).
 
-% if there's no winner the next turn is played by the enemy
-process_result('none', NewGameState, PlayerS, Result):-
+process_result(NewGameState, 'none', TypePlayer, TypeToPlay, PlayerS):-
   display_game(NewGameState),
   opposed_opponent_string(PlayerS, EnemyS),
-  skip_line,
-  turn(NewGameState, EnemyS, Result).
-% if there's a winner, the game ends
-process_result(Winner, _, _, Winner):-
+  turn(NewGameState, TypeToPlay, EnemyS, TypePlayer).
+process_result(NewGameState, Winner, _, _, _):-
+  display_game(NewGameState),
   format('Result -> ~s', Winner),
-  sleep(2), skip_line.
+  sleep(2).
+
 
 % checks first if enemy is winner
 check_winnner(Board, CurrentPlayer, EnemyS):-

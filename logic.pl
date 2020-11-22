@@ -12,14 +12,6 @@ direction(X, Y, 'right', Xr, Yr):-  Xr is X+1,  Yr = Y.
 direction(X, Y, 'down', Xr, Yr):-   Xr = X,     Yr is Y+1.
 direction(X, Y, 'left', Xr, Yr):-   Xr is X-1,  Yr = Y.
 
-
-% Predicate to select move a piece
-move(GameState, PlayerS, NewGameState) :-
-    choose_piece(GameState, PlayerS, X, Y, Directions),
-    format('- Selected spot: X : ~d -- Y : ~w \n', [X,Y]),
-    read_direction(Directions, Direction),
-    format('- Direction received in logic : ~s\n', Direction),
-    make_choice(GameState, PlayerS, X, Y, Direction, NewGameState).
     
 % predicate to read input, check if piece belongs to player, get available directions and return
 % +Board, +PlayerS, -Xtemp, -Ytemp, -Directions
@@ -121,7 +113,7 @@ check_final_state(GameState, PlayerS, X, Y):-
 % if reached end of board, then returns, else fails and continues to next predicate
 check_final_state(GameState, _, X, Y):-
     size_of_board(GameState, Length),
-    check_end(X, Y, Length, 1).
+    check_end(X, Y, Length).
 % checks if next position has directions available
 check_final_state(GameState, PlayerS, X, Y):-
     size_of_board(GameState, Length),
@@ -141,12 +133,9 @@ next_index(X, Y, Length, X2, Y2):-
     Y2 is Y + 1.
 
 % used before calling next_index to check if current position is the last in the board
-check_end(X, Y, Length, 1):-
+check_end(X, Y, Length):-
     X is (Length - 1),
     Y is (Length - 1).
-check_end(X, Y, Length, 0):-
-    X \== (Length - 1),
-    Y \== (Length - 1).
 
 % checks if there are directions available, if the list is empty goes to next predicate, else return is 0
 check_no_neighbors(Board, PlayerS, X, Y, Value, 0):-
@@ -159,11 +148,9 @@ check_no_neighbors(Board, PlayerS, X, Y, Value, 1):-
 % if the player piece is different from the value on the board, no need to check for directions
 check_no_neighbors(_, _, _, _, _, 1).
 
-% instead of moving a pice and captuing a enemy piece, a player piece is removed because there aren't any available plays
-remove(GameState, PlayerS, NewGameState) :-
-    write('- There are no pieces to replace, select one piece to remove.\n'),
-    size_of_board(GameState, Size),
-    read_inputs(Size, Xread, Yread),
-    validate_choice(GameState, Xread, Yread, PlayerS, Xtemp, Ytemp),
-    format('- Selected spot: X : ~d -- Y : ~w \n', [Xread,Yread]),
-    replace(GameState, Xtemp, Ytemp, 0, NewGameState).
+get_row(GameState, Y, Row):-
+    nth0(Y, GameState, Row).
+
+get_column(GameState, X, Column):-
+    transpose(GameState, Transpose),
+    get_row(Transpose, X, Column).
