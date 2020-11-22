@@ -58,13 +58,7 @@ choose_move(_, _, 'Easy', List, X, Y, Direction):-
   nth0(0, Value, X),
   nth0(1, Value, Y),
   nth0(2, Value, Direction).
-choose_move(_, _, 'Easy', List, X, Y):-
-  random_member(Value, List),
-  nth0(0, Value, X),
-  nth0(1, Value, Y).
-
 choose_move(GameState, Player, 'Normal', List, X, Y, Direction):-  
-  write('here with direction'),
   findall(
     Value1-X1-Y1-Direction1-Index,
     (
@@ -79,6 +73,10 @@ choose_move(GameState, Player, 'Normal', List, X, Y, Direction):-
     ),
   sort(ListResults, Sorted), 
   reverse(Sorted, [_-X-Y-Direction-_|_]).
+choose_move(_, _, 'Easy', List, X, Y):-
+  random_member(Value, List),
+  nth0(0, Value, X),
+  nth0(1, Value, Y).
 choose_move(GameState, Player, 'Normal', List, X, Y):-
   write('here without direction'),
   findall(
@@ -103,23 +101,35 @@ choose_move(GameState, Player, 'Normal', List, X, Y):-
 value(GameState, Player, Value):-
   random(0, 10, Value).
   
-% faz flood fill se nos lados tiver um o
-/* value(GameState, 'Player 1', Value):-
-  check_value2(GameState, 'Player 1').
+/*
+  Percorre célula a célula
+    Encontra lugar vazio
+      Faz flood_fill com Board Inicial
+        verifica quantos caracteres de fill há em cada coluna e põe numa lista [4,3,4,3,0,0]
+          vai row a row numa coluna Y e conta os caracteres de fill, retorna esse numero
+        vê qual é a maior sequencia de numeros seguidos diferentes de 0: [4,3,4,3,0,0] -> 4
+        Chama predicado de percorrer board com posição seguinte e board novo,
+        Append do Resultado a uma lista de return
+    Encontra lugar com fill character
+      Já tem um valor para essa mancha, continua até encontrar vazio
 
-% vê numero de 0 em cada linha e retorna o maior
+*/
 value(GameState, 'Player 1', Value).
 
-% checks it there's at least a 0 in columns 0 and SizeofBoard-1
-check_value2(GameState, Player):-
-  size_of_board(GameState, Size),Size1 is Size-1,
-  find_zero_in_column(GameState, 0),
-  find_zero_in_column(GameState, Size1).
+value(GameState, 'Player 2', Value):-
+  transpose(GameState, Transpose),
+  value(Transpose, 'Player 1', Value).
 
-% checks if column X has a zero
-find_zero_in_column(GameState, X):-
-  get_column(GameState, X). */
+% returns the Amount of cells with Value in column X
+values_in_column(GameState, X, Value, Amount):-
+  get_column(GameState, X, Column),
+  count(Value, Column, Amount),
+  write(Column), nl, write(Amount).
 
+values_in_all_columns(GameState, Value, ListResult):-
+  size_of_board(GameState, Size), Size1 is Size-1,
+  values_in_all_columns(GameState, Value, Size1, ListResult).
+values_in_column(GameState, 0, Value, [TempResult])
 
 
 
@@ -132,7 +142,7 @@ check_spot_remove(GameState, X, Y, Player, ReturnList):-
   next_index(X, Y, Size, X1, Y1),
   check_spot_remove(GameState, X1, Y1, Player, TempReturnList),
   append(TempReturnList, [[X, Y]], ReturnList).
-check_spot_remove(GameState, X, Y, Player, ReturnList):-
+check_spot_remove(GameState, X, Y, _, ReturnList):-
   size_of_board(GameState, Size),
   check_end(X, Y, Size),
   ReturnList = [].
@@ -147,7 +157,7 @@ valid_moves(GameState, PlayerS, List):-
   check_spot(GameState, 0, 0, PlayerS, List).
   
 % if spot belongs to player, checks directions and if list is empty -> next spot
-check_spot(GameState, X, Y, Player, ReturnList):-
+check_spot(GameState, X, Y, Player, _):-
   player_in_board(GameState, X, Y, Player),
   \+ available_dirs(GameState, X, Y, Player, []).
 check_spot(GameState, X, Y, Player, ReturnList):-
@@ -160,7 +170,7 @@ check_spot(GameState, X, Y, Player, ReturnList):-
   check_spot(GameState, X1, Y1, Player, TempReturnList),
   append(TempReturnList, Result, ReturnList).
 % if the spot does not belong to player checks if can go to next, if end of board returns
-check_spot(GameState, X, Y, Player, ReturnList):-
+check_spot(GameState, X, Y, _, ReturnList):-
   size_of_board(GameState, Size),
   check_end(X, Y, Size),
   ReturnList = [].
@@ -175,4 +185,4 @@ create_sublist(X, Y, [Dir|Rest], Result):-
   NewList = [[X, Y, Dir]],
   create_sublist(X, Y, Rest, PreviousResult),
   append(PreviousResult, NewList, Result).
-create_sublist(X, Y, [], []).
+create_sublist(_, _, [], []).

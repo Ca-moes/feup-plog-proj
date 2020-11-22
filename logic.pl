@@ -154,3 +154,7 @@ get_row(GameState, Y, Row):-
 get_column(GameState, X, Column):-
     transpose(GameState, Transpose),
     get_row(Transpose, X, Column).
+
+count(_, [], 0).
+count(Num, [H|T], X) :- Num \= H, count(Num, T, X).
+count(Num, [H|T], X) :- Num = H, count(Num, T, X1), X is X1 + 1.
