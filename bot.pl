@@ -24,12 +24,30 @@ valid_moves(+GameState, +Player, -ListOfMoves).
  *   player_in_board(Board, X, Y, PlayerS)
  */
 
-bot_move(Difficulty, GameState, Player, NewGameState):-
+
+% Player Predicate  move belongs to logic.pl but need to be together with the bot predicate
+move('Player', GameState, PlayerS, NewGameState) :-
+  choose_piece(GameState, PlayerS, X, Y, Directions),
+  format('- Selected spot: X : ~d -- Y : ~w \n', [X,Y]),
+  read_direction(Directions, Direction),
+  format('- Direction received in logic : ~s\n', Direction),
+  make_choice(GameState, PlayerS, X, Y, Direction, NewGameState), skip_line.
+move(Difficulty, GameState, Player, NewGameState):-
   valid_moves(GameState, Player, List),
   choose_move(GameState, Player, Difficulty, List, X-Y-Direction),
   row(Y, Letter), format("I'll move from X:~d Y:~s to the ~s Direction\n", [X, Letter, Direction]),
   make_choice(GameState, Player, X, Y, Direction, NewGameState).
-bot_remove(Difficulty, GameState, Player, NewGameState):-
+
+% Player Predicate remove belongs to logic.pl but need to be together with the bot predicate
+% instead of moving a pice and captuing a enemy piece, a player piece is removed because there aren't any available plays
+remove('Player', GameState, PlayerS, NewGameState) :-
+  write('- There are no pieces to replace, select one piece to remove.\n'),
+  size_of_board(GameState, Size),
+  read_inputs(Size, Xread, Yread),
+  validate_choice(GameState, Xread, Yread, PlayerS, Xtemp, Ytemp),
+  format('- Selected spot: X : ~d -- Y : ~w \n', [Xread,Yread]),
+  replace(GameState, Xtemp, Ytemp, 0, NewGameState), skip_line.
+remove(Difficulty, GameState, Player, NewGameState):-
   valid_removes(GameState, Player, List),
   choose_move(GameState, Player, Difficulty, List, X-Y),
   row(Y, Letter), format("I'll remove my piece from X:~d Y:~s\n", [X, Letter]),
@@ -46,9 +64,21 @@ choose_move(_, _, 'Easy', List, X-Y):-
   nth0(1, Value, Y).
 
 choose_move(GameState, Player, 'Normal', List, X-Y-Direction):-  
-  % set_of
-  % value(+GameState, +Player, -Value).
-  random_member(Value, List),
+  findall(
+    Value1-X1-Y1-Direction1-Index,
+    (
+      nth0(Index, List, SubList), 
+      nth0(0, SubList, X1),
+      nth0(1, SubList, Y1),
+      nth0(2, SubList, Direction1),
+      make_choice(GameState, Player, X1, Y1, Direction1, NewGameState),
+      value(NewGameState, Player, Value1)
+    ),
+    ListResults
+    ),
+  sort(ListResults, Sorted), 
+  reverse(Sorted, [_-X-Y-Direction-_|_]).
+random_member(Value, List),
   nth0(0, Value, X),
   nth0(1, Value, Y),
   nth0(2, Value, Direction).
@@ -64,7 +94,28 @@ choose_move(GameState, Player, 'Normal', List, X-Y):-
  *   Max is the largest of the elements in ListOfNumbers.
  */
 % peça que removida/movida cause o maior numero de celulas brancas seguidas numa linha/coluna  
-value(GameState, Player, Value).
+value(GameState, Player, Value):-
+  random(0, 11, Value).
+  
+% faz flood fill se nos lados tiver um o
+/* value(GameState, 'Player 1', Value):-
+  check_value2(GameState, 'Player 1').
+
+% vê numero de 0 em cada linha e retorna o maior
+value(GameState, 'Player 1', Value).
+
+% checks it there's at least a 0 in columns 0 and SizeofBoard-1
+check_value2(GameState, Player):-
+  size_of_board(GameState, Size),Size1 is Size-1,
+  find_zero_in_column(GameState, 0),
+  find_zero_in_column(GameState, Size1).
+
+% checks if column X has a zero
+find_zero_in_column(GameState, X):-
+  get_column(GameState, X). */
+
+
+
 
 valid_removes(GameState, PlayerS, List):-
   check_spot_remove(GameState, 0, 0, PlayerS, List).

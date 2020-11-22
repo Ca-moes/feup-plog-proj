@@ -12,14 +12,6 @@ direction(X, Y, 'right', Xr, Yr):-  Xr is X+1,  Yr = Y.
 direction(X, Y, 'down', Xr, Yr):-   Xr = X,     Yr is Y+1.
 direction(X, Y, 'left', Xr, Yr):-   Xr is X-1,  Yr = Y.
 
-
-% Predicate to select move a piece
-move(GameState, PlayerS, NewGameState) :-
-    choose_piece(GameState, PlayerS, X, Y, Directions),
-    format('- Selected spot: X : ~d -- Y : ~w \n', [X,Y]),
-    read_direction(Directions, Direction),
-    format('- Direction received in logic : ~s\n', Direction),
-    make_choice(GameState, PlayerS, X, Y, Direction, NewGameState).
     
 % predicate to read input, check if piece belongs to player, get available directions and return
 % +Board, +PlayerS, -Xtemp, -Ytemp, -Directions
@@ -156,11 +148,9 @@ check_no_neighbors(Board, PlayerS, X, Y, Value, 1):-
 % if the player piece is different from the value on the board, no need to check for directions
 check_no_neighbors(_, _, _, _, _, 1).
 
-% instead of moving a pice and captuing a enemy piece, a player piece is removed because there aren't any available plays
-remove(GameState, PlayerS, NewGameState) :-
-    write('- There are no pieces to replace, select one piece to remove.\n'),
-    size_of_board(GameState, Size),
-    read_inputs(Size, Xread, Yread),
-    validate_choice(GameState, Xread, Yread, PlayerS, Xtemp, Ytemp),
-    format('- Selected spot: X : ~d -- Y : ~w \n', [Xread,Yread]),
-    replace(GameState, Xtemp, Ytemp, 0, NewGameState).
+get_row(GameState, Y, Row):-
+    nth0(Y, GameState, Row).
+
+get_column(GameState, X, Column):-
+    transpose(GameState, Transpose),
+    get_row(Transpose, X, Column).

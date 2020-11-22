@@ -59,10 +59,29 @@ menu_option(5):-
   menu.
 menu_option(6):-
   write('\nOption for Testing things\n'),
-  initial(5, GameState),
+
+  /* initial(1, GameState),
   display_game(GameState),
-  valid_removes(GameState, 'Player 2', List),
-  write(List),
+  transpose(GameState, Transpose),
+  
+  display_game(Transpose),
+
+
+
+  write('\nExpected Result:\n'),
+  initial(5, GameState2),
+  display_game(GameState2),
+
+
+  Player = 'Player 1',
+  value(GameState, Player, Value),
+  format('\nValue in menu is ~d', Value), */
+  
+  Player = 'Player 1',
+  initial(1, GameState),
+  valid_moves(GameState, Player, List),
+  choose_move(GameState, Player, 'Normal', List, X-Y-Direction),
+  format('Resultados no menu: X-~d, Y-~d, Dir:~s', [X,Y,Direction]),
   menu.
 
 % Choose to exit game on size screen
@@ -72,14 +91,12 @@ pp_menu(0):-
 pp_menu(4):-
   write('You found a Hidden Feature, Have Fun!\n'),
   initial(4, GameState),
-  display_game(GameState),
-  start_game(GameState),
+  start_game(GameState, 'Player', 'Player'),
   menu.
 % Choose Size, Starting Game
 pp_menu(Size):-
   initial(Size, GameState),
-  display_game(GameState),
-  start_game(GameState),
+  start_game(GameState, 'Player', 'Player'),
   menu.
 
 % Choose to exit game on size screen
@@ -114,18 +131,21 @@ pc_menu_3(Size, Difficulty, Player):-
   format('\nTO IMPLEMENT\nPlayer vs Computer (~s), Player is Player ~d, Board Size ~dx~d\n', [Diff, Player, Actual, Actual]),
   pc_option(Size, Difficulty, Player).
 
+% TODO simplificar Isto para o predicado de cima
 pc_option(Size, 1, 1):-
   initial(Size, GameState),
-  display_game(GameState),
-  start_game('pceasy1', GameState).
+  start_game(GameState, 'Player', 'Easy').
 pc_option(Size, 1, 2):-
   initial(Size, GameState),
-  display_game(GameState),
-  start_game('pceasy2', GameState).
+  start_game(GameState, 'Easy', 'Player').
 pc_option(Size, 2, 1):-
-  write('\nadicionar aqui o jogo\n').
+  write('\nTO IMPLEMENT\n'),
+  initial(Size, GameState),
+  start_game(GameState, 'Player', 'Normal').
 pc_option(Size, 2, 2):-
-  write('\nadicionar aqui o jogo\n').
+  write('\nTO IMPLEMENT\n'),
+  initial(Size, GameState),
+  start_game(GameState, 'Normal', 'Player').
 
 % Returning to Main Menu
 cc_menu_1(0).
@@ -161,11 +181,16 @@ cc_menu_3(Size, Diff1, Diff2):-
 
 cc_option(Size, 1, 1):-
   initial(Size, GameState),
-  display_game(GameState),
-  start_game('ceasyceasy', GameState).
+  start_game(GameState, 'Easy', 'Easy').
 cc_option(Size, 1, 2):-
-  write('\nadicionar aqui o jogo\n').
+  write('\nTO IMPLEMENT\n'),
+  initial(Size, GameState),
+  start_game(GameState, 'Easy', 'Normal').
 cc_option(Size, 2, 1):-
-  write('\nadicionar aqui o jogo\n').
+  write('\nTO IMPLEMENT\n'),
+  initial(Size, GameState),
+  start_game(GameState, 'Normal', 'Easy').
 cc_option(Size, 2, 2):-
-  write('\nadicionar aqui o jogo\n').
+  write('\nTO IMPLEMENT\n'),
+  initial(Size, GameState),
+  start_game(GameState, 'Normal', 'Normal').
