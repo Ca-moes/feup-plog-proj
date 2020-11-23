@@ -60,28 +60,27 @@ menu_option(5):-
 menu_option(6):-
   write('\nOption for Testing things\n'),
 
-  /* initial(1, GameState),
-  display_game(GameState),
-  transpose(GameState, Transpose),
-  
-  display_game(Transpose),
-
-
-
-  write('\nExpected Result:\n'),
-  initial(5, GameState2),
-  display_game(GameState2),
-
-
-  Player = 'Player 1',
-  value(GameState, Player, Value),
-  format('\nValue in menu is ~d', Value), */
-  
-  Player = 'Player 1',
   initial(1, GameState),
+  display_game(GameState),
+  Player = 'Player 1',
   valid_moves(GameState, Player, List),
-  choose_move(GameState, Player, 'Normal', List, X, Y),
-  format('Resultados no menu: X-~d, Y-~d.', [X,Y]),
+
+  write(List), nl, 
+  findall(
+    Value1-X1-Y1-Direction1-Index,
+    (
+      nth0(Index, List, SubList), 
+      nth0(0, SubList, X1),
+      nth0(1, SubList, Y1),
+      nth0(2, SubList, Direction1),
+      make_choice(GameState, Player, X1, Y1, Direction1, NewGameState),
+      value(NewGameState, Player, Value1),
+      write(Value1-X1-Y1-Direction1-Index), nl
+    ),
+    ListResults
+  ),
+  write(ListResults), 
+
   menu.
 
 % Choose to exit game on size screen

@@ -58,13 +58,7 @@ choose_move(_, _, 'Easy', List, X, Y, Direction):-
   nth0(0, Value, X),
   nth0(1, Value, Y),
   nth0(2, Value, Direction).
-choose_move(_, _, 'Easy', List, X, Y):-
-  random_member(Value, List),
-  nth0(0, Value, X),
-  nth0(1, Value, Y).
-
 choose_move(GameState, Player, 'Normal', List, X, Y, Direction):-  
-  write('here with direction'),
   findall(
     Value1-X1-Y1-Direction1-Index,
     (
@@ -79,6 +73,10 @@ choose_move(GameState, Player, 'Normal', List, X, Y, Direction):-
     ),
   sort(ListResults, Sorted), 
   reverse(Sorted, [_-X-Y-Direction-_|_]).
+choose_move(_, _, 'Easy', List, X, Y):-
+  random_member(Value, List),
+  nth0(0, Value, X),
+  nth0(1, Value, Y).
 choose_move(GameState, Player, 'Normal', List, X, Y):-
   write('here without direction'),
   findall(
@@ -100,25 +98,128 @@ choose_move(GameState, Player, 'Normal', List, X, Y):-
  *   Max is the largest of the elements in ListOfNumbers.
  */
 % peça que removida/movida cause o maior numero de celulas brancas seguidas numa linha/coluna  
-value(GameState, Player, Value):-
-  random(0, 11, Value).
   
-% faz flood fill se nos lados tiver um o
-/* value(GameState, 'Player 1', Value):-
-  check_value2(GameState, 'Player 1').
+/*
+  2 passagens no board:
+  1 - Vai celula a celula, encontra espaço branco, guarda essa posição e faz floodfill, continua a ir celula
+  a celula com o board floodfilled, quando encontrar outra celula branca faz o mesmo e passa o board.
+  Recursividade acaba quando chegar ao final do board. Retorna lista de posições X-Y
 
-% vê numero de 0 em cada linha e retorna o maior
-value(GameState, 'Player 1', Value).
+  2 - Vai a cada posição e faz floodfill no board inicial, analisa o board, adiciona valor a lista,
+  vai a proxima posição e faz floodfill com board inicial, ...
+  retorna lista de valores de cada mancha
 
-% checks it there's at least a 0 in columns 0 and SizeofBoard-1
-check_value2(GameState, Player):-
-  size_of_board(GameState, Size),Size1 is Size-1,
-  find_zero_in_column(GameState, 0),
-  find_zero_in_column(GameState, Size1).
+  Value retorna maior dos valores de cada mancha
 
-% checks if column X has a zero
-find_zero_in_column(GameState, X):-
-  get_column(GameState, X). */
+  Predicado 1:
+  ```
+  Percorre célula a célula
+    Encontra lugar 0
+      FloodFill para obter novo GameState, Guarda Posição X-Y para depois retornar e chama mesmo predicado
+      com novo GameState
+    Dá append a X-Y á lista de Return de ter chamado o predicado e dá return da nova lista
+  ```
+  Caso Base: Chegou ao final do Board e Retorna Lista Vazia.
+  Return do Predicado: Lista da forma [X-Y,X1-Y1, ..] que contem posições por onde começar para fazer floodfill de uma mancha
+  Terá sempre pelo menos 1 elemento, já que avalia o board da próxima jogada. Mesmo que fosse o primeiro a jogar já abriria 1 spot vazio
+
+  Predicado 2:
+  Percorre cada posição da lista de cima 
+    Faz floodfill e forma-se um board com 1 mancha
+    verifica quantos caracteres de fill há em cada coluna e põe numa lista [4,3,3,2,0,0]
+      vai row a row numa coluna Y e conta os caracteres de fill, retorna esse numero
+    vê qual é a maior sequencia de numeros seguidos diferentes de 0: [4,3,3,2,0,0] -> 4
+    Chama predicado com resto da lista
+    Append do Resultado a uma lista de return
+  Caso Base: Chegou ao final da Lista de Pontos e Retorna Lista Vazia.
+  Return do predicado: Uma lista de valores [X, Y, Z] com o value de cada mancha
+
+  Value retorna o maior dos values
+*/
+
+%value aleatório entre 0 e 10
+/* value(GameState, 'Player 1', Value):-	
+  write('asd'),
+  random(0, 11, Value). */
+
+% analisa na horizontal
+value(GameState, 'Player 1', Value):-
+  value_part_1(GameState, List),
+  value_part_2(GameState, List, ReturnList),
+  max_member(Value, ReturnList), !.
+  
+value(GameState, 'Player 2', Value):-
+  transpose(GameState, Transpose),
+  value(Transpose, 'Player 1', Value).
+
+
+
+value_part_2(_, [], []).
+value_part_2(GameState, [X-Y|Rest], ReturnList):-
+  size_of_board(GameState, Size),
+  floodFill(GameState, Size, X, Y, 0, 9, NewGS),
+  values_in_all_columns(NewGS, 9, ListResult),
+  sequence(ListResult, TempValue),
+  value_part_2(GameState, Rest, TempReturnList),
+  append(TempReturnList, [TempValue], ReturnList).
+
+value_part_1(GameState, List):-
+  value_part_1(GameState, 0, 0, List).
+% if it's last cell and its empty, neither the top pr left cell are empty, meaning list is has a value.
+% No need to do floodfill cause there's only 1 cell to fill
+value_part_1(GameState, X, Y, [Size1-Size1]):-
+  size_of_board(GameState, Size), check_end(X, Y, Size),
+  value_in_board(GameState, X, Y, 0),
+  Size1 is Size-1.
+% if it's last cell and not empty, return list is empty
+value_part_1(GameState, X, Y, []):-
+  size_of_board(GameState, Size), check_end(X, Y, Size).
+% not at end and value of cell is 0
+value_part_1(GameState, X, Y, List):-
+  value_in_board(GameState, X, Y, 0), 
+  size_of_board(GameState, Size),
+  floodFill(GameState, Size, X, Y, 0, 9, NewGS),
+  next_index(X, Y, Size, X2, Y2),
+  value_part_1(NewGS, X2, Y2, Result),
+  append(Result, [X-Y], List).
+% not at end and value is != 0
+value_part_1(GameState, X, Y, List):-
+  size_of_board(GameState, Size),
+  next_index(X, Y, Size, X2, Y2),
+  value_part_1(GameState, X2, Y2, List).
+
+% with a Board and a value returns a list [4,3,4,3,0,0] with amount of characters Value in all Columns
+values_in_all_columns(GameState, Value, ListResult):-
+  size_of_board(GameState, Size), Size1 is Size-1,
+  values_in_all_columns(GameState, Value, Size1, ListResult).
+values_in_all_columns(_, _, -1, []).
+values_in_all_columns(GameState, Value, Index, Result):-
+  values_in_column(GameState, Index, Value, ValueResult),
+  Index1 is Index-1,
+  values_in_all_columns(GameState, Value, Index1, TempResult),
+  append(TempResult, [ValueResult], Result).
+% returns the Amount of cells with Value in column X
+values_in_column(GameState, X, Value, Amount):-
+  get_column(GameState, X, Column),
+  count(Value, Column, Amount).
+
+% Receives [4,3,4,3,0,0] and returs 4
+% [0,1,0,0,1,4,2]
+% Returns in Result the longest sequence not formed by 0
+sequence(List, Result):-
+  sequence(List, 0, 0, Result).
+sequence([], Counter, MaxLength, Counter):-
+  Counter > MaxLength.
+sequence([], _, MaxLength, MaxLength).
+sequence([ToTest|Rest], Counter, MaxLength, Result):-
+  ToTest == 0, Counter > MaxLength, 
+  sequence(Rest, 0, Counter, Result).
+sequence([ToTest|Rest], _, MaxLength, Result):-
+  ToTest == 0, 
+  sequence(Rest, 0, MaxLength, Result).
+sequence([_|Rest], Counter, MaxLength, Result):-
+  Counter1 is Counter+1,
+  sequence(Rest, Counter1, MaxLength, Result).
 
 
 
@@ -132,7 +233,7 @@ check_spot_remove(GameState, X, Y, Player, ReturnList):-
   next_index(X, Y, Size, X1, Y1),
   check_spot_remove(GameState, X1, Y1, Player, TempReturnList),
   append(TempReturnList, [[X, Y]], ReturnList).
-check_spot_remove(GameState, X, Y, Player, ReturnList):-
+check_spot_remove(GameState, X, Y, _, ReturnList):-
   size_of_board(GameState, Size),
   check_end(X, Y, Size),
   ReturnList = [].
@@ -147,9 +248,21 @@ valid_moves(GameState, PlayerS, List):-
   check_spot(GameState, 0, 0, PlayerS, List).
   
 % if spot belongs to player, checks directions and if list is empty -> next spot
+
+% Base Case: Last Spot and Spot Belongs to Player, There're available plays
 check_spot(GameState, X, Y, Player, ReturnList):-
+  size_of_board(GameState, Size), check_end(X, Y, Size),
   player_in_board(GameState, X, Y, Player),
-  \+ available_dirs(GameState, X, Y, Player, []).
+  available_dirs(GameState, X, Y, Player, TempList), TempList \= [],
+  create_sublist(X, Y, TempList, ReturnList).
+% Base Case: Last Spot and Spot Belongs to Player, There're no available plays
+check_spot(GameState, X, Y, Player, []):-
+  size_of_board(GameState, Size), check_end(X, Y, Size),
+  player_in_board(GameState, X, Y, Player),
+  available_dirs(GameState, X, Y, Player, []).
+% Base Case: Last Spot and Spot Doesn't Belong to Player
+check_spot(GameState, X, Y, _, []):-
+  size_of_board(GameState, Size), check_end(X, Y, Size).
 check_spot(GameState, X, Y, Player, ReturnList):-
   player_in_board(GameState, X, Y, Player),
   available_dirs(GameState, X, Y, Player, TempList), TempList \= [],
@@ -160,7 +273,7 @@ check_spot(GameState, X, Y, Player, ReturnList):-
   check_spot(GameState, X1, Y1, Player, TempReturnList),
   append(TempReturnList, Result, ReturnList).
 % if the spot does not belong to player checks if can go to next, if end of board returns
-check_spot(GameState, X, Y, Player, ReturnList):-
+check_spot(GameState, X, Y, _, ReturnList):-
   size_of_board(GameState, Size),
   check_end(X, Y, Size),
   ReturnList = [].
@@ -175,4 +288,4 @@ create_sublist(X, Y, [Dir|Rest], Result):-
   NewList = [[X, Y, Dir]],
   create_sublist(X, Y, Rest, PreviousResult),
   append(PreviousResult, NewList, Result).
-create_sublist(X, Y, [], []).
+create_sublist(_, _, [], []).
