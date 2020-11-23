@@ -67,7 +67,8 @@ choose_move(GameState, Player, 'Normal', List, X, Y, Direction):-
       nth0(1, SubList, Y1),
       nth0(2, SubList, Direction1),
       make_choice(GameState, Player, X1, Y1, Direction1, NewGameState),
-      value(NewGameState, Player, Value1)
+      value(NewGameState, Player, Value1),
+      write(Value1-X1-Y1-Direction1-Index), nl
     ),
     ListResults
     ),
@@ -98,8 +99,6 @@ choose_move(GameState, Player, 'Normal', List, X, Y):-
  *   Max is the largest of the elements in ListOfNumbers.
  */
 % peça que removida/movida cause o maior numero de celulas brancas seguidas numa linha/coluna  
-value(GameState, Player, Value):-
-  random(0, 10, Value).
   
 /*
   2 passagens no board:
@@ -139,15 +138,32 @@ value(GameState, Player, Value):-
   Value retorna o maior dos values
 */
 
-% analisa na horizontal
-value(GameState, 'Player 1', Value).
+/* %value aleatório entre 0 e 10
+value(GameState, Player, Value):-	
+  random(0, 11, Value). */
 
+% analisa na horizontal
+value(GameState, 'Player 1', Value):-
+  value_part_1(GameState, List),
+  value_part_2(GameState, List, ReturnList),
+  max_member(Value, ReturnList).
+  
 value(GameState, 'Player 2', Value):-
   transpose(GameState, Transpose),
   value(Transpose, 'Player 1', Value).
 
 value_part_1(GameState, List):-
   value_part_1(GameState, 0, 0, List).
+
+value_part_2(GameState, [], []).
+value_part_2(GameState, [X-Y|Rest], ReturnList):-
+  size_of_board(GameState, Size),
+  floodFill(GameState, Size, X, Y, 0, 9, NewGS),
+  values_in_all_columns(NewGS, 9, ListResult),
+  sequence(ListResult, TempValue),
+  value_part_2(GameState, Rest, TempReturnList),
+  append(TempReturnList, [TempValue], ReturnList).
+
 
 % if it's last cell and its empty, neither the top pr left cell are empty, meaning list is has a value.
 % No need to do floodfill cause there's only 1 cell to fill
@@ -172,7 +188,7 @@ value_part_1(GameState, X, Y, List):-
   next_index(X, Y, Size, X2, Y2),
   value_part_1(GameState, X2, Y2, List).
 
-
+% with a Board and a value returns a list [4,3,4,3,0,0] with amount of characters Value in all Columns
 values_in_all_columns(GameState, Value, ListResult):-
   size_of_board(GameState, Size), Size1 is Size-1,
   values_in_all_columns(GameState, Value, Size1, ListResult).
