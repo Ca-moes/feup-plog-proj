@@ -117,7 +117,7 @@ value(GameState, Player, Value):-
   ```
   Percorre célula a célula
     Encontra lugar 0
-      FloodFill para obter novo GameState, Guarda Posição X-Y para depois retornar e chamda mesmo predicado
+      FloodFill para obter novo GameState, Guarda Posição X-Y para depois retornar e chama mesmo predicado
       com novo GameState
     Dá append a X-Y á lista de Return de ter chamado o predicado e dá return da nova lista
   ```
@@ -138,18 +138,41 @@ value(GameState, Player, Value):-
 
   Value retorna o maior dos values
 */
+
+% analisa na horizontal
 value(GameState, 'Player 1', Value).
 
 value(GameState, 'Player 2', Value):-
   transpose(GameState, Transpose),
   value(Transpose, 'Player 1', Value).
 
+value_part_1(GameState, List):-
+  value_part_1(GameState, 0, 0, List).
+
+% if it's last cell and its empty, neither the top pr left cell are empty, meaning list is has a value.
+% No need to do floodfill cause there's only 1 cell to fill
+value_part_1(GameState, X, Y, [Size1-Size1]):-
+  size_of_board(GameState, Size), check_end(X, Y, Size),
+  value_in_board(GameState, X, Y, Value), Value == 0,
+  Size1 is Size-1.
+% if it's last cell and not empty, return list is empty
+value_part_1(GameState, X, Y, []):-
+  size_of_board(GameState, Size), check_end(X, Y, Size).
+% not at end and value of cell is 0
+value_part_1(GameState, X, Y, List):-
+  value_in_board(GameState, X, Y, Value), Value == 0, 
+  size_of_board(GameState, Size),
+  floodFill(GameState, Size, X, Y, 0, 9, NewGS),
+  next_index(X, Y, Size, X2, Y2),
+  value_part_1(NewGS, X2, Y2, Result),
+  append(Result, [X-Y], List).
+% not at end and value is != 0
+value_part_1(GameState, X, Y, List):-
+  size_of_board(GameState, Size),
+  next_index(X, Y, Size, X2, Y2),
+  value_part_1(GameState, X2, Y2, List).
 
 
-% returns the Amount of cells with Value in column X
-values_in_column(GameState, X, Value, Amount):-
-  get_column(GameState, X, Column),
-  count(Value, Column, Amount).
 values_in_all_columns(GameState, Value, ListResult):-
   size_of_board(GameState, Size), Size1 is Size-1,
   values_in_all_columns(GameState, Value, Size1, ListResult).
@@ -159,6 +182,10 @@ values_in_all_columns(GameState, Value, Index, Result):-
   Index1 is Index-1,
   values_in_all_columns(GameState, Value, Index1, TempResult),
   append(TempResult, [ValueResult], Result).
+% returns the Amount of cells with Value in column X
+values_in_column(GameState, X, Value, Amount):-
+  get_column(GameState, X, Column),
+  count(Value, Column, Amount).
 
 % Receives [4,3,4,3,0,0] and returs 4
 % [0,1,0,0,1,4,2]
