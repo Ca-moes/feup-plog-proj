@@ -102,17 +102,41 @@ value(GameState, Player, Value):-
   random(0, 10, Value).
   
 /*
-  Percorre célula a célula
-    Encontra lugar vazio
-      Faz flood_fill com Board Inicial
-        verifica quantos caracteres de fill há em cada coluna e põe numa lista [4,3,4,3,0,0]
-          vai row a row numa coluna Y e conta os caracteres de fill, retorna esse numero
-        vê qual é a maior sequencia de numeros seguidos diferentes de 0: [4,3,4,3,0,0] -> 4
-        Chama predicado de percorrer board com posição seguinte e board novo,
-        Append do Resultado a uma lista de return
-    Encontra lugar com fill character
-      Já tem um valor para essa mancha, continua até encontrar vazio
+  2 passagens no board:
+  1 - Vai celula a celula, encontra espaço branco, guarda essa posição e faz floodfill, continua a ir celula
+  a celula com o board floodfilled, quando encontrar outra celula branca faz o mesmo e passa o board.
+  Recursividade acaba quando chegar ao final do board. Retorna lista de posições X-Y
 
+  2 - Vai a cada posição e faz floodfill no board inicial, analisa o board, adiciona valor a lista,
+  vai a proxima posição e faz floodfill com board inicial, ...
+  retorna lista de valores de cada mancha
+
+  Value retorna maior dos valores de cada mancha
+
+  Predicado 1:
+  ```
+  Percorre célula a célula
+    Encontra lugar 0
+      FloodFill para obter novo GameState, Guarda Posição X-Y para depois retornar e chamda mesmo predicado
+      com novo GameState
+    Dá append a X-Y á lista de Return de ter chamado o predicado e dá return da nova lista
+  ```
+  Caso Base: Chegou ao final do Board e Retorna Lista Vazia.
+  Return do Predicado: Lista da forma [X-Y,X1-Y1, ..] que contem posições por onde começar para fazer floodfill de uma mancha
+  Terá sempre pelo menos 1 elemento, já que avalia o board da próxima jogada. Mesmo que fosse o primeiro a jogar já abriria 1 spot vazio
+
+  Predicado 2:
+  Percorre cada posição da lista de cima 
+    Faz floodfill e forma-se um board com 1 mancha
+    verifica quantos caracteres de fill há em cada coluna e põe numa lista [4,3,4,3,0,0]
+      vai row a row numa coluna Y e conta os caracteres de fill, retorna esse numero
+    vê qual é a maior sequencia de numeros seguidos diferentes de 0: [4,3,4,3,0,0] -> 4
+    Chama predicado com resto da lista
+    Append do Resultado a uma lista de return
+  Caso Base: Chegou ao final da Lista de Pontos e Retorna Lista Vazia.
+  Return do predicado: Uma lista de valores [X, Y, Z] com o value de cada mancha
+
+  Value retorna o maior dos values
 */
 value(GameState, 'Player 1', Value).
 
@@ -120,16 +144,39 @@ value(GameState, 'Player 2', Value):-
   transpose(GameState, Transpose),
   value(Transpose, 'Player 1', Value).
 
+
+
 % returns the Amount of cells with Value in column X
 values_in_column(GameState, X, Value, Amount):-
   get_column(GameState, X, Column),
-  count(Value, Column, Amount),
-  write(Column), nl, write(Amount).
-
+  count(Value, Column, Amount).
 values_in_all_columns(GameState, Value, ListResult):-
   size_of_board(GameState, Size), Size1 is Size-1,
   values_in_all_columns(GameState, Value, Size1, ListResult).
-values_in_column(GameState, 0, Value, [TempResult])
+values_in_all_columns(GameState, Value, -1, []).
+values_in_all_columns(GameState, Value, Index, Result):-
+  values_in_column(GameState, Index, Value, ValueResult),
+  Index1 is Index-1,
+  values_in_all_columns(GameState, Value, Index1, TempResult),
+  append(TempResult, [ValueResult], Result).
+
+% Receives [4,3,4,3,0,0] and returs 4
+% [0,1,0,0,1,4,2]
+% Returns in Result the longest sequence not formed by 0
+sequence(List, Result):-
+  sequence(List, 0, 0, Result).
+sequence([ToTest|Rest], Counter, MaxLength, Result):-
+  ToTest == 0, Counter > MaxLength, 
+  sequence(Rest, 0, Counter, Result).
+sequence([ToTest|Rest], Counter, MaxLength, Result):-
+  ToTest == 0, 
+  sequence(Rest, 0, MaxLength, Result).
+sequence([ToTest|Rest], Counter, MaxLength, Result):-
+  Counter1 is Counter+1,
+  sequence(Rest, Counter1, MaxLength, Result).
+sequence([], Counter, MaxLength, Counter):-
+  Counter > MaxLength.
+sequence([], Counter, MaxLength, MaxLength).
 
 
 

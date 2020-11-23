@@ -60,10 +60,17 @@ menu_option(5):-
 menu_option(6):-
   write('\nOption for Testing things\n'),
 
-  initial(1, GameState),
+  spy sequence,
+  sequence([0,1,0,0,1,4,2], Result),
+  write(Result),
+
+  /* initial(1, GameState),
+  display_game(GameState),
+
   size_of_board(GameState, Size),
   Size1 is Size-1,
-  values_in_column(GameState, Size1, 1, Amount),
+  values_in_all_columns(GameState, 1, ListResult), nl,
+  write(ListResult), */
   menu.
 
 % Choose to exit game on size screen
