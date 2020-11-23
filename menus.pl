@@ -60,16 +60,11 @@ menu_option(5):-
 menu_option(6):-
   write('\nOption for Testing things\n'),
 
-  initial(1, GameState),
+  initial(2, GameState),
   display_game(GameState),
-  /* value_part_1(GameState, List),
-  value_part_2(GameState, List, ReturnList),
-  max_member(Value, ReturnList),
-  write(Value),nl, */
-  value(GameState, 'Player 1', Value1),
-  write(Value1),nl,
-  value(GameState, 'Player 2', Value2),
-  write(Value2),
+  valid_moves(GameState, 'Player 1', List),
+  write(List), length(List, Int),
+  format('\nLength : ~d', Int),
 
   menu.
 

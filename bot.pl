@@ -127,9 +127,9 @@ choose_move(GameState, Player, 'Normal', List, X, Y):-
   Predicado 2:
   Percorre cada posição da lista de cima 
     Faz floodfill e forma-se um board com 1 mancha
-    verifica quantos caracteres de fill há em cada coluna e põe numa lista [4,3,4,3,0,0]
+    verifica quantos caracteres de fill há em cada coluna e põe numa lista [4,3,3,2,0,0]
       vai row a row numa coluna Y e conta os caracteres de fill, retorna esse numero
-    vê qual é a maior sequencia de numeros seguidos diferentes de 0: [4,3,4,3,0,0] -> 4
+    vê qual é a maior sequencia de numeros seguidos diferentes de 0: [4,3,3,2,0,0] -> 4
     Chama predicado com resto da lista
     Append do Resultado a uma lista de return
   Caso Base: Chegou ao final da Lista de Pontos e Retorna Lista Vazia.
@@ -152,8 +152,7 @@ value(GameState, 'Player 2', Value):-
   transpose(GameState, Transpose),
   value(Transpose, 'Player 1', Value).
 
-value_part_1(GameState, List):-
-  value_part_1(GameState, 0, 0, List).
+
 
 value_part_2(GameState, [], []).
 value_part_2(GameState, [X-Y|Rest], ReturnList):-
@@ -164,19 +163,20 @@ value_part_2(GameState, [X-Y|Rest], ReturnList):-
   value_part_2(GameState, Rest, TempReturnList),
   append(TempReturnList, [TempValue], ReturnList).
 
-
+value_part_1(GameState, List):-
+  value_part_1(GameState, 0, 0, List).
 % if it's last cell and its empty, neither the top pr left cell are empty, meaning list is has a value.
 % No need to do floodfill cause there's only 1 cell to fill
 value_part_1(GameState, X, Y, [Size1-Size1]):-
   size_of_board(GameState, Size), check_end(X, Y, Size),
-  value_in_board(GameState, X, Y, Value), Value == 0,
+  value_in_board(GameState, X, Y, 0),
   Size1 is Size-1.
 % if it's last cell and not empty, return list is empty
 value_part_1(GameState, X, Y, []):-
   size_of_board(GameState, Size), check_end(X, Y, Size).
 % not at end and value of cell is 0
 value_part_1(GameState, X, Y, List):-
-  value_in_board(GameState, X, Y, Value), Value == 0, 
+  value_in_board(GameState, X, Y, 0), 
   size_of_board(GameState, Size),
   floodFill(GameState, Size, X, Y, 0, 9, NewGS),
   next_index(X, Y, Size, X2, Y2),
@@ -208,6 +208,9 @@ values_in_column(GameState, X, Value, Amount):-
 % Returns in Result the longest sequence not formed by 0
 sequence(List, Result):-
   sequence(List, 0, 0, Result).
+sequence([], Counter, MaxLength, Counter):-
+  Counter > MaxLength.
+sequence([], Counter, MaxLength, MaxLength).
 sequence([ToTest|Rest], Counter, MaxLength, Result):-
   ToTest == 0, Counter > MaxLength, 
   sequence(Rest, 0, Counter, Result).
@@ -217,9 +220,7 @@ sequence([ToTest|Rest], Counter, MaxLength, Result):-
 sequence([ToTest|Rest], Counter, MaxLength, Result):-
   Counter1 is Counter+1,
   sequence(Rest, Counter1, MaxLength, Result).
-sequence([], Counter, MaxLength, Counter):-
-  Counter > MaxLength.
-sequence([], Counter, MaxLength, MaxLength).
+
 
 
 
@@ -247,9 +248,21 @@ valid_moves(GameState, PlayerS, List):-
   check_spot(GameState, 0, 0, PlayerS, List).
   
 % if spot belongs to player, checks directions and if list is empty -> next spot
-check_spot(GameState, X, Y, Player, _):-
+
+% Base Case: Last Spot and Spot Belongs to Player, There're available plays
+check_spot(GameState, X, Y, Player, ReturnList):-
+  size_of_board(GameState, Size), check_end(X, Y, Size),
   player_in_board(GameState, X, Y, Player),
-  \+ available_dirs(GameState, X, Y, Player, []).
+  available_dirs(GameState, X, Y, Player, TempList), TempList \= [],
+  create_sublist(X, Y, TempList, ReturnList).
+% Base Case: Last Spot and Spot Belongs to Player, There're no available plays
+check_spot(GameState, X, Y, Player, []):-
+  size_of_board(GameState, Size), check_end(X, Y, Size),
+  player_in_board(GameState, X, Y, Player),
+  available_dirs(GameState, X, Y, Player, []).
+% Base Case: Last Spot and Spot Doesn't Belong to Player
+check_spot(GameState, X, Y, Player, []):-
+  size_of_board(GameState, Size), check_end(X, Y, Size).
 check_spot(GameState, X, Y, Player, ReturnList):-
   player_in_board(GameState, X, Y, Player),
   available_dirs(GameState, X, Y, Player, TempList), TempList \= [],
