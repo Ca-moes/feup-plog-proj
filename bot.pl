@@ -67,8 +67,7 @@ choose_move(GameState, Player, 'Normal', List, X, Y, Direction):-
       nth0(1, SubList, Y1),
       nth0(2, SubList, Direction1),
       make_choice(GameState, Player, X1, Y1, Direction1, NewGameState),
-      value(NewGameState, Player, Value1),
-      write(Value1-X1-Y1-Direction1-Index), nl
+      value(NewGameState, Player, Value1)
     ),
     ListResults
     ),
@@ -138,15 +137,16 @@ choose_move(GameState, Player, 'Normal', List, X, Y):-
   Value retorna o maior dos values
 */
 
-/* %value aleatório entre 0 e 10
-value(GameState, Player, Value):-	
+%value aleatório entre 0 e 10
+/* value(GameState, 'Player 1', Value):-	
+  write('asd'),
   random(0, 11, Value). */
 
 % analisa na horizontal
 value(GameState, 'Player 1', Value):-
   value_part_1(GameState, List),
   value_part_2(GameState, List, ReturnList),
-  max_member(Value, ReturnList).
+  max_member(Value, ReturnList), !.
   
 value(GameState, 'Player 2', Value):-
   transpose(GameState, Transpose),
@@ -154,7 +154,7 @@ value(GameState, 'Player 2', Value):-
 
 
 
-value_part_2(GameState, [], []).
+value_part_2(_, [], []).
 value_part_2(GameState, [X-Y|Rest], ReturnList):-
   size_of_board(GameState, Size),
   floodFill(GameState, Size, X, Y, 0, 9, NewGS),
@@ -192,7 +192,7 @@ value_part_1(GameState, X, Y, List):-
 values_in_all_columns(GameState, Value, ListResult):-
   size_of_board(GameState, Size), Size1 is Size-1,
   values_in_all_columns(GameState, Value, Size1, ListResult).
-values_in_all_columns(GameState, Value, -1, []).
+values_in_all_columns(_, _, -1, []).
 values_in_all_columns(GameState, Value, Index, Result):-
   values_in_column(GameState, Index, Value, ValueResult),
   Index1 is Index-1,
@@ -210,14 +210,14 @@ sequence(List, Result):-
   sequence(List, 0, 0, Result).
 sequence([], Counter, MaxLength, Counter):-
   Counter > MaxLength.
-sequence([], Counter, MaxLength, MaxLength).
+sequence([], _, MaxLength, MaxLength).
 sequence([ToTest|Rest], Counter, MaxLength, Result):-
   ToTest == 0, Counter > MaxLength, 
   sequence(Rest, 0, Counter, Result).
-sequence([ToTest|Rest], Counter, MaxLength, Result):-
+sequence([ToTest|Rest], _, MaxLength, Result):-
   ToTest == 0, 
   sequence(Rest, 0, MaxLength, Result).
-sequence([ToTest|Rest], Counter, MaxLength, Result):-
+sequence([_|Rest], Counter, MaxLength, Result):-
   Counter1 is Counter+1,
   sequence(Rest, Counter1, MaxLength, Result).
 
@@ -261,7 +261,7 @@ check_spot(GameState, X, Y, Player, []):-
   player_in_board(GameState, X, Y, Player),
   available_dirs(GameState, X, Y, Player, []).
 % Base Case: Last Spot and Spot Doesn't Belong to Player
-check_spot(GameState, X, Y, Player, []):-
+check_spot(GameState, X, Y, _, []):-
   size_of_board(GameState, Size), check_end(X, Y, Size).
 check_spot(GameState, X, Y, Player, ReturnList):-
   player_in_board(GameState, X, Y, Player),

@@ -60,11 +60,26 @@ menu_option(5):-
 menu_option(6):-
   write('\nOption for Testing things\n'),
 
-  initial(2, GameState),
+  initial(1, GameState),
   display_game(GameState),
-  valid_moves(GameState, 'Player 1', List),
-  write(List), length(List, Int),
-  format('\nLength : ~d', Int),
+  Player = 'Player 1',
+  valid_moves(GameState, Player, List),
+
+  write(List), nl, 
+  findall(
+    Value1-X1-Y1-Direction1-Index,
+    (
+      nth0(Index, List, SubList), 
+      nth0(0, SubList, X1),
+      nth0(1, SubList, Y1),
+      nth0(2, SubList, Direction1),
+      make_choice(GameState, Player, X1, Y1, Direction1, NewGameState),
+      value(NewGameState, Player, Value1),
+      write(Value1-X1-Y1-Direction1-Index), nl
+    ),
+    ListResults
+  ),
+  write(ListResults), 
 
   menu.
 
