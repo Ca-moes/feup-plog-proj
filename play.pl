@@ -1,12 +1,16 @@
-% main predicate for game start
+% play/0
+% main predicate for game start, presents the main menu
 play :-
   menu.
 
-%starts a game with playertype vs playertype
+% start_game(+GameState, +Player1Type, +Player2Type)
+% starts a game with Player1Type vs Player2Type
 start_game(GameState, Player1Type, Player2Type):-
   display_game(GameState),
   turn(GameState, Player1Type, 'Player 1', Player2Type ).
 
+% turn(+GameState, +Player, +PlayerS, +NextPlayer)
+% Turn predicate for final game state where player removes a piece instead of moving it
 turn(GameState, Player, PlayerS, NextPlayer):-
   ( Player = 'Player', format('\n ~a turn.\n', PlayerS) ; 
     Player \= 'Player', format('\n Computer turn as ~s.\n', PlayerS) ),
@@ -14,15 +18,20 @@ turn(GameState, Player, PlayerS, NextPlayer):-
   remove(Player, GameState, PlayerS, NewGameState),
   game_over(NewGameState, PlayerS, TempResult),
   process_result(NewGameState, TempResult, Player, NextPlayer, PlayerS).
+% Turn predicate for moving a piece
 turn(GameState, Player, PlayerS, NextPlayer):-
   make_move(Player, GameState, PlayerS, NewGameState),
   game_over(NewGameState, PlayerS, TempResult),
   process_result(NewGameState, TempResult, Player, NextPlayer, PlayerS).
 
+% process_result(+NewGameState, +Winner, +TypePlayer, +TypeToPlay, +PlayerS)
+% Processes the Winner argument, if there are no winners then it's the opponent's turn
 process_result(NewGameState, 'none', TypePlayer, TypeToPlay, PlayerS):-
+  clear,
   display_game(NewGameState),
   opposed_opponent_string(PlayerS, EnemyS),
   turn(NewGameState, TypeToPlay, EnemyS, TypePlayer).
+% If there's a winner, the game ends
 process_result(NewGameState, Winner, _, _, _):-
   display_game(NewGameState),
   format('Result -> ~s', Winner),
@@ -32,16 +41,14 @@ process_result(NewGameState, Winner, _, _, _):-
 % game_over(+GameState, +Player , -Winner)
 % checks first if enemy is winner
 game_over(GameState, CurrentPlayer, EnemyS):-
-  size_of_board(GameState, Size),
-  Size1 is Size-1,
+  size_of_board(GameState, Size), Size1 is Size-1,
   opposed_opponent_string(CurrentPlayer, EnemyS),
   check_win(EnemyS, GameState, Size1, EnemyS).
 % then checks if player is the winner
 game_over(GameState, CurrentPlayer, CurrentPlayer):-
-  size_of_board(GameState, Size),
-  Size1 is Size-1,
+  size_of_board(GameState, Size), Size1 is Size-1,
   check_win(CurrentPlayer, GameState, Size1, CurrentPlayer).
-% in case there is no winner
+% in case there is no winner, 'none' is returned
 game_over(_, _, 'none').
 
 % verifies if player 1 won, and if the helper function finds a solution, returns 'Player 1'

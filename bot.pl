@@ -67,7 +67,8 @@ choose_move(GameState, Player, 'Normal', X-Y-Direction):-
       nth0(1, SubList, Y1),
       nth0(2, SubList, Direction1),
       move(GameState, X1-Y1-Direction1, NewGameState),
-      value(NewGameState, Player, Value1)
+      value(NewGameState, Player, Value1),
+      write(Value1-X1-Y1-Direction1-Index), nl
     ),
     ListResults
     ),
@@ -160,6 +161,7 @@ value_part_2(GameState, [X-Y|Rest], ReturnList):-
   size_of_board(GameState, Size),
   floodFill(GameState, Size, X, Y, 0, 9, NewGS),
   values_in_all_columns(NewGS, 9, ListResult),
+  write(ListResult),nl,
   sequence(ListResult, TempValue),
   value_part_2(GameState, Rest, TempReturnList),
   append(TempReturnList, [TempValue], ReturnList).
@@ -269,7 +271,6 @@ check_spot(GameState, X, Y, Player, ReturnList):-
   available_dirs(GameState, X, Y, Player, TempList), TempList \= [],
   create_sublist(X, Y, TempList, Result),
   size_of_board(GameState, Size),
-  \+ check_end(X, Y, Size), 
   next_index(X, Y, Size, X1, Y1),
   check_spot(GameState, X1, Y1, Player, TempReturnList),
   append(TempReturnList, Result, ReturnList).

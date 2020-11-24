@@ -1,8 +1,10 @@
 option_dif(1, 'Easy').
 option_dif(2, 'Normal').
+clear:- write('\33\[2J').
 
 %Main Menu
 menu :-
+  clear,
   write('\nMenu\n'),
   write('1 - Player vs Player\n'),
   write('2 - Player vs Computer\n'),
@@ -58,11 +60,15 @@ menu_option(5):-
   write('\nMade By Andre Gomes and Goncalo Teixeira\n'),
   menu.
 menu_option(6):-
+  write('\33\[2J'),
   write('\nOption for Testing things\n'),
 
-  initial(1, GameState),
+  initial(3, GameState),
   display_game(GameState),
-  Player = 'Player 1',
+  transpose(GameState, Transpose),
+  display_game(Transpose),
+
+  Player = 'Player 2',
   valid_moves(GameState, Player, List),
 
   write(List), nl, 
@@ -73,7 +79,7 @@ menu_option(6):-
       nth0(0, SubList, X1),
       nth0(1, SubList, Y1),
       nth0(2, SubList, Direction1),
-      make_choice(GameState, X1-Y1-Direction1, NewGameState),
+      move(GameState, X1-Y1-Direction1, NewGameState),
       value(NewGameState, Player, Value1),
       write(Value1-X1-Y1-Direction1-Index), nl
     ),
@@ -127,7 +133,6 @@ pc_menu_3(_,_,0).
 % Choose a board, bot difficulty and player, can start game player vs bot game
 pc_menu_3(Size, Difficulty, Player):-
   index_to_board_size(Size,Actual), option_dif(Difficulty, Diff), 
-  format('\nTO IMPLEMENT\nPlayer vs Computer (~s), Player is Player ~d, Board Size ~dx~d\n', [Diff, Player, Actual, Actual]),
   pc_option(Size, Difficulty, Player).
 
 % TODO simplificar Isto para o predicado de cima
