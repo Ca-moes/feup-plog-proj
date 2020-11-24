@@ -33,8 +33,7 @@ make_move('Player', GameState, PlayerS, NewGameState) :-
   format('- Direction received in logic : ~s\n', Direction),
   move(GameState, X-Y-Direction, NewGameState), skip_line.
 make_move(Difficulty, GameState, Player, NewGameState):-
-  valid_moves(GameState, Player, List),
-  choose_move(GameState, Player, Difficulty, List, X, Y, Direction),
+  choose_move(GameState, Player, Difficulty, X-Y-Direction),
   row(Y, Letter), format("I'll move from X:~d Y:~s to the ~s Direction\n", [X, Letter, Direction]),
   move(GameState, X-Y-Direction, NewGameState).
 
@@ -48,17 +47,18 @@ remove('Player', GameState, PlayerS, NewGameState) :-
   format('- Selected spot: X : ~d -- Y : ~w \n', [Xread,Yread]),
   replace(GameState, Xtemp, Ytemp, 0, NewGameState), skip_line.
 remove(Difficulty, GameState, Player, NewGameState):-
-  valid_removes(GameState, Player, List),
-  choose_move(GameState, Player, Difficulty, List, X, Y),
+  choose_remove(GameState, Player, Difficulty, X-Y),
   row(Y, Letter), format("I'll remove my piece from X:~d Y:~s\n", [X, Letter]),
   replace(GameState, X, Y, 0, NewGameState).
 
-choose_move(_, _, 'Easy', List, X, Y, Direction):-
+choose_move(GameState, Player, 'Easy', X-Y-Direction):-
+  valid_moves(GameState, Player, List),
   random_member(Value, List),
   nth0(0, Value, X),
   nth0(1, Value, Y),
   nth0(2, Value, Direction).
-choose_move(GameState, Player, 'Normal', List, X, Y, Direction):-  
+choose_move(GameState, Player, 'Normal', X-Y-Direction):-  
+  valid_moves(GameState, Player, List),
   findall(
     Value1-X1-Y1-Direction1-Index,
     (
@@ -73,12 +73,13 @@ choose_move(GameState, Player, 'Normal', List, X, Y, Direction):-
     ),
   sort(ListResults, Sorted), 
   reverse(Sorted, [_-X-Y-Direction-_|_]).
-choose_move(_, _, 'Easy', List, X, Y):-
+choose_remove(GameState, Player, 'Easy', X-Y):-
+  valid_removes(GameState, Player, List),
   random_member(Value, List),
   nth0(0, Value, X),
   nth0(1, Value, Y).
-choose_move(GameState, Player, 'Normal', List, X, Y):-
-  write('here without direction'),
+choose_remove(GameState, Player, 'Normal', X-Y):-
+  valid_removes(GameState, Player, List),
   findall(
     Value1-X1-Y1-Index,
     (
