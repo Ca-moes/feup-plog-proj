@@ -8,14 +8,15 @@ start_game(GameState, Player1Type, Player2Type):-
   turn(GameState, Player1Type, 'Player 1', Player2Type ).
 
 turn(GameState, Player, PlayerS, NextPlayer):-
-  ((Player == 'Player', format('\n ~a turn.\n', PlayerS)) ; format('\n Computer turn as ~s.\n', PlayerS)),
+  ( Player = 'Player', format('\n ~a turn.\n', PlayerS) ; 
+    Player \= 'Player', format('\n Computer turn as ~s.\n', PlayerS) ),
   check_final_state(GameState, PlayerS, 0, 0),
   remove(Player, GameState, PlayerS, NewGameState),
-  check_winnner(NewGameState, PlayerS, TempResult),
+  game_over(NewGameState, PlayerS, TempResult),
   process_result(NewGameState, TempResult, Player, NextPlayer, PlayerS).
 turn(GameState, Player, PlayerS, NextPlayer):-
-  move(Player, GameState, PlayerS, NewGameState),
-  check_winnner(NewGameState, PlayerS, TempResult),
+  make_move(Player, GameState, PlayerS, NewGameState),
+  game_over(NewGameState, PlayerS, TempResult),
   process_result(NewGameState, TempResult, Player, NextPlayer, PlayerS).
 
 process_result(NewGameState, 'none', TypePlayer, TypeToPlay, PlayerS):-
@@ -28,19 +29,20 @@ process_result(NewGameState, Winner, _, _, _):-
   sleep(2).
 
 
+% game_over(+GameState, +Player , -Winner)
 % checks first if enemy is winner
-check_winnner(Board, CurrentPlayer, EnemyS):-
-  size_of_board(Board, Size),
+game_over(GameState, CurrentPlayer, EnemyS):-
+  size_of_board(GameState, Size),
   Size1 is Size-1,
   opposed_opponent_string(CurrentPlayer, EnemyS),
-  check_win(EnemyS, Board, Size1, EnemyS).
+  check_win(EnemyS, GameState, Size1, EnemyS).
 % then checks if player is the winner
-check_winnner(Board, CurrentPlayer, CurrentPlayer):-
-  size_of_board(Board, Size),
+game_over(GameState, CurrentPlayer, CurrentPlayer):-
+  size_of_board(GameState, Size),
   Size1 is Size-1,
-  check_win(CurrentPlayer, Board, Size1, CurrentPlayer).
+  check_win(CurrentPlayer, GameState, Size1, CurrentPlayer).
 % in case there is no winner
-check_winnner(_, _, 'none').
+game_over(_, _, 'none').
 
 % verifies if player 1 won, and if the helper function finds a solution, returns 'Player 1'
 check_win('Player 1', Board, Y, 'Player 1'):-
@@ -106,7 +108,6 @@ check_2_win_helper(Board, X, MaxY):-
 attemp_flood_fill(Board, X, Y, NewBoard):-
   size_of_board(Board, Size),
   floodFill(Board, Size, X, Y, 0, 9, NewBoard), !.
-
 % prolog implementation of the floodFill algorithm
 floodFill(Board, BoardSize, X, Y, PrevCode, NewCode, FinalBoard):-
   X >= 0, X < BoardSize, Y >= 0, Y < BoardSize,

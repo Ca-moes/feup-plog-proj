@@ -98,11 +98,12 @@ replace(Board, X, Y, Value, BoardResult):-
     replace_index(Y, Board, NewRow, BoardResult).
 
 %  performs the change in the board, replaces current piece with 0 and enemy piece with player code
-make_choice(Board, PlayerS, X, Y, Direction, FinalBoard):-
-    replace(Board, X, Y, 0, Board1),
+move(GameState, X-Y-Direction, NewGameState):-
+    replace(GameState, X, Y, 0, Board1),
     direction(X, Y, Direction, X1, Y1),
+    player_in_board(GameState, X, Y, PlayerS),
     player_piece(PlayerS, Code),
-    replace(Board1, X1, Y1, Code, FinalBoard).
+    replace(Board1, X1, Y1, Code, NewGameState).
 
 /* predicate to check if game as reached its final state */ 
 % if check_no_neightbors returs 0, ends predicate   

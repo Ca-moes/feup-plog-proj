@@ -26,17 +26,17 @@ valid_moves(+GameState, +Player, -ListOfMoves).
 
 
 % Player Predicate  move belongs to logic.pl but need to be together with the bot predicate
-move('Player', GameState, PlayerS, NewGameState) :-
+make_move('Player', GameState, PlayerS, NewGameState) :-
   choose_piece(GameState, PlayerS, X, Y, Directions),
   format('- Selected spot: X : ~d -- Y : ~w \n', [X,Y]),
   read_direction(Directions, Direction),
   format('- Direction received in logic : ~s\n', Direction),
-  make_choice(GameState, PlayerS, X, Y, Direction, NewGameState), skip_line.
-move(Difficulty, GameState, Player, NewGameState):-
+  move(GameState, X-Y-Direction, NewGameState), skip_line.
+make_move(Difficulty, GameState, Player, NewGameState):-
   valid_moves(GameState, Player, List),
   choose_move(GameState, Player, Difficulty, List, X, Y, Direction),
   row(Y, Letter), format("I'll move from X:~d Y:~s to the ~s Direction\n", [X, Letter, Direction]),
-  make_choice(GameState, Player, X, Y, Direction, NewGameState).
+  move(GameState, X-Y-Direction, NewGameState).
 
 % Player Predicate remove belongs to logic.pl but need to be together with the bot predicate
 % instead of moving a pice and captuing a enemy piece, a player piece is removed because there aren't any available plays
@@ -66,7 +66,7 @@ choose_move(GameState, Player, 'Normal', List, X, Y, Direction):-
       nth0(0, SubList, X1),
       nth0(1, SubList, Y1),
       nth0(2, SubList, Direction1),
-      make_choice(GameState, Player, X1, Y1, Direction1, NewGameState),
+      move(GameState, X1-Y1-Direction1, NewGameState),
       value(NewGameState, Player, Value1)
     ),
     ListResults

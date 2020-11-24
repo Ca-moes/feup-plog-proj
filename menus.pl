@@ -73,7 +73,7 @@ menu_option(6):-
       nth0(0, SubList, X1),
       nth0(1, SubList, Y1),
       nth0(2, SubList, Direction1),
-      make_choice(GameState, Player, X1, Y1, Direction1, NewGameState),
+      make_choice(GameState, X1-Y1-Direction1, NewGameState),
       value(NewGameState, Player, Value1),
       write(Value1-X1-Y1-Direction1-Index), nl
     ),
@@ -138,11 +138,9 @@ pc_option(Size, 1, 2):-
   initial(Size, GameState),
   start_game(GameState, 'Easy', 'Player').
 pc_option(Size, 2, 1):-
-  write('\nTO IMPLEMENT\n'),
   initial(Size, GameState),
   start_game(GameState, 'Player', 'Normal').
 pc_option(Size, 2, 2):-
-  write('\nTO IMPLEMENT\n'),
   initial(Size, GameState),
   start_game(GameState, 'Normal', 'Player').
 
