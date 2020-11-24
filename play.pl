@@ -37,50 +37,43 @@ process_result(NewGameState, Winner, _, _, _):-
   format('Result -> ~s', Winner),
   sleep(2).
 
-
 % game_over(+GameState, +Player , -Winner)
 % checks first if enemy is winner
 game_over(GameState, CurrentPlayer, EnemyS):-
   size_of_board(GameState, Size), Size1 is Size-1,
   opposed_opponent_string(CurrentPlayer, EnemyS),
-  check_win(EnemyS, GameState, Size1, EnemyS).
+  check_win(EnemyS, GameState, Size1).
 % then checks if player is the winner
 game_over(GameState, CurrentPlayer, CurrentPlayer):-
   size_of_board(GameState, Size), Size1 is Size-1,
-  check_win(CurrentPlayer, GameState, Size1, CurrentPlayer).
+  check_win(CurrentPlayer, GameState, Size1).
 % in case there is no winner, 'none' is returned
 game_over(_, _, 'none').
 
 % check_win(+PlayerS, +GameState, +K, -Result)
 % to check the win for Player 1, we can check the win for Player 1 with the transposed matrix
-check_win('Player 2', GameState, X, Result):-
+check_win('Player 2', GameState, X):-
   transpose(GameState, Transpose),
-  check_win('Player 1', Transpose, X, Result).
-% verifies if player 1 won, and if the helper function finds a solution, returns 'Player 1'
-check_win('Player 1', Board, Y, 'Player 1'):-
+  check_win('Player 1', Transpose, X).
+% verifies if player 1 won, and if the helper function finds a solution, returns 'Player 1', if it fails, goes to next predicate
+check_win('Player 1', Board, Y):-
   value_in_board(Board, 0, Y, 0), 
   attemp_flood_fill(Board, 0, Y, NewBoard),
   size_of_board(Board, Size), Size1 is Size-1,
   check_win_helper(NewBoard, Size1, Size1).
-% if the helper functions doesn't find a solution, goes to next predicate
-check_win('Player 1', Board, Y, _):-
-  value_in_board(Board, 0, Y, 0), 
-  attemp_flood_fill(Board, 0, Y, NewBoard),
-  size_of_board(Board, Size), Size1 is Size-1,
-  check_win_helper(NewBoard, Size1, Size1).
-% if the value in board is not 0, goes to next spot
-check_win('Player 1', Board, Y, Result):-
-  Y1 is Y-1, Y1 >= 0, 
-  check_win('Player 1', Board, Y1, Result).
-% once it reaches the end of the board, returns 'none'
-check_win('Player 1', _, _, 'none').
+% if the value in board is not 0 or previous fails, goes to next spot
+check_win('Player 1', Board, Y):-
+  Y @> 0, Y1 is Y-1, 
+  check_win('Player 1', Board, Y1).
+% once it reaches the end of the board, fails
+check_win('Player 1', _, _):- fail.
 
 % if the value in board in 9, a solution was found
 check_win_helper(Board, Y, MaxX):-
-  value_in_board(Board, MaxX, Y, 9).
+  Y >= 0, value_in_board(Board, MaxX, Y, 9).
 % else goes to the next spot and checks
 check_win_helper(Board, Y, MaxX):-
-  Y1 is Y-1, Y1 >= 0,
+  Y > 0, Y1 is Y-1, 
   check_win_helper(Board, Y1, MaxX).
 
 % does one floodfill and doesn't repeat on redo

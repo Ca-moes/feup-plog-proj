@@ -35,6 +35,7 @@ make_move('Player', GameState, PlayerS, NewGameState) :-
 make_move(Difficulty, GameState, Player, NewGameState):-
   choose_move(GameState, Player, Difficulty, X-Y-Direction),
   row(Y, Letter), format("I'll move from X:~d Y:~s to the ~s Direction\n", [X, Letter, Direction]),
+  sleep(1),
   move(GameState, X-Y-Direction, NewGameState).
 
 % Player Predicate remove belongs to logic.pl but need to be together with the bot predicate
@@ -49,6 +50,7 @@ remove('Player', GameState, PlayerS, NewGameState) :-
 remove(Difficulty, GameState, Player, NewGameState):-
   choose_remove(GameState, Player, Difficulty, X-Y),
   row(Y, Letter), format("I'll remove my piece from X:~d Y:~s\n", [X, Letter]),
+  sleep(1),
   replace(GameState, X, Y, 0, NewGameState).
 
 choose_move(GameState, Player, 'Easy', X-Y-Direction):-
@@ -67,8 +69,7 @@ choose_move(GameState, Player, 'Normal', X-Y-Direction):-
       nth0(1, SubList, Y1),
       nth0(2, SubList, Direction1),
       move(GameState, X1-Y1-Direction1, NewGameState),
-      value(NewGameState, Player, Value1),
-      write(Value1-X1-Y1-Direction1-Index), nl
+      value(NewGameState, Player, Value1)
     ),
     ListResults
     ),
