@@ -155,13 +155,11 @@ value(GameState, 'Player 2', Value):-
   value(Transpose, 'Player 1', Value).
 
 
-
 value_part_2(_, [], []).
 value_part_2(GameState, [X-Y|Rest], ReturnList):-
   size_of_board(GameState, Size),
   floodFill(GameState, Size, X, Y, 0, 9, NewGS),
   values_in_all_columns(NewGS, 9, ListResult),
-  write(ListResult),nl,
   sequence(ListResult, TempValue),
   value_part_2(GameState, Rest, TempReturnList),
   append(TempReturnList, [TempValue], ReturnList).
