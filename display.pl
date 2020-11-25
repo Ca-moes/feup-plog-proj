@@ -1,5 +1,5 @@
+% initial(+Identifier, -Board)
 % Initial board with pieces in chess formation
-
 /* initial(1, [
   [ 1,-1, 1,-1, 1,-1],
   [-1, 1,-1, 1,-1, 1],
@@ -112,14 +112,15 @@ initial(4, [
   [ 1,-1, 1]
 ]).
 
+% index_to_board_size(+Identifier, -Size).
+% Gives the Board Size from a Menu Identifier to print out in menu
 index_to_board_size(1,6).
 index_to_board_size(2,8).
 index_to_board_size(3,10).
-index_to_board_size(3,3).
+index_to_board_size(4,3).
 
 
-
-
+% size_of_board(+Board, -X)
 % returns in X the size of the Square Board. Does not accept Rectangular Boards
 size_of_board(Board, X):-
   nth0(0, Board, Header),
@@ -127,10 +128,13 @@ size_of_board(Board, X):-
   length(Board, Y),
   X == Y. % check if board is nxn and not nxm
 
+% opposed_opponent_code(+PlayerS, -Code)
 % Code takes opposed player code
 opposed_opponent_code(PlayerS, Code):-
   player_piece(PlayerS, Piece),
   Code is -Piece.
+
+% opposed_opponent_string(+PlayerS, -EnemyS)
 % EnemyS returns the string of the enemy of PlayerS
 opposed_opponent_string(PlayerS, EnemyS):-
   opposed_opponent_code(PlayerS, Code),
@@ -192,7 +196,6 @@ print_line([C|L]) :-
   code(C, P),put_code(P), write(' | '),
   print_line(L).
 
-
 print_header_numbers(Inicial, Final):-
   Inicial = Final,
   write('\n').
@@ -224,15 +227,10 @@ print_header(P, X):-
   write('---+   *---'),
   print_board_separator(X).
 
-
 % Prints the board according to its state
-display_game(Board) :- % trocar _ por Player no futuro, está assim para não ser singleton
-  % Header of the board
+display_game(Board):- 
   nl, code(-1, P), size_of_board(Board, X),
   print_header(P, X),
   print_matrix(Board, 0, X),
   write('         '),
   print_line_codes(X, P).
-
-% test display:
-% ?- initial_board(_B), print_board(_B).
