@@ -22,18 +22,23 @@ turn(GameState, Player, PlayerS, NextPlayer):-
 % Turn predicate for moving a piece
 turn(GameState, Player, PlayerS, NextPlayer):-
   make_move(Player, GameState, PlayerS, NewGameState),
+  statistics(runtime, [T0|_]),
   game_over(NewGameState, PlayerS, TempResult),
+  sleep(1),
+  statistics(runtime, [T1,T2]),
+  T is T1-T0,
+  format('\ngame_over took ~500d sec.~n', [T0]),
   process_result(NewGameState, TempResult, Player, NextPlayer, PlayerS).
 
 % process_result(+NewGameState, +Winner, +TypePlayer, +TypeToPlay, +PlayerS)
 % Processes the Winner argument, if there are no winners then it's the opponent's turn
 process_result(NewGameState, 'none', TypePlayer, TypeToPlay, PlayerS):-
-  clear, display_game(NewGameState),
+  display_game(NewGameState),
   opposed_opponent_string(PlayerS, EnemyS),
   turn(NewGameState, TypeToPlay, EnemyS, TypePlayer).
 % If there's a winner, the game ends
 process_result(NewGameState, Winner, _, _, _):-
-  clear, display_game(NewGameState),
+  display_game(NewGameState),
   format('Result -> ~s', Winner),
   sleep(2).
 
@@ -55,8 +60,16 @@ game_over(_, _, 'none').
 check_win('Player 2', GameState, X):-
   transpose(GameState, Transpose),
   check_win('Player 1', Transpose, X).
+
+check_win('Player 1', GameState, Size1):-
+  Size is Size1+1,
+  value(GameState, 'Player 1', Value),
+  format('Size: ~d, Value: ~d', [Size, Value]),
+  Value == Size.
+
+
 % verifies if player 1 won, and if the helper function finds a solution, returns true, if it fails, goes to next predicate
-check_win('Player 1', Board, Y):-
+/* check_win('Player 1', Board, Y):-
   value_in_board(Board, 0, Y, 0), 
   attemp_flood_fill(Board, 0, Y, NewBoard),
   size_of_board(Board, Size), Size1 is Size-1,
@@ -74,7 +87,7 @@ check_win_helper(Board, Y, MaxX):-
 % else goes to the next spot and checks
 check_win_helper(Board, Y, MaxX):-
   Y > 0, Y1 is Y-1, 
-  check_win_helper(Board, Y1, MaxX).
+  check_win_helper(Board, Y1, MaxX). */
 
 % does one floodfill and doesn't repeat on redo
 attemp_flood_fill(Board, X, Y, NewBoard):-

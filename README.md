@@ -141,3 +141,25 @@ O predicado `valid_moves(+GameState, +PlayerS, -List)` usa o predicado `check_sp
 Para além do predicado `valid_moves`, temos também o predicado `valid_removes(+GameState, +PlayerS, -List)` que contempla a parte final do jogo, na qual, caso não haja movimentos possiveis, os jogadores começam a remover uma peça por turno. Este predicado difere no anterior nas sublistas da lista retornada, que ficam na forma `[X, Y]`, já que não é preciso uma direção.
 
 ### Execução de Jogadas
+
+Para o Jogador conseguir executar uma jogada, o programa tem de retornar corretamente de dois predicados: `choose_piece(+Board, +PlayerS, -Xtemp, -Ytemp, -Directions)` e `read_direction(+List, -DirSelected)`.
+
+No primeiro predicado é realizada a leitura dos valores `X` e `Y` para ter a posição a partir de onde o Jogador vai jogar. Estes valores têm de corresponder a uma posição dentro dos limites do tabuleiro onde esteja posicionada uma peça do Jogador, se o jogador der input de uma linha e coluna e nessa posição não estiver uma peça sua, é-lhe pedido que introduza outros valores válidos.
+
+Assim que o input da posição esteja correto, o predicado `choose_piece(+Board, +PlayerS, -Xtemp, -Ytemp, -Directions)` retorna com os valores lidos e as direções disponiveis, estas direções são passadas ao predicado `read_direction(+List, -DirSelected)` e aqui é feita a escolha, do lado do jogador, de uma das direções disponiveis.
+
+Assim que estes 3 valores estiverem determinados (`X-Y-dir`), é possivel executar o predicado `move(+GameState, +Move, -NewGameState)` e obter o Tabuleiro resultante desta jogada.
+
+### Final do Jogo
+
+Um caso possivel de acontecer é de um Jogador fazer uma jogada, tal que abra um caminho para si, mas também para o inimigo, sendo assim a vitória do inimigo. Para fazer esta verificação, no final de uma jogada, o predicado `game_over(+GameState, +Player , -Winner)` é chamado e é primeiro verificado se o jogador oposto tem um caminho formado entre os seus lados do tabuleiro. Caso não haja, então é que é verificado se existe um caminho para o jogador inicial.
+
+A verificação da vitória é feita no predicado `check_win(+PlayerS, +GameState, +K, -Result)`. 
+```prolog
+% check_win(+PlayerS, +GameState, +K, -Result)
+% to check the win for Player 1, we can check the win for Player 1 with the transposed matrix
+check_win('Player 2', GameState, X):-
+  transpose(GameState, Transpose),
+  check_win('Player 1', Transpose, X).
+```
+Este predicado verifica se existe um caminho entreo lado esquerdo e o lado direito 
