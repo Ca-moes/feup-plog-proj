@@ -4,107 +4,75 @@
 - [André Daniel Alves Gomes](up201806224@fe.up.pt) - up201806224
 - [Gonçalo André Carneiro Teixeira](up201806562@fe.up.pt) - up201806562
 
-## Descrição do Jogo
+## Instalação e Execução
+### Windows
+- Executar `spwin.exe`
+- `File` -> `Consult...` -> Selecionar ficheiro `talpa.pl`
+- Na consola do SicStus: `play.`
+### Linux
+> Deve ser os mesmos passos, necessário testar
 
-Tendo como estado inicial um tabuleiro 8x8 preenchido por peças quadradas de 2 cores (azul e vermelho) dispostas num padrão em *xadrez*, os jogadores, de forma alternada, começando pelo que controla as peças **vermelhas**, escolhem uma das suas peças e *capturam* uma das peças do oponente num quadrado adjacente na vertical ou horizontal. A peça capturada é removida do tabuleiro e a peça que capturou ocupa o quadrado capturado. Quando a captura é possivel esta é obrigatória, em caso contrário os jogadores removem uma das suas peças por turno. O jogo acaba quando um caminho é formado pelos quadrados livres entre duas pontas do tabuleiro de um dos jogadores. Caso um jogador faça uma jogada que abra um caminho para si e para o adversário o adversário ganha.
+## Talpa - Descrição do Jogo
 
-Fontes de informação:
-- [nestorgames - Talpa](https://nestorgames.com/#talpa_detail)
-- [nestorgames - Talpa rulebook](https://nestorgames.com/rulebooks/TALPA_EN.pdf)
-- [BoardGameGeek](https://boardgamegeek.com/boardgame/80657/talpa)
+O objetivo do jogo é criar um caminho formado por lugares vazios no tabuleiro, que conecte lados opostos do tabuleiro, sendo cada par de lados opostos atribuido a um dos jogadores. 
 
-## Representação Interna do Estado do Jogo
-O estado de Jogo é representado a partir da combinação de um **tabuleiro** e de um **jogador atual** correspondente a um dos jogadores. O tabuleiro é guardado usando uma lista de listas cujos valores representam peças, estando os códigos representados abaixo, juntamente com o tabuleiro.
+Tendo como estado inicial um tabuleiro 8x8 preenchido por peças quadradas de 2 cores (azul e vermelho) dispostas num padrão em *xadrez*, os jogadores, de forma alternada, começando pelo que controla as peças **vermelhas**, escolhem uma das suas peças e *capturam* uma das peças do oponente num quadrado adjacente na vertical ou horizontal. A peça capturada é removida do tabuleiro e a peça que capturou ocupa o quadrado capturado. Quando a captura é possivel esta é obrigatória, em caso contrário os jogadores removem uma das suas peças por turno.
+
+O jogo acaba quando um caminho é formado pelos espaços livres entre dois lados do tabuleiro de um dos jogadores. Caso um jogador faça uma jogada que abra um caminho para si e para o adversário, o adversário ganha.
+
+## Lógica do Jogo
+### Representação Interna do Estado de Jogo
+#### Tabuleiro
+O tabuleiro é representado a partir de uma lista com sublistas, sendo cada sublista uma linha do tabuleiro. Cada elemento, durante o jogo, pode ter 1 de 3 valores possiveis:
+- `0` representa uma posição vazia
+- `1` representa uma posição com uma peça pertencente ao jogador 1 
+- `2` representa uma posição com uma peça pertencente ao jogador 2 
+
+Fica também reservado o valor `9` que serve como caracter de enchimento usado no algoritmo `floodFill`, explicado numa próxima secção.
+
 ```prolog
-%  Tabuleiro inicial com peças em formação xadrez
-initial_board([
-  [1,2,1,2,1,2,1,2],
-  [2,1,2,1,2,1,2,1],
-  [1,2,1,2,1,2,1,2],
-  [2,1,2,1,2,1,2,1],
-  [1,2,1,2,1,2,1,2],
-  [2,1,2,1,2,1,2,1],
-  [1,2,1,2,1,2,1,2],
-  [2,1,2,1,2,1,2,1]
-]).
+Possiveis estados de jogo:
 
-% códigos das peças na list
-code(0, ' ').  % sitio sem peças
-code(1, 'X').  % peças vermelhas
-code(2, '+').  % peças azuis
+- Inicial:
+[ [ 1,-1, 1,-1, 1,-1],
+  [-1, 1,-1, 1,-1, 1],
+  [ 1,-1, 1,-1, 1,-1],
+  [-1, 1,-1, 1,-1, 1],
+  [ 1,-1, 1,-1, 1,-1],
+  [-1, 1,-1, 1,-1, 1] ]
+
+- Intermedio:
+[ [ 0, 0, 1, 0, 1,-1],
+  [-1, 0, 0, 0,-1, 1],
+  [ 0, 0, 0,-1, 0, 0],
+  [ 0, 1, 0, 1, 0, 1],
+  [ 0,-1, 1, 0, 1,-1],
+  [-1, 1,-1, 1, 0, 1] ]
+
+- Final:
+[ [ 0, 0, 1, 0, 1,-1],
+  [-1, 0, 0, 0,-1, 1],
+  [ 0, 0, 0,-1, 0, 0],
+  [ 0, 1, 0, 1, 0, 1],
+  [ 0,-1, 1, 0, 1,-1],
+  [ 0,-1,-1, 1, 0, 1] ]
+
 ```
-O jogador atual pode ter 2 valores : `'Player 1'` ou `'Player 2'`, sendo um destes valores passado aos predicados `turn`, `select_spot` e `display_game`.
-O valor do tabuleiro vai sendo alterado ao longo do jogo, podendo passar, como exemplo, pelos seguintes estados:
+
+#### Player
+O player tem does estados possiveis, ambos strings: `Player 1` e `Player 2`.
+Estas strings estão associadas ao elementos do board a partir do predicado `player_piece/2`.
 ```prolog
-% Estado Inicial
-[
-  [1,2,1,2,1,2,1,2],
-  [2,1,2,1,2,1,2,1],
-  [1,2,1,2,1,2,1,2],
-  [2,1,2,1,2,1,2,1],
-  [1,2,1,2,1,2,1,2],
-  [2,1,2,1,2,1,2,1],
-  [1,2,1,2,1,2,1,2],
-  [2,1,2,1,2,1,2,1]
-]
-
-% Estado Intermédio
-[
-  [2,2,2,2,1,0,2,0],
-  [0,1,0,0,0,0,0,2],
-  [2,2,0,1,0,2,1,2],
-  [0,0,0,2,0,1,2,1],
-  [0,1,1,0,1,2,1,2],
-  [1,0,0,0,1,0,1,1],
-  [1,2,0,1,1,2,1,2],
-  [2,1,2,1,2,1,2,1]
-]
-
-% Estado Final: _ representam 0 mas foram substituidos para mostrar o caminho final   
-[
-  [2,2,2,2,1,0,2,0],
-  [0,0,0,0,0,0,0,2],
-  [2,1,0,1,0,0,1,0],
-  [0,0,0,2,0,2,0,2],
-  [0,1,1,0,1,_,_,_],
-  [2,0,_,_,_,_,1,0],
-  [_,_,_,1,1,2,0,0],
-  [2,1,2,0,1,1,1,0]
-]
-``` 
-## Visualização do Estado de Jogo
-
-### Predicado de Visualização
-
-Ao executar o predicado `display_game`, o programa começa por desenhar o cabeçalho do tabuleiro e procede a desenhar alternadamente uma linha, fazendo uso do predicado `print_line`, e um separador no predicado `print_matrix`. Quando acaba de desenhar todas as linhas retorna.
-```prolog
-% quando o contador chegar a 8 significa que acabou
-print_matrix([], 8).
-print_matrix([L|T], N) :-
-  row(N, R), write(' '), write(R), write(' | '),
-  N1 is N + 1,
-  print_line(L), nl,
-  write('---|---|---|---|---|---|---|---|---|\n'),
-  print_matrix(T, N1).
-
-% imprime uma linha do tabuleiro
-print_line([]).
-print_line([C|L]) :-
-  code(C, P), write(P), write(' | '),
-  print_line(L).
-
-% Imprime o tabuleiro de acordo com o estado de Board
-display_game(Board, Player) :-
-  % cabeçalho do tabuleiro
-  nl,
-  write('   | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |\n'),
-  write('---|---|---|---|---|---|---|---|---|\n'),
-  print_matrix(Board, 0).
+player_piece('Player 1', 1).
+player_piece('Player 2', -1).
 ```
-### Estados do tabuleiro
-| Inicial | Intermédio | Final |
-|--------|-------|---|
-| ![Estado Inicial](https://i.imgur.com/XsrXPdp.png)  | ![Estado Intermédio](https://i.imgur.com/1xufEy8.png) | ![Estado Final](https://i.imgur.com/tryYD6T.png) |
+Na representação gráfica do tabuleiro, as peças do `Player 1` são `×` e as peças do `Player 2` são `Ø`. Esta associação é feita a partir do predicado `code/2`, que associa um valor de uma peça do tabuleiro a um código ASCII, usado com `put_code` na representação gráfica para apresentar a peça:
+```prolog
+% Pieces codes for board representation
+code(0, 32). %ascii code for space
+code(-1, 216). % Ø - Player 2
+code(1, 215). % × - Player 1
+code(9, 181). % µ - used for floodFill
+```
 
-
-
+#### Playing 
