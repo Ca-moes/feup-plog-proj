@@ -1,8 +1,10 @@
 option_dif(1, 'Easy').
 option_dif(2, 'Normal').
+clear:- write('\33\[2J').
 
 %Main Menu
 menu :-
+  clear,
   write('\nMenu\n'),
   write('1 - Player vs Player\n'),
   write('2 - Player vs Computer\n'),
@@ -58,11 +60,15 @@ menu_option(5):-
   write('\nMade By Andre Gomes and Goncalo Teixeira\n'),
   menu.
 menu_option(6):-
+  write('\33\[2J'),
   write('\nOption for Testing things\n'),
 
-  initial(1, GameState),
+  initial(3, GameState),
   display_game(GameState),
-  Player = 'Player 1',
+  transpose(GameState, Transpose),
+  display_game(Transpose),
+
+  Player = 'Player 2',
   valid_moves(GameState, Player, List),
 
   write(List), nl, 
@@ -73,7 +79,7 @@ menu_option(6):-
       nth0(0, SubList, X1),
       nth0(1, SubList, Y1),
       nth0(2, SubList, Direction1),
-      make_choice(GameState, Player, X1, Y1, Direction1, NewGameState),
+      move(GameState, X1-Y1-Direction1, NewGameState),
       value(NewGameState, Player, Value1),
       write(Value1-X1-Y1-Direction1-Index), nl
     ),
@@ -120,17 +126,9 @@ pc_menu_2(Size, Difficulty):-
   write('2 - Player 2\n'),
   write('0 - Exit\n'),
   read_number(0,2,Number),
-  pc_menu_3(Size, Difficulty, Number).
+  pc_option(Size, Difficulty, Number).
 
-% Returning to Main Menu
-pc_menu_3(_,_,0).
-% Choose a board, bot difficulty and player, can start game player vs bot game
-pc_menu_3(Size, Difficulty, Player):-
-  index_to_board_size(Size,Actual), option_dif(Difficulty, Diff), 
-  format('\nTO IMPLEMENT\nPlayer vs Computer (~s), Player is Player ~d, Board Size ~dx~d\n', [Diff, Player, Actual, Actual]),
-  pc_option(Size, Difficulty, Player).
-
-% TODO simplificar Isto para o predicado de cima
+pc_option(_,_,0).
 pc_option(Size, 1, 1):-
   initial(Size, GameState),
   start_game(GameState, 'Player', 'Easy').
@@ -138,11 +136,9 @@ pc_option(Size, 1, 2):-
   initial(Size, GameState),
   start_game(GameState, 'Easy', 'Player').
 pc_option(Size, 2, 1):-
-  write('\nTO IMPLEMENT\n'),
   initial(Size, GameState),
   start_game(GameState, 'Player', 'Normal').
 pc_option(Size, 2, 2):-
-  write('\nTO IMPLEMENT\n'),
   initial(Size, GameState),
   start_game(GameState, 'Normal', 'Player').
 
@@ -168,16 +164,9 @@ cc_menu_2(Size, Diff1):-
   write('2 - Normal (Greedy)\n'),
   write('0 - Exit\n'),
   read_number(0,2,Number),
-  cc_menu_3(Size, Diff1, Number).
-
-% Returning to Main Menu
-cc_menu_3(_, _, 0).
-% Choose a board, bot 1 difficulty and bot 2 difficulty, can start bot vs bot game
-cc_menu_3(Size, Diff1, Diff2):-
-  index_to_board_size(Size,Actual), option_dif(Diff1, Diff1S), option_dif(Diff2, Diff2S),
-  format('\nTO IMPLEMENT\nComputer (~s) vs Computer (~s) - ~dx~d Board\n', [Diff1S, Diff2S, Actual, Actual]),
-  cc_option(Size, Diff1, Diff2).
-
+  cc_option(Size, Diff1, Number).
+  
+cc_option(_,_,0).
 cc_option(Size, 1, 1):-
   initial(Size, GameState),
   start_game(GameState, 'Easy', 'Easy').
