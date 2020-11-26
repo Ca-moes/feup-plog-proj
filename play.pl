@@ -22,12 +22,7 @@ turn(GameState, Player, PlayerS, NextPlayer):-
 % Turn predicate for moving a piece
 turn(GameState, Player, PlayerS, NextPlayer):-
   make_move(Player, GameState, PlayerS, NewGameState),
-  statistics(runtime, [T0|_]),
   game_over(NewGameState, PlayerS, TempResult),
-  sleep(1),
-  statistics(runtime, [T1,T2]),
-  T is T1-T0,
-  format('\ngame_over took ~500d sec.~n', [T0]),
   process_result(NewGameState, TempResult, Player, NextPlayer, PlayerS).
 
 % process_result(+NewGameState, +Winner, +TypePlayer, +TypeToPlay, +PlayerS)
@@ -45,13 +40,13 @@ process_result(NewGameState, Winner, _, _, _):-
 % game_over(+GameState, +Player , -Winner)
 % checks first if enemy is winner
 game_over(GameState, CurrentPlayer, EnemyS):-
-  size_of_board(GameState, Size), Size1 is Size-1,
+  size_of_board(GameState, Size), 
   opposed_opponent_string(CurrentPlayer, EnemyS),
-  check_win(EnemyS, GameState, Size1).
+  check_win(EnemyS, GameState, Size).
 % then checks if player is the winner
 game_over(GameState, CurrentPlayer, CurrentPlayer):-
-  size_of_board(GameState, Size), Size1 is Size-1,
-  check_win(CurrentPlayer, GameState, Size1).
+  size_of_board(GameState, Size),
+  check_win(CurrentPlayer, GameState, Size).
 % in case there is no winner, 'none' is returned
 game_over(_, _, 'none').
 
@@ -61,33 +56,10 @@ check_win('Player 2', GameState, X):-
   transpose(GameState, Transpose),
   check_win('Player 1', Transpose, X).
 
-check_win('Player 1', GameState, Size1):-
-  Size is Size1+1,
+check_win('Player 1', GameState, Size):-
   value(GameState, 'Player 1', Value),
   format('Size: ~d, Value: ~d', [Size, Value]),
   Value == Size.
-
-
-% verifies if player 1 won, and if the helper function finds a solution, returns true, if it fails, goes to next predicate
-/* check_win('Player 1', Board, Y):-
-  value_in_board(Board, 0, Y, 0), 
-  attemp_flood_fill(Board, 0, Y, NewBoard),
-  size_of_board(Board, Size), Size1 is Size-1,
-  check_win_helper(NewBoard, Size1, Size1).
-% if the value in board is not 0 or previous fails, goes to next spot
-check_win('Player 1', Board, Y):-
-  Y > 0, Y1 is Y-1, 
-  check_win('Player 1', Board, Y1).
-% once it reaches the end of the board, fails
-check_win('Player 1', _, _):- fail.
-
-% if the value in board in 9, a solution was found
-check_win_helper(Board, Y, MaxX):-
-  Y >= 0, value_in_board(Board, MaxX, Y, 9).
-% else goes to the next spot and checks
-check_win_helper(Board, Y, MaxX):-
-  Y > 0, Y1 is Y-1, 
-  check_win_helper(Board, Y1, MaxX). */
 
 % does one floodfill and doesn't repeat on redo
 attemp_flood_fill(Board, X, Y, NewBoard):-
@@ -97,7 +69,7 @@ attemp_flood_fill(Board, X, Y, NewBoard):-
 floodFill(Board, BoardSize, X, Y, PrevCode, NewCode, FinalBoard):-
   X >= 0, X < BoardSize, Y >= 0, Y < BoardSize,
   value_in_board(Board, X, Y, PrevCode),
-  replace(Board, X, Y, NewCode, BoardResult), % substitui 0 pelo novo valor,
+  replace(Board, X, Y, NewCode, BoardResult), % replaces PrevCode by NewCode
   X1 is X+1, X2 is X-1, Y1 is Y+1, Y2 is Y-1,
   floodFill(BoardResult, BoardSize, X1, Y, PrevCode, NewCode, T1) ,
   floodFill(T1, BoardSize, X2, Y, PrevCode, NewCode, T2) ,

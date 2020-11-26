@@ -150,9 +150,61 @@ Assim que o input da posição esteja correto, o predicado `choose_piece(+Board,
 
 Assim que estes 3 valores estiverem determinados (`X-Y-dir`), é possivel executar o predicado `move(+GameState, +Move, -NewGameState)` e obter o Tabuleiro resultante desta jogada.
 
+### Avaliação do Tabuleiro
+
+Para analisar o "valor" de um tabuleiro, para um jogador, implementamos a função `value(+GameState, +Player, -Value)` que é constituida por duas partes. Na primeira parte, o tabuleiro é percorrido célula a célula até encontrar uma célula vazia, tendo essa célula como ponto inicial é realizado o algoritmo **Flood Fill**.
+
+#### FloodFill
+FloodFill é um algoritmo usado em arrays mutidimensionais para determinar "áreas" interligadas entre si. Para utilizar este algoritmo precisamos de uma matriz, uma posição inicial, um valor a substituir (A) e um valor que será substituido (B). O algoritmo começa na posição inicial e verifica se o valor que aí se encontra é igual a A, em caso positivo, a posição fica com o valor B e o algoritmo é aplicado nas células adjacentes á célula inicial. Nessas células faz-se a mesma verificação do valor A e substituição pelo valor B. Se a posição não tiver valor A, então o seu valor não é substituido e as posições adjacentes não são verificadas. O algoritmo termina quando não houver mais células a verificar.
+
+![Flood Fill Demonstration](kadabra./README_files/Recursive_Flood_Fill.gif)
+##### Exemplo usando um board intermédio
+
+| Before Flood Fill | After FloodFill |
+|--------|-------|
+| ![Flood Fill Demonstration](kadabra./README_files/Board_before_floodfill.png)  | ![Flood Fill Demonstration](kadabra./README_files/Board_after_floodfill.png) |
+
+> Implementação em Prolog
+
+```prolog
+% prolog implementation of the floodFill algorithm
+floodFill(Board, BoardSize, X, Y, PrevCode, NewCode, FinalBoard):-
+  X >= 0, X < BoardSize, Y >= 0, Y < BoardSize,
+  value_in_board(Board, X, Y, PrevCode),
+  replace(Board, X, Y, NewCode, BoardResult), % replaces PrevCode by NewCode
+  X1 is X+1, X2 is X-1, Y1 is Y+1, Y2 is Y-1,
+  floodFill(BoardResult, BoardSize, X1, Y, PrevCode, NewCode, T1) ,
+  floodFill(T1, BoardSize, X2, Y, PrevCode, NewCode, T2) ,
+  floodFill(T2, BoardSize, X, Y1, PrevCode, NewCode, T3) ,  
+  floodFill(T3, BoardSize, X, Y2, PrevCode, NewCode, FinalBoard).
+% if initial floodfill returns from every direction, returns the initial board
+floodFill(Board, _, _, _, _, _, Board).
+```
+---
+
+Continuando com a avaliação do tabuleiro, após ter sido realizado o algoritmo de **Flood Fill** no tabuleiro, é formada uma *mancha* pelos carácters de enchimento que será analisada na segunda parte. O valor da posição na qual foi feito o Flood Fill é guardado e este predicado é chamado recursivamente com o novo tabuleiro. Desta forma serão encontradas, e guardadas, todas as posições possiveis de sofrer Flood Fill, equivalentes a *manchas* independentes entre si. No final é retornada uma lista que contém sublistas da forma `[X-Y]`, correspondente ás posições possiveis de fazer Flood FIll.
+
+```
+Pseudocódigo parte 1:
+  Percorre célula a célula
+  Encontra lugar 0
+    FloodFill para obter novo GameState, Guarda Posição X-Y para depois retornar e chama mesmo predicado
+    com novo GameState
+    Dá append a X-Y á lista de Return de ter chamado o predicado e dá return da nova lista
+```
+
+Na segunda parte, a lista de posições recém formada é percorrida, uma a uma, para analisar cada *mancha*. Tendo uma posição, é realizado o algoritmo de **Flood Fill** para obter um tabuleiro com uma *mancha*. Este novo tabuleiro é passado ao predicado `values_in_all_columns(+GameState, +Value, -ListResult)` que percorrerá o tabuleiro e guardará numa lista, com cada elemento a simbolizar uma coluna, os valores da soma das ocorrência de cada carácter de enchimento por coluna, formando, por exemplo, uma lista semelhante a `[4,3,3,2,0,0]` que corresponde á lista retornada por este predicado se fosse passado como argumento o tabuleiro *After FloodFill* [da secção acima](#exemplo-usando-um-board-intermédio).
+
+Esta lista é a seguir passada como argumento para o predicado `sequence(+List, -Result)` que retorna em `Result` o valor correspondente ao comprimento da maior sequência de números formados sem usar o número 0 que, usando o exemplo de cima, retornaria `4`. É assim obtido o **value** de uma possivel mancha.
+
+Este **value** corresponde ao **alcance** da mancha após uma jogada. Se o **value** for igual ao comprimento do tabuleiro, significa que essa jogada criou uma mancha cujo alcance vai desde um lado ao lado oposto do tabuleiro, sendo esta uma jogada que abre um caminho vencedor para o jogador. Quanto maior for o valor de **value**, maior será o alcance de uma mancha e mais próximo está o jogador de abrir um caminho entre os seus dois lados do tabuleiro.
+
+A segunda parte do predicado value acaba no fim de verificar todos as posições que formam manchas independentes, obtendo uma lista de **values** para cada mancha. Para obter o **value** de um tabuleiro o predicado retorna o maior dos **values** da lista, que corresponde à mancha que se consegue *estender* mais.
+
+Esta explicação abranje apenas o caso relativo ao `Player 1` porque analisa o **value** de cada *mancha* na horizontal, significando que quanto mais *extensa*, na horizontal, for a *mancha*, maior será o seu **value**. Como, para representar o tabuleiro, estamos a usar uma lista composta por sublistas, podemos usar o predicado `transpose(?X, ?Y)` com o tabuleiro quando for para analisar o caso do `Player 2`. Isto transformará as linhas do tabuleiro em colunas e vice-versa, sendo agora possivel analizar o caminha na horizontal também para o `Player 2`.
 ### Final do Jogo
 
-Um caso possivel de acontecer é de um Jogador fazer uma jogada, tal que abra um caminho para si, mas também para o inimigo, sendo assim a vitória do inimigo. Para fazer esta verificação, no final de uma jogada, o predicado `game_over(+GameState, +Player , -Winner)` é chamado e é primeiro verificado se o jogador oposto tem um caminho formado entre os seus lados do tabuleiro. Caso não haja, então é que é verificado se existe um caminho para o jogador inicial.
+Um caso possivel de acontecer é de um Jogador fazer uma jogada, tal que abra um caminho para si, mas também para o inimigo, sendo assim a vitória do inimigo. Para fazer esta verificação, no final de uma jogada, o predicado `game_over(+GameState, +Player , -Winner)` é chamado e é primeiro verificado se o jogador oposto tem um caminho formado entre os seus lados do tabuleiro. Caso não haja um caminho, então é que é verificado se existe um caminho para o jogador inicial.
 
 A verificação da vitória é feita no predicado `check_win(+PlayerS, +GameState, +K, -Result)`. 
 ```prolog
@@ -161,5 +213,41 @@ A verificação da vitória é feita no predicado `check_win(+PlayerS, +GameStat
 check_win('Player 2', GameState, X):-
   transpose(GameState, Transpose),
   check_win('Player 1', Transpose, X).
+
+check_win('Player 1', GameState, Size1):-
+  Size is Size1+1,
+  value(GameState, 'Player 1', Value),
+  format('Size: ~d, Value: ~d', [Size, Value]),
+  Value == Size.
 ```
-Este predicado verifica se existe um caminho entreo lado esquerdo e o lado direito 
+Este predicado tira partido do predicado `value(+GameState, +Player, -Value)` e de algo já referido:
+
+> Se o **value** for igual ao comprimento do tabuleiro, significa que essa jogada criou uma mancha cujo alcance vai desde um lado ao lado oposto do tabuleiro, sendo esta uma jogada que abre um caminho vencedor para o jogador.
+
+Usando esta lógica, torna-se simples verificar se um jogador é vencedor ou não, basta verificar se o **value** do tabuleiro resultante para o jogador que acabou de jogar é igual ao comprimento do tabuleiro.
+
+### Jogada do Computador
+
+Neste Projeto criamos 2 dificuldades possiveis para o Computador: `Easy` e `Normal`.
+
+Se a dificuldade for `Easy`, então o Computador, com o auxilio do predicado `valid_moves(+GameState, +PlayerS, -List)`, tem à sua disposição uma lista de movimentos possiveis de executar e escolherá, aleatóriamente, um destes movimentos da lista, usando o predicado `random_member(-Elem, +List)` da biblioteca `random`, devolvendo o movimento no último argumento do predicado `choose_move(+GameState, +Player, +Level, -Move)`.
+
+Se a dificuldade for `Normal`, após obter a lista dos movimentos possiveis, é usado o predicado `findall(+Template, +Generator, -List)` para gerar uma lista de elementos na forma `Value-X-Y-Direction-Index`:
+- `Value` - valor do board resultante da jogada
+- `X-Y-Direction` - componentes de uma jogada
+- `Index` - Indice da jogada na lista de todos os movimentos possiveis
+
+A lista resultante está ordenada pelo `Index` de forma crescente, sendo assim preciso efetuar um `sort(+List1, -List2)` para que a Lista fique ordenada por ordem crescente de `Value`. Para obter o `Move` a efetuar só falta retirar as componentes `X-Y-Direction` do último elemento da lista usando o predicado `last(+List, -Last)`.
+
+## Conclusões
+
+> A adicionar
+
+### Possiveis Melhorias
+É possível acrescentar 2 dificuldades ao nosso jogo:
+1. Ao verificar o valor de cada mancha para o jogador, verifica o valor dessa mancha para o inimigo e no final faz a diferença entre os valores. Assim o Computador escolhe a melhor jogada para ele, mas que também não seja a melhor para o adversário.
+2. Para cada movimento possivel, verificar os movimentos possiveis de fazer a seguir e analisar os tabuleiros resultantes. Assim o Computador consegue não fazer a melhor jogada no momento mas poderá ser uma jogada que lhe dará mais vantagem no futuro.
+## Bibliografia
+- [Documentação SicStus 4.6.0](https://sicstus.sics.se/sicstus/docs/latest4/html/sicstus.html/)
+- [Wikipedia - Flood Fill](https://en.wikipedia.org/wiki/Flood_fill)
+- [GeeksForGeeks - Flood Fill](https://www.geeksforgeeks.org/flood-fill-algorithm-implement-fill-paint/)

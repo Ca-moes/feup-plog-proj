@@ -54,8 +54,7 @@ choose_move(GameState, Player, 'Normal', X-Y-Direction):-
     ),
     ListResults
     ),
-  sort(ListResults, Sorted), 
-  reverse(Sorted, [_-X-Y-Direction-_|_]).
+  sort(ListResults, Sorted), last(Sorted, _-X-Y-Direction-_).
 % choose_remove(+GameState, +Player, +Level, -Move)
 % Returns a Remove after evaluating all the GameStates possible caused by all the available removes
 % For the Easy Difficulty the remove is chosen randomly
