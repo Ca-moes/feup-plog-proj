@@ -1,6 +1,7 @@
 % play/0
 % main predicate for game start, presents the main menu
 play :-
+  talpa_logo,
   menu.
 
 % start_game(+GameState, +Player1Type, +Player2Type)

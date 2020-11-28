@@ -1,6 +1,34 @@
 option_dif(1, 'Easy').
 option_dif(2, 'Normal').
-clear:- write('\33\[2J').
+clear :- write('\33\[2J').
+
+talpa_logo :-
+    clear,
+    write('TTTTTTTTTTTTTTTTTTTTTTT                lllllll                                      \n'),
+    write('T:::::::::::::::::::::T                l:::::l                                      \n'),
+    write('T:::::::::::::::::::::T                l:::::l                                      \n'),
+    write('T:::::TT:::::::TT:::::T                l:::::l                                      \n'),
+    write('TTTTTT  T:::::T  TTTTTTaaaaaaaaaaaaa    l::::lppppp   ppppppppp     aaaaaaaaaaaaa   \n'),
+    write('        T:::::T        a::::::::::::a   l::::lp::::ppp:::::::::p    a::::::::::::a  \n'),
+    write('        T:::::T        aaaaaaaaa:::::a  l::::lp:::::::::::::::::p   aaaaaaaaa:::::a \n'),
+    write('        T:::::T                 a::::a  l::::lpp::::::ppppp::::::p           a::::a \n'),
+    write('        T:::::T          aaaaaaa:::::a  l::::l p:::::p     p:::::p    aaaaaaa:::::a \n'),
+    write('        T:::::T        aa::::::::::::a  l::::l p:::::p     p:::::p  aa::::::::::::a \n'),
+    write('        T:::::T       a::::aaaa::::::a  l::::l p:::::p     p:::::p a::::aaaa::::::a \n'),
+    write('        T:::::T      a::::a    a:::::a  l::::l p:::::p    p::::::pa::::a    a:::::a \n'),
+    write('      TT:::::::TT    a::::a    a:::::a l::::::lp:::::ppppp:::::::pa::::a    a:::::a \n'),
+    write('      T:::::::::T    a:::::aaaa::::::a l::::::lp::::::::::::::::p a:::::aaaa::::::a \n'),
+    write('      T:::::::::T     a::::::::::aa:::al::::::lp::::::::::::::pp   a::::::::::aa:::a\n'),
+    write('      TTTTTTTTTTT      aaaaaaaaaa  aaaallllllllp::::::pppppppp      aaaaaaaaaa  aaaa\n'),
+    write('                                               p:::::p                              \n'),
+    write('                                               p:::::p                              \n'),
+    write('                                              p:::::::p                             \n'),
+    write('                                              p:::::::p                             \n'),
+    write('                                              p:::::::p                             \n'),
+    write('                                              ppppppppp                             \n').
+
+
+
 
 %Main Menu
 menu :-
@@ -175,14 +203,11 @@ cc_option(Size, 1, 1):-
   initial(Size, GameState),
   start_game(GameState, 'Easy', 'Easy').
 cc_option(Size, 1, 2):-
-  write('\nTO IMPLEMENT\n'),
   initial(Size, GameState),
   start_game(GameState, 'Easy', 'Normal').
 cc_option(Size, 2, 1):-
-  write('\nTO IMPLEMENT\n'),
   initial(Size, GameState),
   start_game(GameState, 'Normal', 'Easy').
 cc_option(Size, 2, 2):-
-  write('\nTO IMPLEMENT\n'),
   initial(Size, GameState),
   start_game(GameState, 'Normal', 'Normal').
