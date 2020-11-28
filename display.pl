@@ -141,10 +141,10 @@ opposed_opponent_string(PlayerS, EnemyS):-
   player_piece(EnemyS, Code).
 
 % Pieces codes for board representation
-code(0, 32). %ascii code for space
+code(0, 32).   % ascii code for space
 code(-1, 216). % Ø - Player 2
-code(1, 215). % × - Player 1
-code(9, 181). % used for floodFill
+code(1, 215).  % × - Player 1
+code(9, 181).  % µ - Used for floodFill
 % Pieces codes for each player
 player_piece('Player 1', 1).
 player_piece('Player 2', -1).

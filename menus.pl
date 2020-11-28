@@ -4,8 +4,8 @@ clear:- write('\33\[2J').
 
 %Main Menu
 menu :-
-  clear,
-  write('\nMenu\n'),
+/*   clear,
+ */  write('\nMenu\n'),
   write('1 - Player vs Player\n'),
   write('2 - Player vs Computer\n'),
   write('3 - Computer vs Computer\n'),
@@ -63,9 +63,13 @@ menu_option(6):-
   write('\33\[2J'),
   write('\nOption for Testing things\n'),
 
-  initial(3, GameState),
+  initial(1, GameState),
   display_game(GameState),
-  transpose(GameState, Transpose),
+  attemp_flood_fill(GameState, 0, 0, NewBoard),
+  display_game(NewBoard),
+
+
+  /* transpose(GameState, Transpose),
   display_game(Transpose),
 
   Player = 'Player 2',
@@ -85,7 +89,7 @@ menu_option(6):-
     ),
     ListResults
   ),
-  write(ListResults), 
+  write(ListResults),  */
 
   menu.
 
