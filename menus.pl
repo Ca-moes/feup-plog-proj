@@ -28,19 +28,29 @@ talpa_logo :-
     write('                                              ppppppppp                             \n').
 
 
-
+menu_option_format(Option, Details):-
+format('*~t~d~t~15|~t~a~t~40+~t*~57|~n',
+        [Option ,Details]).
 
 %Main Menu
 menu :-
-/*   clear,
- */  write('\nMenu\n'),
-  write('1 - Player vs Player\n'),
-  write('2 - Player vs Computer\n'),
-  write('3 - Computer vs Computer\n'),
-  write('4 - Game Intructions\n'),
-  write('5 - Information about project\n'),
-  write('6 - TEST AREA\n'),
-  write('0 - Exit\n'),
+/*   clear,*/
+  format('~n~`*t MAIN MENU ~`*t~57|~n', []),
+  format('*~t*~57|~n', []),
+  format('*~t~a~t~15+~t~a~t~40+~t*~57|~n',
+        ['Option','Details']),
+  format('*~t*~57|~n', []),
+  menu_option_format(1, 'Player vs Player'),
+  menu_option_format(2, 'Player vs Computer'),
+  menu_option_format(3, 'Computer vs Computer'),
+  menu_option_format(4, 'Game Intructions'),
+  menu_option_format(5, 'Information about project'),
+  menu_option_format(6, 'TEST AREA'),
+  format('*~t*~57|~n', []),
+  menu_option_format(0, 'EXIT'),
+  format('*~t*~57|~n', []),
+  format('~`*t~57|~n', []),
+
   read_number(0, 6, Number),
   menu_option(Number).
 
