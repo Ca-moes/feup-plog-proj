@@ -28,47 +28,67 @@ talpa_logo :-
     write('                                              ppppppppp                             \n').
 
 
+menu_header_format(Header):-
+  format('~n~`*t ~p ~`*t~57|~n', [Header]).
 menu_option_format(Option, Details):-
-format('*~t~d~t~15|~t~a~t~40+~t*~57|~n',
-        [Option ,Details]).
+  format('*~t~d~t~15|~t~a~t~40+~t*~57|~n',
+        [Option, Details]).
+menu_empty_format :-
+  format('*~t*~57|~n', []).
+menu_sec_header_format(Label1, Label2):-
+  format('*~t~a~t~15+~t~a~t~40+~t*~57|~n',
+          [Label1, Label2]).
+menu_bottom_format :-
+  format('~`*t~57|~n', []).
 
 %Main Menu
 menu :-
 /*   clear,*/
-  format('~n~`*t MAIN MENU ~`*t~57|~n', []),
-  format('*~t*~57|~n', []),
-  format('*~t~a~t~15+~t~a~t~40+~t*~57|~n',
-        ['Option','Details']),
-  format('*~t*~57|~n', []),
+  menu_header_format('MAIN MENU'),
+  menu_empty_format,
+  menu_sec_header_format('Option', 'Details'),
+  menu_empty_format,
   menu_option_format(1, 'Player vs Player'),
   menu_option_format(2, 'Player vs Computer'),
   menu_option_format(3, 'Computer vs Computer'),
   menu_option_format(4, 'Game Intructions'),
   menu_option_format(5, 'Information about project'),
   menu_option_format(6, 'TEST AREA'),
-  format('*~t*~57|~n', []),
+  menu_empty_format,
   menu_option_format(0, 'EXIT'),
-  format('*~t*~57|~n', []),
-  format('~`*t~57|~n', []),
+  menu_empty_format,
+  menu_bottom_format,
 
   read_number(0, 6, Number),
   menu_option(Number).
 
 % menu with an extra option for a hidden feature
 menu_board_size_hidden_feature(Size):-
-  write('\nChoose a Board Size\n'),
-  write('1 - 6x6\n'),
-  write('2 - 8x8\n'),
-  write('3 - 10x10\n'),
-  write('0 - Exit\n'),
+  menu_header_format('Choose a Board Size'),
+  menu_empty_format,
+  menu_sec_header_format('Option', 'Details'),
+  menu_empty_format,
+  menu_option_format(1, '6x6'),
+  menu_option_format(2, '8x8'),
+  menu_option_format(3, '10x10'),
+  menu_empty_format,
+  menu_option_format(0, 'EXIT'),
+  menu_empty_format,
+  menu_bottom_format,
   read_number_hidden(0, 4, Size).
 % menu to choose the board size
 menu_board_size(Size):-
-  write('\nChoose a Board Size\n'),
-  write('1 - 6x6\n'),
-  write('2 - 8x8\n'),
-  write('3 - 10x10\n'),
-  write('0 - Exit\n'),
+ menu_header_format('Choose a Board Size'),
+  menu_empty_format,
+  menu_sec_header_format('Option', 'Details'),
+  menu_empty_format,
+  menu_option_format(1, '6x6'),
+  menu_option_format(2, '8x8'),
+  menu_option_format(3, '10x10'),
+  menu_empty_format,
+  menu_option_format(0, 'EXIT'),
+  menu_empty_format,
+  menu_bottom_format,
   read_number(0, 3, Size).
 % Exit Main Menu
 menu_option(0):-
