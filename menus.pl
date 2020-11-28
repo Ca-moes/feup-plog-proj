@@ -3,28 +3,13 @@ option_dif(2, 'Normal').
 clear :- write('\33\[2J').
 
 talpa_logo :-
-    write('TTTTTTTTTTTTTTTTTTTTTTT                lllllll                                      \n'),
-    write('T:::::::::::::::::::::T                l:::::l                                      \n'),
-    write('T:::::::::::::::::::::T                l:::::l                                      \n'),
-    write('T:::::TT:::::::TT:::::T                l:::::l                                      \n'),
-    write('TTTTTT  T:::::T  TTTTTTaaaaaaaaaaaaa    l::::lppppp   ppppppppp     aaaaaaaaaaaaa   \n'),
-    write('        T:::::T        a::::::::::::a   l::::lp::::ppp:::::::::p    a::::::::::::a  \n'),
-    write('        T:::::T        aaaaaaaaa:::::a  l::::lp:::::::::::::::::p   aaaaaaaaa:::::a \n'),
-    write('        T:::::T                 a::::a  l::::lpp::::::ppppp::::::p           a::::a \n'),
-    write('        T:::::T          aaaaaaa:::::a  l::::l p:::::p     p:::::p    aaaaaaa:::::a \n'),
-    write('        T:::::T        aa::::::::::::a  l::::l p:::::p     p:::::p  aa::::::::::::a \n'),
-    write('        T:::::T       a::::aaaa::::::a  l::::l p:::::p     p:::::p a::::aaaa::::::a \n'),
-    write('        T:::::T      a::::a    a:::::a  l::::l p:::::p    p::::::pa::::a    a:::::a \n'),
-    write('      TT:::::::TT    a::::a    a:::::a l::::::lp:::::ppppp:::::::pa::::a    a:::::a \n'),
-    write('      T:::::::::T    a:::::aaaa::::::a l::::::lp::::::::::::::::p a:::::aaaa::::::a \n'),
-    write('      T:::::::::T     a::::::::::aa:::al::::::lp::::::::::::::pp   a::::::::::aa:::a\n'),
-    write('      TTTTTTTTTTT      aaaaaaaaaa  aaaallllllllp::::::pppppppp      aaaaaaaaaa  aaaa\n'),
-    write('                                               p:::::p                              \n'),
-    write('                                               p:::::p                              \n'),
-    write('                                              p:::::::p                             \n'),
-    write('                                              p:::::::p                             \n'),
-    write('                                              p:::::::p                             \n'),
-    write('                                              ppppppppp                             \n').
+    write('    ########    ###    ##       ########     ###   \n'),
+    write('       ##      ## ##   ##       ##     ##   ## ##  \n'),
+    write('       ##     ##   ##  ##       ##     ##  ##   ## \n'),
+    write('       ##    ##     ## ##       ########  ##     ##\n'),
+    write('       ##    ######### ##       ##        #########\n'),
+    write('       ##    ##     ## ##       ##        ##     ##\n'),
+    write('       ##    ##     ## ######## ##        ##     ##\n').
 
 
 menu_header_format(Header):-
@@ -41,22 +26,18 @@ menu_bottom_format :-
   format('~`*t~57|~n', []).
 
 banner(String):-
-  clear,
   format('~n~`*t~57|~n', []),
   format('*~t~a~t*~57|~n', [String]),
   format('~`*t~57|~n', []).
 banner(String, BoardSize):-
-  clear,
   format('~n~`*t~57|~n', []),
   format('*~t~a - ~dx~d Board~t*~57|~n', [String, BoardSize, BoardSize]),
   format('~`*t~57|~n', []).
 banner(String, BoardSize, Difficulty):-
-  clear,
   format('~n~`*t~57|~n', []),
   format('*~t~a (~a) - ~dx~d Board~t*~57|~n', [String, Difficulty, BoardSize, BoardSize]),
   format('~`*t~57|~n', []).
 banner_bot(BoardSize, Difficulty):-
-  clear,
   format('~n~`*t~57|~n', []),
   format('*~tComputer (~a) vs Computer - ~dx~d Board~t*~57|~n', [Difficulty, BoardSize, BoardSize]),
   format('~`*t~57|~n', []).
@@ -193,7 +174,7 @@ pc_menu_1(0).
 pc_menu_1(Size):-
   index_to_board_size(Size,Actual),
 
-  banner('Player vs Computer - ', Actual),
+  banner('Player vs Computer', Actual),
   menu_header_format('Choose a Difficulty'),
   menu_empty_format,
   menu_sec_header_format('Option', 'Details'),

@@ -1,6 +1,7 @@
 % play/0
 % main predicate for game start, presents the main menu
 play :-
+  clear,
   talpa_logo,
   menu.
 
@@ -14,8 +15,8 @@ start_game(GameState, Player1Type, Player2Type):-
 % turn(+GameState, +Player, +PlayerS, +NextPlayer)
 % Turn predicate for final game state where player removes a piece instead of moving it
 turn(GameState, Player, PlayerS, NextPlayer):-
-  ( Player = 'Player', format('\n ~a turn.\n', PlayerS) ; 
-    Player \= 'Player', format('\n Computer turn as ~s.\n', PlayerS) ),
+  ( Player = 'Player', format('~n~`*t ~a turn ~`*t~57|~n', [PlayerS]) ;
+    Player \= 'Player', format('~n~`*t Computer turn as ~s ~`*t~57|~n', [PlayerS]) ),
   check_final_state(GameState, PlayerS, 0, 0),
   remove(Player, GameState, PlayerS, NewGameState),
   game_over(NewGameState, PlayerS, TempResult),
@@ -35,7 +36,7 @@ process_result(NewGameState, 'none', TypePlayer, TypeToPlay, PlayerS):-
 % If there's a winner, the game ends
 process_result(NewGameState, Winner, _, _, _):-
   display_game(NewGameState),
-  format('Result -> ~s', Winner),
+  format('~n~`*t Winner - ~a ~`*t~57|~n', [Winner]),
   sleep(2).
 
 % game_over(+GameState, +Player , -Winner)

@@ -28,12 +28,13 @@ choose_piece(Board, PlayerS, X, Y, Directions):-
     check_list(Board, PlayerS, Xtemp, Ytemp, List, Directions, X, Y).
 % checks if list os available directions is empty, in that case, calls choose_piece again
 check_list(Board, PlayerS, _, _, [], Directions, XFinal, YFinal):-
-    write('# No plays available for that piece, choose another\n'),
+    format('~`xt No plays available for that piece ~`xt~57|~n', []),
+    format('~`*t Chose Another Piece ~`*t~57|~n', []),
     skip_line,
     choose_piece(Board, PlayerS, XFinal, YFinal, Directions).
 % if List is not empty
 check_list(_,_,X,Y,List,List,X,Y):-
-    write('- There are plays available for that spot\n').
+    format('~`-t There are plays available for that spot ~`-t~57|~n', []).
      
 % validate_choice(+Board, +Xread, +Yread, +PlayerS, -X, -Y)
 % check if selected piece belongs to player
@@ -46,7 +47,7 @@ validate_choice(Board, Xread, Yread, PlayerS, X, Y):-
     write('- Chose Spot belonging to player\n').
 % if the selected piece doesnt belong to the player, asks again
 validate_choice(Board, _, _, PlayerS, X, Y):-
-    write('--Unavailable piece, try again\n'),
+    format('~`xt Unavailable piece, try again ~`xt~57|~n', []),
     size_of_board(Board, Size),
     skip_line,
     read_inputs(Size, Xread, Yread),
