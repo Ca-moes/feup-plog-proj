@@ -3,7 +3,6 @@ option_dif(2, 'Normal').
 clear :- write('\33\[2J').
 
 talpa_logo :-
-    clear,
     write('TTTTTTTTTTTTTTTTTTTTTTT                lllllll                                      \n'),
     write('T:::::::::::::::::::::T                l:::::l                                      \n'),
     write('T:::::::::::::::::::::T                l:::::l                                      \n'),
@@ -39,6 +38,27 @@ menu_sec_header_format(Label1, Label2):-
   format('*~t~a~t~15+~t~a~t~40+~t*~57|~n',
           [Label1, Label2]).
 menu_bottom_format :-
+  format('~`*t~57|~n', []).
+
+banner(String):-
+  clear,
+  format('~n~`*t~57|~n', []),
+  format('*~t~a~t*~57|~n', [String]),
+  format('~`*t~57|~n', []).
+banner(String, BoardSize):-
+  clear,
+  format('~n~`*t~57|~n', []),
+  format('*~t~a - ~dx~d Board~t*~57|~n', [String, BoardSize, BoardSize]),
+  format('~`*t~57|~n', []).
+banner(String, BoardSize, Difficulty):-
+  clear,
+  format('~n~`*t~57|~n', []),
+  format('*~t~a (~a) - ~dx~d Board~t*~57|~n', [String, Difficulty, BoardSize, BoardSize]),
+  format('~`*t~57|~n', []).
+banner_bot(BoardSize, Difficulty):-
+  clear,
+  format('~n~`*t~57|~n', []),
+  format('*~tComputer (~a) vs Computer - ~dx~d Board~t*~57|~n', [Difficulty, BoardSize, BoardSize]),
   format('~`*t~57|~n', []).
 
 %Main Menu
@@ -92,30 +112,31 @@ menu_board_size(Size):-
   read_number(0, 3, Size).
 % Exit Main Menu
 menu_option(0):-
-  write('\nThank You For Playing\nIgnore the "yes"').
+  banner('Thank You For Playing'),
+  talpa_logo.
 % Player vs PLayer, need to choose Board Size
 menu_option(1):-
   menu_board_size_hidden_feature(Size),
   pp_menu(Size).
 % Player vs Computer, need to choose Board Size
 menu_option(2):-
-  write('\nPlayer vs Computer\n'),
+  banner('Player vs Computer'),
   menu_board_size(Size),
   pc_menu_1(Size),
   menu.
 % Computer vs Computer, need to choose Board Size
 menu_option(3):-
-  write('\nComputer vs Computer\n'),
+  banner('Computer vs Computer'),
   menu_board_size(Size),
   cc_menu_1(Size),
   menu.
 % Game Instructions
 menu_option(4):-
-  write('\nMissing instructions\n'),
+  banner('Missing Instructions'),
   menu.
 % Info about the Project
 menu_option(5):-
-  write('\nMade By Andre Gomes and Goncalo Teixeira\n'),
+  banner('Made By Andre Gomes and Goncalo Teixeira'),
   menu.
 menu_option(6):-
   write('\33\[2J'),
@@ -171,10 +192,19 @@ pc_menu_1(0).
 % Choose a board, needs to choose a difficulty for the bot
 pc_menu_1(Size):-
   index_to_board_size(Size,Actual),
-  format('\nPlayer vs Computer - ~dx~d Board\nChoose a Difficulty:\n', [Actual, Actual]),
-  write('1 - Easy (Random)\n'),
-  write('2 - Normal (Greedy)\n'),
-  write('0 - Exit\n'),
+
+  banner('Player vs Computer - ', Actual),
+  menu_header_format('Choose a Difficulty'),
+  menu_empty_format,
+  menu_sec_header_format('Option', 'Details'),
+  menu_empty_format,
+  menu_option_format(1, 'Easy (Random)'),
+  menu_option_format(2, 'Normal (Greedy)'),
+  menu_empty_format,
+  menu_option_format(0, 'EXIT'),
+  menu_empty_format,
+  menu_bottom_format,
+
   read_number(0,2,Number),
   pc_menu_2(Size, Number).
 
@@ -183,10 +213,20 @@ pc_menu_2(_, 0).
 % Choose a board and bot difficulty, needs to choose who plays first
 pc_menu_2(Size, Difficulty):-
   index_to_board_size(Size,Actual), option_dif(Difficulty, Diff),
-  format('\nPlayer vs Computer (~s) - ~dx~d Board\nWhich Player do you want to be:\n', [Diff, Actual, Actual]),
-  write('1 - Player 1 (Plays First)\n'),
-  write('2 - Player 2\n'),
-  write('0 - Exit\n'),
+
+  banner('Player vs Computer', Actual, Diff),
+  menu_header_format('Choose a Player'),
+  menu_empty_format,
+  menu_sec_header_format('Option', 'Details'),
+  menu_empty_format,
+  menu_option_format(1, 'Player 1 (Plays First)'),
+  menu_option_format(2, 'Player 2'),
+  menu_empty_format,
+  menu_option_format(0, 'EXIT'),
+  menu_empty_format,
+  menu_bottom_format,
+
+
   read_number(0,2,Number),
   pc_option(Size, Difficulty, Number).
 
@@ -209,10 +249,19 @@ cc_menu_1(0).
 % Choose a board, needs to choose bot 1 difficulty
 cc_menu_1(Size):-
   index_to_board_size(Size,Actual),
-  format('\nComputer vs Computer - ~dx~d Board\nChoose a Difficulty for Computer 1:\n', [Actual, Actual]),
-  write('1 - Easy (Random)\n'),
-  write('2 - Normal (Greedy)\n'),
-  write('0 - Exit\n'),
+
+  banner('Computer vs Computer - ', Actual),
+  menu_header_format('Difficulty Computer 1'),
+  menu_empty_format,
+  menu_sec_header_format('Option', 'Details'),
+  menu_empty_format,
+  menu_option_format(1, 'Easy (Random)'),
+  menu_option_format(2, 'Normal (Greedy)'),
+  menu_empty_format,
+  menu_option_format(0, 'EXIT'),
+  menu_empty_format,
+  menu_bottom_format,
+
   read_number(0,2,Number),
   cc_menu_2(Size, Number).
 
@@ -221,10 +270,19 @@ cc_menu_2(_, 0).
 % Choose a board and bot 1 difficulty, needs to choose bot 2 difficulty
 cc_menu_2(Size, Diff1):-
   index_to_board_size(Size,Actual), option_dif(Diff1, Diff1S),
-  format('\nComputer (~s) vs Computer - ~dx~d Board\nChoose a Difficulty for Computer 2:\n', [Diff1S, Actual, Actual]),
-  write('1 - Easy (Random)\n'),
-  write('2 - Normal (Greedy)\n'),
-  write('0 - Exit\n'),
+
+  banner_bot(Actual, Diff1S),
+  menu_header_format('Difficulty Computer 2'),
+  menu_empty_format,
+  menu_sec_header_format('Option', 'Details'),
+  menu_empty_format,
+  menu_option_format(1, 'Easy (Random)'),
+  menu_option_format(2, 'Normal (Greedy)'),
+  menu_empty_format,
+  menu_option_format(0, 'EXIT'),
+  menu_empty_format,
+  menu_bottom_format,
+
   read_number(0,2,Number),
   cc_option(Size, Diff1, Number).
   
