@@ -26,9 +26,9 @@ O jogo acaba quando um caminho é formado pelos espaços livres entre dois lados
 O tabuleiro é representado a partir de uma lista com sublistas, sendo cada sublista uma linha do tabuleiro. Cada elemento, durante o jogo, pode ter 1 de 3 valores possiveis:
 - `0` representa uma posição vazia
 - `1` representa uma posição com uma peça pertencente ao jogador 1 
-- `2` representa uma posição com uma peça pertencente ao jogador 2 
+- `-1` representa uma posição com uma peça pertencente ao jogador 2 
 
-Fica também reservado o valor `9` que serve como caracter de enchimento usado no algoritmo `floodFill`, explicado numa próxima secção.
+Fica também reservado o valor `9` que serve como caracter de enchimento usado no algoritmo `floodFill`, explicado numa [próxima secção](#floodfill).
 
 ```prolog
 Possiveis estados de jogo:
@@ -188,8 +188,7 @@ Continuando com a avaliação do tabuleiro, após ter sido realizado o algoritmo
 Pseudocódigo parte 1:
   Percorre célula a célula
   Encontra lugar 0
-    FloodFill para obter novo GameState, Guarda Posição X-Y para depois retornar e chama mesmo predicado
-    com novo GameState
+    FloodFill para obter novo GameState, Guarda Posição X-Y para depois retornar e chama mesmo predicado com novo GameState
     Dá append a X-Y á lista de Return de ter chamado o predicado e dá return da nova lista
 ```
 
