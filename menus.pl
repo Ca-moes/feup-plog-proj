@@ -152,6 +152,7 @@ menu_option(3):-
   menu.
 % Game Instructions
 menu_option(4):-
+  clear,
   menu_header_format('INSTRUCTIONS'),
   menu_empty_format,
   format('*~t~s~t~30|~t~c~t~23+~t*~57|~n', ["Player 1", 215]),
