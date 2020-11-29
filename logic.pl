@@ -109,15 +109,9 @@ replace(Board, X, Y, Value, BoardResult):-
 % move(+GameState, +X-Y-Direction, -NewGameState)
 %  performs the change in the board, replaces current piece with 0 and enemy piece with player code
 move(GameState, X-Y-Direction, NewGameState):-
+    value_in_board(GameState, X, Y, Code),
     replace(GameState, X, Y, 0, Board1),
     direction(X-Y, Direction, X1, Y1),
-    /*
-        TODO
-        Não precisa de PlayerS
-        Vai apenas buscar ocódigo diretamente
-    */
-    player_in_board(GameState, X, Y, PlayerS),
-    player_piece(PlayerS, Code),
     replace(Board1, X1, Y1, Code, NewGameState).
 
 % check_final(+GameState, +PlayerS)
