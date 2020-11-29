@@ -10,8 +10,9 @@
 - `File` -> `Consult...` -> Selecionar ficheiro `talpa.pl`
 - Na consola do SicStus: `play.`
 ### Linux
-> Deve ser os mesmos passos, necessário testar.
-
+- Executar `SicStus Prolog`
+- `File` -> `Consult...` -> Selecionar ficheiro `talpa.pl`
+- Na consola do SicStus: `play.`
 ## Talpa - Descrição do Jogo
 
 O objetivo do jogo é criar um caminho formado por lugares vazios no tabuleiro, que conecte lados opostos do tabuleiro, sendo cada par de lados opostos atribuido a um dos jogadores. 
@@ -239,8 +240,7 @@ Se a dificuldade for `Normal`, após obter a lista dos movimentos possíveis, é
 A lista resultante está ordenada pelo `Index` de forma crescente, sendo assim preciso efetuar um `sort(+List1, -List2)` para que a Lista fique ordenada por ordem crescente de `Value`. Para obter o `Move` a efetuar só falta retirar as componentes `X-Y-Direction` do último elemento da lista usando o predicado `last(+List, -Last)`.
 
 ## Conclusões
-
-> A adicionar
+Uma das dificuldades apresentadas no inicio do trabalho consistiu na representação pretendida das peças, sendo o SicStus executado em formato consola, ficamos com poucas opções relativamente aos caraters possíveis de usar. Uma possível melhoria ao projeto seria um acompanhamento mais especifico para o projeto ir de acordo com os critérios de avaliação. No momento em que este relatório está a ser escrito, não sabemos quais são as componentes que serão avaliadas, nem o peso de cada uma, o que fez com que não nos pudéssemos focar nas partes do programa que importam. Aliado ao facto de que a unidade curricular de Programação Lógica consiste em apenas 4.5 ECTS, foi dedicado demasiado tempo a este projeto, algo que poderia ter sido facilmente evitável.
 
 ### Possiveis Melhorias
 É possível acrescentar 2 dificuldades ao nosso jogo:
