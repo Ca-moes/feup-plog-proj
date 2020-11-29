@@ -17,6 +17,8 @@ menu_header_format(Header):-
 menu_option_format(Option, Details):-
   format('*~t~d~t~15|~t~a~t~40+~t*~57|~n',
         [Option, Details]).
+menu_text_format(Text):-
+  format('*~t~a~t*~57|~n', [Text]).
 menu_empty_format :-
   format('*~t*~57|~n', []).
 menu_sec_header_format(Label1, Label2):-
@@ -113,7 +115,48 @@ menu_option(3):-
   menu.
 % Game Instructions
 menu_option(4):-
-  banner('Instructions'),
+  menu_header_format('Instructions'),
+  menu_empty_format,
+  format('*~t~s~t~30|~t~c~t~23+~t*~57|~n', ["Player 1", 215]),
+  format('*~t~s~t~30|~t~c~t~23+~t*~57|~n', ["Player 2", 216]),
+  menu_empty_format,
+
+  menu_text_format('The Goal is to open a path with empty spots'),
+  menu_text_format('on the board to connect opposite sides,'),
+  menu_text_format('each pair of opposite sides belongs to a player.'),
+  menu_empty_format,
+  menu_empty_format,
+  menu_text_format('-- GENERAL RULES --'),
+  menu_empty_format,
+  menu_text_format('The game starts with a square chess-like board'),
+  menu_text_format('with the pieces displayed in a chess-like format'),
+  menu_text_format('Players are forced to capture a piece whenever'),
+  menu_text_format('possible. When is no longer possible to capture'),
+  menu_text_format('the player is asked to remove a piece.'),
+  menu_empty_format,
+  menu_empty_format,
+  menu_text_format('-- CAPTURING A PIECE --'),
+  menu_empty_format,
+  menu_text_format('To capture a piece, the player must move his piece'),
+  menu_text_format('in one of four directions (up, down, left, right),'),
+  menu_text_format('pieces cannot move unless they capture an enemy.'),
+  menu_empty_format,
+  menu_empty_format,
+  menu_text_format('-- ENDING CONDITIONS --'),
+  menu_empty_format,
+  menu_text_format('If the Player opens up a path for his side'),
+  menu_text_format('this is considered a victory move, ending the game'),
+  menu_empty_format,
+  menu_text_format('If the Player opens up a path for enemy side, this'),
+  menu_text_format('is considered a victory for the enemy side, as a path'),
+  menu_text_format('was openned and thus, ending the game.'),
+  menu_empty_format,
+  menu_text_format('If the Player opens up a path for him *AND* for'),
+  menu_text_format('the enemy side, this is considered a victory for the'),
+  menu_text_format('enemy side.'),
+  menu_empty_format,
+  menu_bottom_format,
+
   menu.
 % Info about the Project
 menu_option(5):-
