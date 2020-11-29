@@ -8,16 +8,12 @@ direction(4, 'left').
 
 % direction(+X, +Y, +Direction, -Xr, -Yr)
 % get position in direction, doesn't check range, can get out of board
-direction(X, Y, 'up', Xr, Yr):-     Xr = X,     Yr is Y-1.
-direction(X, Y, 'right', Xr, Yr):-  Xr is X+1,  Yr = Y.
-direction(X, Y, 'down', Xr, Yr):-   Xr = X,     Yr is Y+1.
-direction(X, Y, 'left', Xr, Yr):-   Xr is X-1,  Yr = Y.
+direction(X-Y, 'up', Xr, Yr):-     Xr = X,     Yr is Y-1.
+direction(X-Y, 'right', Xr, Yr):-  Xr is X+1,  Yr = Y.
+direction(X-Y, 'down', Xr, Yr):-   Xr = X,     Yr is Y+1.
+direction(X-Y, 'left', Xr, Yr):-   Xr is X-1,  Yr = Y.
 
-    
-/**
- * TODO
- * Passar X, Y para X-Y
- * */
+
 % choose_piece(+Board, +PlayerS, -Xtemp, -Ytemp, -Directions)
 % predicate to read input, checks if piece belongs to player, gets available directions and return
 choose_piece(Board, PlayerS, X, Y, Directions):-
@@ -114,7 +110,7 @@ replace(Board, X, Y, Value, BoardResult):-
 %  performs the change in the board, replaces current piece with 0 and enemy piece with player code
 move(GameState, X-Y-Direction, NewGameState):-
     replace(GameState, X, Y, 0, Board1),
-    direction(X, Y, Direction, X1, Y1),
+    direction(X-Y, Direction, X1, Y1),
     /*
         TODO
         Não precisa de PlayerS
