@@ -113,7 +113,7 @@ menu_option(3):-
   menu.
 % Game Instructions
 menu_option(4):-
-  banner('Missing Instructions'),
+  banner('Instructions'),
   menu.
 % Info about the Project
 menu_option(5):-

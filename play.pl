@@ -30,14 +30,16 @@ turn(GameState, Player, PlayerS, NextPlayer):-
 % process_result(+NewGameState, +Winner, +TypePlayer, +TypeToPlay, +PlayerS)
 % Processes the Winner argument, if there are no winners then it's the opponent's turn
 process_result(NewGameState, 'none', TypePlayer, TypeToPlay, PlayerS):-
+  clear, 
   display_game(NewGameState),
   opposed_opponent_string(PlayerS, EnemyS),
   turn(NewGameState, TypeToPlay, EnemyS, TypePlayer).
 % If there's a winner, the game ends
 process_result(NewGameState, Winner, _, _, _):-
+  clear, 
   display_game(NewGameState),
   format('~n~`*t Winner - ~a ~`*t~57|~n', [Winner]),
-  sleep(2).
+  sleep(2), clear.
 
 % game_over(+GameState, +Player , -Winner)
 % checks first if enemy is winner
@@ -60,7 +62,6 @@ check_win('Player 2', GameState, X):-
 
 check_win('Player 1', GameState, Size):-
   value(GameState, 'Player 1', Value),
-  format('Size: ~d, Value: ~d', [Size, Value]),
   Value == Size.
 
 % does one floodfill and doesn't repeat on redo

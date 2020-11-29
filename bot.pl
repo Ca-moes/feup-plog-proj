@@ -4,13 +4,12 @@ make_move('Player', GameState, PlayerS, NewGameState) :-
   choose_piece(GameState, PlayerS, X, Y, Directions),
   format('- Selected spot: X : ~d -- Y : ~w \n', [X,Y]),
   read_direction(Directions, Direction),
-  format('- Direction received in logic : ~s\n', Direction),
   move(GameState, X-Y-Direction, NewGameState), skip_line.
 % Given the bot Difficulty, chooses a move, performs the move and returns the NewGameState
 make_move(Difficulty, GameState, Player, NewGameState):-
   choose_move(GameState, Player, Difficulty, X-Y-Direction),
   row(Y, Letter), format("I'll move from X:~d Y:~s to the ~s Direction\n", [X, Letter, Direction]),
-  sleep(1),
+  sleep(2),
   move(GameState, X-Y-Direction, NewGameState).
 
 % remove(+Difficulty, +GameState, +Player, -NewGameState)
@@ -27,7 +26,7 @@ remove('Player', GameState, PlayerS, NewGameState) :-
 remove(Difficulty, GameState, Player, NewGameState):-
   choose_remove(GameState, Player, Difficulty, X-Y),
   row(Y, Letter), format("I'll remove my piece from X:~d Y:~s\n", [X, Letter]),
-  sleep(1),
+  sleep(2),
   replace(GameState, X, Y, 0, NewGameState).
 
 % choose_move(+GameState, +Player, +Level, -Move)
