@@ -17,7 +17,7 @@ start_game(GameState, Player1Type, Player2Type):-
 turn(GameState, Player, PlayerS, NextPlayer):-
   ( Player = 'Player', format('~n~`*t ~a turn ~`*t~57|~n', [PlayerS]) ;
     Player \= 'Player', format('~n~`*t Computer turn as ~s ~`*t~57|~n', [PlayerS]) ),
-  check_final_state(GameState, PlayerS, 0, 0),
+  check_final(GameState, PlayerS),
   remove(Player, GameState, PlayerS, NewGameState),
   game_over(NewGameState, PlayerS, TempResult),
   process_result(NewGameState, TempResult, Player, NextPlayer, PlayerS).

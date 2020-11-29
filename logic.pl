@@ -120,12 +120,14 @@ move(GameState, X-Y-Direction, NewGameState):-
     player_piece(PlayerS, Code),
     replace(Board1, X1, Y1, Code, NewGameState).
 
+% check_final(+GameState, +PlayerS)
+% Predicate to check if the game as reached its final state (i.e. starting to remove pieces)
+check_final(GameState, PlayerS):-
+  check_final_state(GameState, PlayerS, 0, 0).
+
 % check_final_state(+GameState, +PlayerS, +X, +Y)
-/* predicate to check if game as reached its final state */ 
-/**
- * todo
-* criar predicado check_final(GameState, PlayerS) que chama check_final_state(GameState, PlayerS, 0, 0)
-*/
+/* predicate to check if game as reached its final state */
+
 % if check_no_neightbors returs 0, ends predicate   
 check_final_state(GameState, PlayerS, X, Y):-
     value_in_board(GameState, X, Y, Value),
