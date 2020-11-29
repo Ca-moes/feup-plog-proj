@@ -56,13 +56,12 @@ menu :-
   menu_option_format(3, 'Computer vs Computer'),
   menu_option_format(4, 'Game Intructions'),
   menu_option_format(5, 'Information about project'),
-  menu_option_format(6, 'TEST AREA'),
   menu_empty_format,
   menu_option_format(0, 'EXIT'),
   menu_empty_format,
   menu_bottom_format,
 
-  read_number(0, 6, Number),
+  read_number(0, 5, Number),
   menu_option(Number).
 
 % menu with an extra option for a hidden feature
@@ -115,7 +114,7 @@ menu_option(3):-
   menu.
 % Game Instructions
 menu_option(4):-
-  menu_header_format('Instructions'),
+  menu_header_format('INSTRUCTIONS'),
   menu_empty_format,
   format('*~t~s~t~30|~t~c~t~23+~t*~57|~n', ["Player 1", 215]),
   format('*~t~s~t~30|~t~c~t~23+~t*~57|~n', ["Player 2", 216]),
@@ -162,39 +161,7 @@ menu_option(4):-
 menu_option(5):-
   banner('Made By Andre Gomes and Goncalo Teixeira'),
   menu.
-menu_option(6):-
-  write('\33\[2J'),
-  write('\nOption for Testing things\n'),
 
-  initial(1, GameState),
-  display_game(GameState),
-  attemp_flood_fill(GameState, 0, 0, NewBoard),
-  display_game(NewBoard),
-
-
-  /* transpose(GameState, Transpose),
-  display_game(Transpose),
-
-  Player = 'Player 2',
-  valid_moves(GameState, Player, List),
-
-  write(List), nl, 
-  findall(
-    Value1-X1-Y1-Direction1-Index,
-    (
-      nth0(Index, List, SubList), 
-      nth0(0, SubList, X1),
-      nth0(1, SubList, Y1),
-      nth0(2, SubList, Direction1),
-      move(GameState, X1-Y1-Direction1, NewGameState),
-      value(NewGameState, Player, Value1),
-      write(Value1-X1-Y1-Direction1-Index), nl
-    ),
-    ListResults
-  ),
-  write(ListResults),  */
-
-  menu.
 
 % Choose to exit game on size screen
 pp_menu(0):-
