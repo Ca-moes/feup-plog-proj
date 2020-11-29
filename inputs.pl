@@ -61,19 +61,26 @@ check_row(_, CheckedRow, Size) :-
   check_row(Row, CheckedRow, Size).
 
 % print_directions(+List)
-% newline after printing directions
-print_directions([]):- nl.
+print_directions([]).
 % prints the available directions
 print_directions([Dir|Rest]):-
   direction(Number, Dir),
-  format(' ~d - ~w |', [Number, Dir]),
+  menu_option_format(Number, Dir),
+  % format(' ~d - ~w |', [Number, Dir]),
   print_directions(Rest).
   
 % read_direction(+List, -DirSelected)
 % prints avaialble directions, reads input and processes it
 read_direction(List, DirSelected):-
-  write('| Select Direction (number) to move to\n|'),
-  print_directions(List), skip_line,
+  menu_header_format('Select Direction'),
+  menu_empty_format,
+  menu_sec_header_format('Option', 'Direction'),
+  menu_empty_format,
+  % write('| Select Direction (number) to move to\n|'),
+  print_directions(List),
+  menu_empty_format,
+  menu_bottom_format,
+  skip_line,
   get_code(CodeRead),
   check_direction_input(List, CodeRead, NumberRead),
   write('- Read valid direction (1-4)\n'), 
@@ -89,9 +96,16 @@ check_direction_input(_, CharRead, Number):-
   Number < 5, Number > 0.
 % if there's bad input, a message is printed and asks again for input
 check_direction_input(List, _, NumberRead):-
-  write('~ Invalid Number. Select again\n'),
-  write('| Select Direction (number) to move to\n|'),
-  print_directions(List), skip_line,
+  format('~`xt Invalid Number. Select again ~`xt~57|~n', []),
+  menu_header_format('Select Direction'),
+  menu_empty_format,
+  menu_sec_header_format('Option', 'Direction'),
+  menu_empty_format,
+  % write('| Select Direction (number) to move to\n|'),
+  print_directions(List),
+  menu_empty_format,
+  menu_bottom_format,
+  skip_line,
   get_code(CodeRead),
   check_direction_input(List, CodeRead, NumberRead).
 

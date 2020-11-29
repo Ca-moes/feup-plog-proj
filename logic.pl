@@ -8,16 +8,12 @@ direction(4, 'left').
 
 % direction(+X, +Y, +Direction, -Xr, -Yr)
 % get position in direction, doesn't check range, can get out of board
-direction(X, Y, 'up', Xr, Yr):-     Xr = X,     Yr is Y-1.
-direction(X, Y, 'right', Xr, Yr):-  Xr is X+1,  Yr = Y.
-direction(X, Y, 'down', Xr, Yr):-   Xr = X,     Yr is Y+1.
-direction(X, Y, 'left', Xr, Yr):-   Xr is X-1,  Yr = Y.
+direction(X-Y, 'up', Xr, Yr):-     Xr = X,     Yr is Y-1.
+direction(X-Y, 'right', Xr, Yr):-  Xr is X+1,  Yr = Y.
+direction(X-Y, 'down', Xr, Yr):-   Xr = X,     Yr is Y+1.
+direction(X-Y, 'left', Xr, Yr):-   Xr is X-1,  Yr = Y.
 
-    
-/**
- * TODO
- * Passar X, Y para X-Y
- * */
+
 % choose_piece(+Board, +PlayerS, -Xtemp, -Ytemp, -Directions)
 % predicate to read input, checks if piece belongs to player, gets available directions and return
 choose_piece(Board, PlayerS, X, Y, Directions):-
@@ -28,12 +24,13 @@ choose_piece(Board, PlayerS, X, Y, Directions):-
     check_list(Board, PlayerS, Xtemp, Ytemp, List, Directions, X, Y).
 % checks if list os available directions is empty, in that case, calls choose_piece again
 check_list(Board, PlayerS, _, _, [], Directions, XFinal, YFinal):-
-    write('# No plays available for that piece, choose another\n'),
+    format('~`xt No plays available for that piece ~`xt~57|~n', []),
+    format('~`*t Chose Another Piece ~`*t~57|~n', []),
     skip_line,
     choose_piece(Board, PlayerS, XFinal, YFinal, Directions).
 % if List is not empty
 check_list(_,_,X,Y,List,List,X,Y):-
-    write('- There are plays available for that spot\n').
+    format('~`-t There are plays available for that spot ~`-t~57|~n', []).
      
 % validate_choice(+Board, +Xread, +Yread, +PlayerS, -X, -Y)
 % check if selected piece belongs to player
@@ -46,7 +43,7 @@ validate_choice(Board, Xread, Yread, PlayerS, X, Y):-
     write('- Chose Spot belonging to player\n').
 % if the selected piece doesnt belong to the player, asks again
 validate_choice(Board, _, _, PlayerS, X, Y):-
-    write('--Unavailable piece, try again\n'),
+    format('~`xt Unavailable piece, try again ~`xt~57|~n', []),
     size_of_board(Board, Size),
     skip_line,
     read_inputs(Size, Xread, Yread),
@@ -112,23 +109,19 @@ replace(Board, X, Y, Value, BoardResult):-
 % move(+GameState, +X-Y-Direction, -NewGameState)
 %  performs the change in the board, replaces current piece with 0 and enemy piece with player code
 move(GameState, X-Y-Direction, NewGameState):-
+    value_in_board(GameState, X, Y, Code),
     replace(GameState, X, Y, 0, Board1),
-    direction(X, Y, Direction, X1, Y1),
-    /*
-        TODO
-        Não precisa de PlayerS
-        Vai apenas buscar ocódigo diretamente
-    */
-    player_in_board(GameState, X, Y, PlayerS),
-    player_piece(PlayerS, Code),
+    direction(X-Y, Direction, X1, Y1),
     replace(Board1, X1, Y1, Code, NewGameState).
 
+% check_final(+GameState, +PlayerS)
+% Predicate to check if the game as reached its final state (i.e. starting to remove pieces)
+check_final(GameState, PlayerS):-
+  check_final_state(GameState, PlayerS, 0, 0).
+
 % check_final_state(+GameState, +PlayerS, +X, +Y)
-/* predicate to check if game as reached its final state */ 
-/**
- * todo
-* criar predicado check_final(GameState, PlayerS) que chama check_final_state(GameState, PlayerS, 0, 0)
-*/
+/* predicate to check if game as reached its final state */
+
 % if check_no_neightbors returs 0, ends predicate   
 check_final_state(GameState, PlayerS, X, Y):-
     value_in_board(GameState, X, Y, Value),

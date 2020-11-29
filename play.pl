@@ -1,6 +1,8 @@
 % play/0
 % main predicate for game start, presents the main menu
 play :-
+  clear,
+  talpa_logo,
   menu.
 
 % start_game(+GameState, +Player1Type, +Player2Type)
@@ -13,9 +15,9 @@ start_game(GameState, Player1Type, Player2Type):-
 % turn(+GameState, +Player, +PlayerS, +NextPlayer)
 % Turn predicate for final game state where player removes a piece instead of moving it
 turn(GameState, Player, PlayerS, NextPlayer):-
-  ( Player = 'Player', format('\n ~a turn.\n', PlayerS) ; 
-    Player \= 'Player', format('\n Computer turn as ~s.\n', PlayerS) ),
-  check_final_state(GameState, PlayerS, 0, 0),
+  ( Player = 'Player', format('~n~`*t ~a turn ~`*t~57|~n', [PlayerS]) ;
+    Player \= 'Player', format('~n~`*t Computer turn as ~s ~`*t~57|~n', [PlayerS]) ),
+  check_final(GameState, PlayerS),
   remove(Player, GameState, PlayerS, NewGameState),
   game_over(NewGameState, PlayerS, TempResult),
   process_result(NewGameState, TempResult, Player, NextPlayer, PlayerS).
@@ -28,14 +30,16 @@ turn(GameState, Player, PlayerS, NextPlayer):-
 % process_result(+NewGameState, +Winner, +TypePlayer, +TypeToPlay, +PlayerS)
 % Processes the Winner argument, if there are no winners then it's the opponent's turn
 process_result(NewGameState, 'none', TypePlayer, TypeToPlay, PlayerS):-
+  clear, 
   display_game(NewGameState),
   opposed_opponent_string(PlayerS, EnemyS),
   turn(NewGameState, TypeToPlay, EnemyS, TypePlayer).
 % If there's a winner, the game ends
 process_result(NewGameState, Winner, _, _, _):-
+  clear, 
   display_game(NewGameState),
-  format('Result -> ~s', Winner),
-  sleep(2).
+  format('~n~`*t Winner - ~a ~`*t~57|~n', [Winner]),
+  sleep(2), clear.
 
 % game_over(+GameState, +Player , -Winner)
 % checks first if enemy is winner
@@ -58,7 +62,6 @@ check_win('Player 2', GameState, X):-
 
 check_win('Player 1', GameState, Size):-
   value(GameState, 'Player 1', Value),
-  format('Size: ~d, Value: ~d', [Size, Value]),
   Value == Size.
 
 % does one floodfill and doesn't repeat on redo
