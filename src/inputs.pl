@@ -52,7 +52,7 @@ read_row(Row, Size) :-
 % checking rows
 check_row(Rowread, RowreadUpper, Size) :-
   (row(RowNumb, Rowread) ; row_lower(RowNumb, Rowread)), RowNumb < Size, RowNumb >= 0, 
-  row(RowNumb, RowreadUpper). % caso lê minuscula, vai buscar maiuscula
+  row(RowNumb, RowreadUpper). % Gets Capital letter, ic case it reads lowercase letter
 % if not between A-y then try again
 check_row(_, CheckedRow, Size) :-
   write('~ Invalid row\n| Select again\n'),
@@ -66,7 +66,6 @@ print_directions([]).
 print_directions([Dir|Rest]):-
   direction(Number, Dir),
   menu_option_format(Number, Dir),
-  % format(' ~d - ~w |', [Number, Dir]),
   print_directions(Rest).
   
 % read_direction(+List, -DirSelected)
@@ -76,7 +75,6 @@ read_direction(List, DirSelected):-
   menu_empty_format,
   menu_sec_header_format('Option', 'Direction'),
   menu_empty_format,
-  % write('| Select Direction (number) to move to\n|'),
   print_directions(List),
   menu_empty_format,
   menu_bottom_format,
@@ -101,7 +99,6 @@ check_direction_input(List, _, NumberRead):-
   menu_empty_format,
   menu_sec_header_format('Option', 'Direction'),
   menu_empty_format,
-  % write('| Select Direction (number) to move to\n|'),
   print_directions(List),
   menu_empty_format,
   menu_bottom_format,

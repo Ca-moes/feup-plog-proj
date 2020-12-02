@@ -8,6 +8,18 @@
   [ 1,-1, 1,-1, 1,-1],
   [-1, 1,-1, 1,-1, 1]
 ]).
+
+initial(2, [
+  [ 1, 0, 1, 0, 1, 0, 1, 0],
+  [ 0,-1, 0,-1, 0,-1, 0,-1],
+  [ 1, 0, 1, 0, 1, 0, 1, 0],
+  [ 0,-1, 0,-1, 0,-1, 0,-1],
+  [ 1, 0, 1, 0, 1, 0, 1, 0],
+  [ 0,-1, 0,-1, 0,-1, 0,-1],
+  [ 1, 0, 1, 0, 1, 0, 1, 0],
+  [ 0,-1, 0,-1, 0,-1, 0,-1]
+]).
+
  initial(2, [
   [ 1,-1, 1,-1, 1,-1, 1,-1],
   [-1, 1,-1, 1,-1, 1,-1, 1],
@@ -123,8 +135,7 @@ print_line([C|L]) :-
   code(C, P),put_code(P), write(' | '),
   print_line(L).
 
-print_header_numbers(Inicial, Final):-
-  Inicial = Final,
+print_header_numbers(Inicial, Inicial):-
   write('\n').
 print_header_numbers(Inicial, Final):-
   write(' '), write(Inicial), write(' |'), N1 is Inicial + 1, print_header_numbers(N1, Final).
