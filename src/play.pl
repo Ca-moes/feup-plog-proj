@@ -39,7 +39,7 @@ process_result(NewGameState, Winner, _, _, _):-
   clear, 
   display_game(NewGameState),
   format('~n~`*t Winner - ~a ~`*t~57|~n', [Winner]),
-  sleep(2), clear.
+  sleep(5), clear.
 
 % game_over(+GameState, +Player , -Winner)
 % checks first if enemy is winner

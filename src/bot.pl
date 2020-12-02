@@ -9,7 +9,7 @@ make_move('Player', GameState, PlayerS, NewGameState) :-
 make_move(Difficulty, GameState, Player, NewGameState):-
   choose_move(GameState, Player, Difficulty, X-Y-Direction),
   row(Y, Letter), format("I'll move from X:~d Y:~s to the ~s Direction\n", [X, Letter, Direction]),
-  sleep(2),
+  sleep(3),
   move(GameState, X-Y-Direction, NewGameState).
 
 % remove(+Difficulty, +GameState, +Player, -NewGameState)
@@ -26,7 +26,7 @@ remove('Player', GameState, PlayerS, NewGameState) :-
 remove(Difficulty, GameState, Player, NewGameState):-
   choose_remove(GameState, Player, Difficulty, X-Y),
   row(Y, Letter), format("I'll remove my piece from X:~d Y:~s\n", [X, Letter]),
-  sleep(2),
+  sleep(3),
   replace(GameState, X, Y, 0, NewGameState).
 
 % choose_move(+GameState, +Player, +Level, -Move)

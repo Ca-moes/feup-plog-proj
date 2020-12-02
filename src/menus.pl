@@ -77,7 +77,6 @@ banner_bot(BoardSize, Difficulty):-
 % menu/0
 % This is the main menu, with all the options available
 menu :-
-  % clear,
   menu_header_format('MAIN MENU'),
   menu_empty_format,
   menu_sec_header_format('Option', 'Details'),
@@ -137,19 +136,19 @@ menu_option(0):-
 % Player vs PLayer, need to choose Board Size
 menu_option(1):-
   menu_board_size_hidden_feature(Size),
-  pp_menu(Size).
+  clear, pp_menu(Size).
 % Player vs Computer, need to choose Board Size
 menu_option(2):-
   banner('Player vs Computer'),
   menu_board_size(Size),
   pc_menu_1(Size),
-  menu.
+  clear, menu.
 % Computer vs Computer, need to choose Board Size
 menu_option(3):-
   banner('Computer vs Computer'),
   menu_board_size(Size),
   cc_menu_1(Size),
-  menu.
+  clear, menu.
 % Game Instructions
 menu_option(4):-
   clear,
@@ -198,7 +197,12 @@ menu_option(4):-
   menu.
 % Information about the Project
 menu_option(5):-
-  banner('Made By Andre Gomes and Goncalo Teixeira'),
+  menu_bottom_format,
+  menu_empty_format,
+  menu_text_format('Made By Andre Gomes and Goncalo Teixeira'),
+  menu_text_format('for PLOG Curricular Unit'),
+  menu_empty_format,
+  menu_bottom_format,
   menu.
 
 % pp_menu(+Size)
@@ -210,6 +214,7 @@ pp_menu(0):-
 % Hidden Feature
 pp_menu(4):-
   write('You found a Hidden Feature, Have Fun!\n'),
+  sleep(3),
   initial(4, GameState),
   start_game(GameState, 'Player', 'Player'),
   menu.
